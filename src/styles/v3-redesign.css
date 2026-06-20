@@ -1,0 +1,2167 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   ██████╗ ███████╗██╗      █████╗ ████████╗███████╗██╗     ██╗███████╗
+   ██╔══██╗██╔════╝██║     ██╔══██╗╚══██╔══╝██╔════╝██║     ██║██╔════╝
+   ███████║█████╗  ██║     ███████║   ██║   █████╗  ██║     ██║█████╗
+   ██╔══██╝██╔══╝  ██║     ██╔══██║   ██║   ██╔══╝  ██║     ██║██╔══╝
+   ██║  ██║███████╗███████╗██║  ██║   ██║   ███████╗███████╗██║███████╗
+   ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝  ╚═╝   ╚══════╝╚══════╝╚═╝╚══════╝
+   UX REDESIGN TOTAL — v3 — Architecture Command-first + Editor-centred
+   Inspiré : Neumorphisme dark · Linear · iA Writer · Editorial luxury
+═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── DESIGN TOKENS v3 ─────────────────────────────────────────────── */
+:root {
+  /* Palette artisanale sombre */
+  --c-void:      #0a0907;
+  --c-depth:     #0f0d0a;
+  --c-surface:   #141210;
+  --c-raise:     #1a1714;
+  --c-lift:      #221f1b;
+  --c-line:      rgba(255,255,255,0.055);
+  --c-line-s:    rgba(255,255,255,0.03);
+
+  /* Parchemin éditeur */
+  --c-parch:     #f6f3ec;
+  --c-parch-d:   #eeebe2;
+  --c-parch-dd:  #e4e0d5;
+  --c-parch-l:   #faf8f4;
+
+  /* Encre */
+  --c-ink:       #1a1612;
+  --c-ink-s:     #3e3830;
+  --c-ink-m:     #7a736a;
+  --c-ink-f:     #b0a898;
+
+  /* Or — accentuation principale */
+  --c-gold:      #c8a030;
+  --c-gold-s:    rgba(200,160,48,0.15);
+  --c-gold-g:    linear-gradient(135deg, #d4b040 0%, #b08820 100%);
+  --c-gold-glow: 0 0 18px rgba(200,160,48,0.28);
+
+  /* Sienne — accentuation secondaire */
+  --c-sienna:    #9a4f1e;
+  --c-sienna-s:  rgba(154,79,30,0.12);
+  --c-sienna-g:  linear-gradient(135deg, #b86030 0%, #883818 100%);
+
+  /* États */
+  --c-ok:        #34a86a;
+  --c-warn:      #d4902a;
+  --c-err:       #c84040;
+
+  /* Neumorphisme dark */
+  --nm-d-out:    6px 6px 16px rgba(0,0,0,0.65), -3px -3px 10px rgba(255,255,255,0.035);
+  --nm-d-in:     inset 4px 4px 12px rgba(0,0,0,0.65), inset -3px -3px 8px rgba(255,255,255,0.035);
+  --nm-d-out-s:  3px 3px 9px rgba(0,0,0,0.6), -2px -2px 6px rgba(255,255,255,0.03);
+  --nm-d-in-s:   inset 2px 2px 7px rgba(0,0,0,0.6), inset -2px -2px 5px rgba(255,255,255,0.03);
+
+  /* Neumorphisme light */
+  --nm-l-out:    5px 5px 12px rgba(0,0,0,0.13), -4px -4px 10px rgba(255,255,255,0.82);
+  --nm-l-in:     inset 3px 3px 9px rgba(0,0,0,0.12), inset -3px -3px 7px rgba(255,255,255,0.78);
+  --nm-l-out-s:  3px 3px 7px rgba(0,0,0,0.11), -2px -2px 6px rgba(255,255,255,0.75);
+  --nm-l-in-s:   inset 2px 2px 6px rgba(0,0,0,0.11), inset -2px -2px 5px rgba(255,255,255,0.72);
+
+  /* Typo */
+  --f-display:   'Playfair Display', 'Georgia', serif;
+  --f-body:      'DM Sans', sans-serif;
+  --f-read:      'Crimson Text', 'Source Serif 4', Georgia, serif;
+  --f-mono:      'JetBrains Mono', monospace;
+
+  /* Layout v3 */
+  --hdr-h:       52px;
+  --rail-w:      56px;
+  --panel-w:     300px;
+  --bar-h:       40px;
+  --status-h:    26px;
+  --t:           0.18s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ─── RESET & BASE ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  height: 100%;
+  overflow: hidden;
+}
+body {
+  font-family: var(--f-body);
+  background: var(--c-depth);
+  color: var(--c-ink-f);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── HEADER v3 — Barre de commande compacte ───────────────────────── */
+header {
+  height: var(--hdr-h) !important;
+  background: var(--c-void) !important;
+  border-bottom: 1px solid var(--c-line) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02), 0 4px 24px rgba(0,0,0,0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 14px !important;
+  gap: 10px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 200 !important;
+}
+
+/* Logo compact */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-display);
+  font-size: 0.9rem;
+  color: var(--c-ink-f);
+  flex-shrink: 0;
+  user-select: none;
+}
+.logo-mark {
+  width: 26px !important; height: 26px !important;
+  background: var(--logo-mark-bg, var(--c-gold)) !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  border: none !important;
+  border-radius: 7px !important;
+  font-size: 12px !important;
+  font-family: var(--f-display) !important;
+  font-weight: 600 !important;
+  color: var(--logo-mark-fg, #fff) !important;
+  display: flex; align-items: center; justify-content: center;
+  transition: box-shadow var(--t), background var(--t) !important;
+  flex-shrink: 0;
+}
+.logo-mark:hover { box-shadow: var(--nm-d-in-s) !important; }
+.logo > span:last-child { display: none; } /* cache v2 */
+
+/* Titre projet — aligné à gauche après le bouton Projets */
+#project-badge {
+  position: static !important;
+  left: unset !important; transform: none !important;
+  font-family: var(--f-display) !important;
+  font-style: italic !important;
+  font-size: 0.88rem !important;
+  color: rgba(200,160,48,0.75) !important;
+  letter-spacing: 0.04em !important;
+  white-space: nowrap;
+  max-width: 22%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  flex-shrink: 1;
+}
+
+/* Header actions — réorganisées */
+.header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-left: auto;
+}
+
+/* Séparateur header */
+.header-actions::before {
+  display: none;
+}
+
+/* ── Boutons header iconiques compacts ── */
+.btn-focus-toggle, .btn-dark-toggle, .btn-settings-toggle, .btn-help-toggle {
+  width: 30px !important; height: 30px !important;
+  background: var(--c-raise) !important;
+  border: none !important;
+  border-radius: 7px !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  color: rgba(255,255,255,0.45) !important;
+  cursor: pointer !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  font-size: 14px !important;
+  transition: box-shadow var(--t), color var(--t) !important;
+  flex-shrink: 0;
+}
+.btn-focus-toggle:hover, .btn-dark-toggle:hover,
+.btn-settings-toggle:hover, .btn-help-toggle:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+  color: rgba(255,255,255,0.85) !important;
+}
+
+/* Save indicator moderne */
+#save-indicator {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: var(--c-raise) !important;
+  border: none !important;
+  border-radius: 7px !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  color: rgba(255,255,255,0.4) !important;
+  flex-shrink: 0;
+}
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-ink-m); }
+#save-dot.saved   { background: var(--c-ok); box-shadow: 0 0 6px var(--c-ok); }
+#save-dot.unsaved { background: var(--c-warn); box-shadow: 0 0 6px var(--c-warn); }
+#save-dot.saving  { background: var(--c-gold); animation: savePulse 0.8s ease infinite; }
+@keyframes savePulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+#save-label { font-family: var(--f-body); font-size: 10px; }
+
+/* Bouton Save principal */
+#btn-save {
+  display: flex !important; align-items: center !important; gap: 6px !important;
+  background: var(--c-raise) !important;
+  border: none !important; border-radius: 7px !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  color: rgba(255,255,255,0.65) !important;
+  font-size: 12px !important;
+  padding: 5px 12px !important;
+  cursor: pointer !important;
+  transition: box-shadow var(--t), color var(--t) !important;
+  font-family: var(--f-body) !important;
+}
+#btn-save:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+  color: rgba(255,255,255,0.9) !important;
+}
+
+/* Pomodoro */
+#pomodoro-btn {
+  display: flex !important; align-items: center !important; gap: 5px !important;
+  background: var(--c-raise) !important;
+  border: none !important; border-radius: 7px !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  color: rgba(255,255,255,0.5) !important;
+  font-size: 11px !important;
+  padding: 5px 10px !important;
+  cursor: pointer !important;
+  transition: box-shadow var(--t) !important;
+}
+#pomodoro-btn:hover { box-shadow: var(--nm-d-in-s) !important; color: rgba(255,255,255,0.8) !important; }
+
+/* Nav history */
+#nav-history-btns { display: flex; gap: 2px; }
+.nav-hist-btn {
+  background: var(--c-raise) !important;
+  border: none !important; border-radius: 6px !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  color: rgba(255,255,255,0.4) !important;
+  font-size: 13px !important;
+  padding: 4px 9px !important;
+  cursor: pointer !important;
+  transition: box-shadow var(--t), color var(--t) !important;
+  line-height: 1;
+}
+.nav-hist-btn:not(:disabled):hover { box-shadow: var(--nm-d-in-s) !important; color: rgba(255,255,255,0.8) !important; }
+.nav-hist-btn:disabled { opacity: 0.25 !important; box-shadow: none !important; }
+
+/* Menu export — regroupé dans un dropdown */
+.btn { font-family: var(--f-body) !important; }
+.btn-ghost {
+  background: var(--c-raise) !important;
+  border: none !important; border-radius: 7px !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  color: rgba(255,255,255,0.55) !important;
+  font-size: 11.5px !important;
+  padding: 5px 12px !important;
+  cursor: pointer !important;
+  transition: box-shadow var(--t), color var(--t) !important;
+}
+.btn-ghost:hover { box-shadow: var(--nm-d-in-s) !important; color: rgba(255,255,255,0.88) !important; transform: none !important; }
+.btn-primary {
+  background: var(--c-raise) !important;
+  border: none !important; border-radius: 7px !important;
+  box-shadow: var(--nm-d-out-s), var(--c-gold-glow) !important;
+  color: var(--c-gold) !important;
+  font-size: 11.5px !important; font-weight: 600 !important;
+  padding: 5px 14px !important;
+  cursor: pointer !important;
+  transition: box-shadow var(--t) !important;
+}
+.btn-primary:hover { box-shadow: var(--nm-d-in-s), var(--c-gold-glow) !important; transform: none !important; opacity: 1 !important; }
+.btn-accent {
+  background: var(--c-raise) !important;
+  border: none !important; border-radius: 7px !important;
+  box-shadow: var(--nm-d-out-s), 0 0 14px rgba(154,79,30,0.2) !important;
+  color: #c07848 !important;
+  font-size: 11.5px !important; font-weight: 600 !important;
+  padding: 5px 14px !important; cursor: pointer !important;
+  transition: box-shadow var(--t) !important;
+}
+.btn-accent:hover { box-shadow: var(--nm-d-in-s), 0 0 16px rgba(154,79,30,0.28) !important; transform: none !important; }
+
+/* ─── WORKSPACE v3 ──────────────────────────────────────────────────── */
+.workspace {
+  display: flex !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  /* NB: pas de overflow:hidden ici — l'aside utilise position:sticky */
+  overflow: visible !important;
+  height: calc(100vh - var(--hdr-h)) !important;
+}
+
+/* ─── NAV-RAIL v3 — Rail d'icônes épuré ────────────────────────────── */
+.nav-rail {
+  width: var(--rail-w) !important;
+  background: var(--c-void) !important;
+  border-right: 1px solid var(--c-line-s) !important;
+  box-shadow: 2px 0 16px rgba(0,0,0,0.4) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  z-index: 50 !important;
+  flex-shrink: 0 !important;
+  animation: none !important;
+}
+
+/* Bandeau top rail — alignement header */
+.nav-rail::before {
+  content: '' !important;
+  display: block !important;
+  width: 100% !important;
+  height: var(--bar-h) !important;
+  background: var(--c-void) !important;
+  border-bottom: 1px solid var(--c-line-s) !important;
+  flex-shrink: 0 !important;
+}
+
+.nav-rail-buttons {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 10px 0 !important;
+  gap: 3px !important;
+  flex: 1 !important;
+  overflow-y: auto !important;
+  scrollbar-width: none !important;
+}
+.nav-rail-buttons::-webkit-scrollbar { display: none; }
+
+.nav-rail-btn {
+  width: 40px !important; height: 40px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important; justify-content: center !important;
+  color: rgba(255,255,255,0.3) !important;
+  transition: background var(--t), color var(--t), box-shadow var(--t) !important;
+  position: relative !important;
+  animation: none !important;
+  box-shadow: none !important;
+}
+.nav-rail-btn:hover {
+  background: var(--theme-icon-hover-bg) !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  color: var(--theme-icon-hover-color) !important;
+  transform: none !important;
+  animation: none !important;
+}
+.nav-rail-btn.active {
+  background: var(--c-lift) !important;
+  box-shadow: var(--nm-d-in-s), 0 0 10px rgba(200,160,48,0.15) !important;
+  color: var(--c-gold) !important;
+  animation: none !important;
+}
+.nav-rail-btn.active::before {
+  content: '' !important;
+  position: absolute !important;
+  right: 0 !important; top: 8px !important; bottom: 8px !important;
+  left: auto !important;
+  width: 2px !important;
+  background: var(--c-gold) !important;
+  border-radius: 2px 0 0 2px !important;
+  box-shadow: 0 0 6px var(--c-gold) !important;
+}
+
+.nav-rail-icon { font-size: 16px !important; line-height: 1 !important; }
+.nav-rail-label { display: none !important; }
+
+.nav-rail-sep {
+  width: 22px !important; height: 1px !important;
+  background: var(--c-line) !important;
+  margin: 6px 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Badge notification */
+.nav-badge {
+  position: absolute !important;
+  top: 5px !important; right: 5px !important;
+  min-width: 14px !important; height: 14px !important;
+  background: var(--c-err) !important;
+  box-shadow: 0 0 6px rgba(200,64,64,0.4) !important;
+  color: #fff !important;
+  border-radius: 7px !important;
+  font-size: 8px !important; font-weight: 700 !important;
+  display: none !important; /* caché par défaut — la JS l'affiche avec style="display:flex" */
+  align-items: center !important; justify-content: center !important;
+  padding: 0 3px !important;
+}
+.nav-badge[style*="display: flex"],
+.nav-badge[style*="display:flex"],
+.nav-badge[style*="display: ''"],
+.nav-badge:not([style*="display:none"]):not([style*="display: none"]).visible {
+  display: flex !important;
+}
+
+/* Tooltip nav-rail */
+#nav-rail-rich-tooltip {
+  position: fixed !important;
+  background: var(--c-lift) !important;
+  border: 1px solid var(--c-line) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--nm-d-out) !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  transition: opacity 0.15s !important;
+  z-index: 9999 !important;
+  min-width: 160px !important; max-width: 220px !important;
+  padding: 10px 14px 11px !important;
+}
+#nav-rail-rich-tooltip.visible { opacity: 1 !important; }
+#nav-rail-rich-tooltip::before {
+  border-right-color: var(--c-lift) !important;
+}
+.nav-rail-tooltip-title {
+  font-family: var(--f-display) !important;
+  font-size: 12px !important; font-weight: 600 !important;
+  color: var(--c-gold) !important;
+  margin-bottom: 4px !important;
+}
+.nav-rail-tooltip-desc {
+  font-size: 11px !important;
+  color: rgba(255,255,255,0.5) !important;
+  line-height: 1.45 !important;
+}
+
+/* ─── SIDEBAR PANEL v3 ──────────────────────────────────────────────── */
+aside {
+  width: calc(var(--rail-w) + var(--panel-w)) !important;
+  background: transparent !important;
+  border-right: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: row !important;
+  height: calc(100vh - var(--hdr-h)) !important;
+  position: sticky !important;
+  top: var(--hdr-h) !important;
+  align-self: flex-start !important;
+  flex-shrink: 0 !important;
+  overflow: hidden !important;
+}
+
+.sidebar-panel {
+  flex: 1 !important;
+  background: var(--c-parch) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  border-right: 1px solid var(--c-parch-dd) !important;
+  box-shadow: inset -1px 0 0 rgba(0,0,0,0.06), 4px 0 24px rgba(0,0,0,0.12) !important;
+}
+
+/* Bandeau titre panneau */
+.sidebar-panel > div:first-child,
+[style*="height:43px"] {
+  background: var(--c-void) !important;
+  border-bottom: 1px solid var(--c-line-s) !important;
+  height: var(--bar-h) !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 14px !important;
+  flex-shrink: 0 !important;
+}
+#sidebar-panel-title {
+  font-family: var(--f-body) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: rgba(255,255,255,0.22) !important;
+}
+
+/* Sections sidebar */
+.sidebar-section { padding: 12px 14px 10px !important; border-bottom: 1px solid var(--c-parch-dd) !important; }
+.sidebar-title {
+  font-size: 9px !important; font-weight: 700 !important;
+  letter-spacing: 0.14em !important; text-transform: uppercase !important;
+  color: var(--c-ink-m) !important; margin-bottom: 10px !important;
+}
+
+/* ─── ACCORDÉONS sidebar v3 ─────────────────────────────────────────── */
+.sb-accordion { border-bottom: 1px solid var(--c-parch-dd) !important; }
+.sb-accordion-header {
+  padding: 9px 14px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  transition: background var(--t) !important;
+  border-left: 2px solid transparent !important;
+  user-select: none;
+}
+.sb-accordion-header:hover {
+  background: rgba(154,79,30,0.05) !important;
+  border-left-color: var(--c-sienna) !important;
+}
+.sb-accordion.open .sb-accordion-header {
+  background: rgba(200,160,48,0.05) !important;
+  border-left-color: var(--c-gold) !important;
+}
+.sb-accordion-title {
+  font-size: 9.5px !important; font-weight: 700 !important;
+  letter-spacing: 0.12em !important; text-transform: uppercase !important;
+  color: var(--c-ink-m) !important;
+}
+.sb-accordion.open .sb-accordion-title { color: var(--c-sienna) !important; }
+.sb-accordion-arrow {
+  font-size: 8px !important;
+  color: var(--c-ink-f) !important;
+  transition: transform 0.2s !important;
+}
+.sb-accordion:not(.open) .sb-accordion-arrow { transform: rotate(-90deg) !important; }
+.sb-accordion-body { padding: 0 14px 12px !important; }
+
+/* ─── PARAMÈTRES mise en page ────────────────────────────────────────── */
+.param-row {
+  display: flex !important; align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 8px !important;
+}
+.param-label { font-size: 12px !important; color: var(--c-ink-s) !important; }
+
+/* Inputs sidebar (light) */
+aside select, aside input[type="number"], aside input[type="text"],
+.sidebar-panel select, .sidebar-panel input[type="number"], .sidebar-panel input[type="text"] {
+  font-family: var(--f-body) !important;
+  font-size: 11.5px !important;
+  background: var(--c-parch) !important;
+  border: none !important;
+  border-radius: 6px !important;
+  box-shadow: var(--nm-l-in-s) !important;
+  color: var(--c-ink) !important;
+  padding: 4px 8px !important;
+  outline: none !important;
+  transition: box-shadow var(--t) !important;
+}
+aside select:focus, aside input:focus,
+.sidebar-panel select:focus, .sidebar-panel input:focus {
+  box-shadow: var(--nm-l-in-s), 0 0 0 2px rgba(154,79,30,0.2) !important;
+}
+aside input[type="number"] { width: 60px !important; text-align: center !important; }
+
+/* ─── CHAPITRES v3 ──────────────────────────────────────────────────── */
+#chapter-list { padding: 0 !important; }
+.chapter-item {
+  font-size: 12px !important;
+  padding: 6px 10px 6px 12px !important;
+  border-radius: 7px !important;
+  margin-bottom: 2px !important;
+  cursor: pointer !important;
+  color: var(--c-ink-s) !important;
+  border: none !important;
+  transition: background var(--t), box-shadow var(--t), color var(--t) !important;
+  display: flex !important; align-items: center !important; gap: 5px !important;
+}
+.chapter-item:hover {
+  background: var(--c-parch) !important;
+  box-shadow: var(--nm-l-out-s) !important;
+  color: var(--c-ink) !important;
+  transform: none !important;
+}
+.chapter-item.active {
+  background: var(--c-parch) !important;
+  box-shadow: var(--nm-l-in-s) !important;
+  color: var(--c-sienna) !important;
+  font-weight: 600 !important;
+  border-left: none !important;
+}
+.chapter-item.h1 { font-weight: 600 !important; }
+.chapter-item.h2 { padding-left: 20px !important; font-size: 11.5px !important; }
+.chapter-item.h3 { padding-left: 28px !important; font-size: 11px !important; color: var(--c-ink-m) !important; }
+
+/* ─── STATS v3 ──────────────────────────────────────────────────────── */
+.stats-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+}
+.stat-card {
+  background: var(--c-parch) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 12px 8px 10px !important;
+  text-align: center !important;
+  box-shadow: var(--nm-l-out-s) !important;
+  transition: box-shadow var(--t) !important;
+}
+.stat-card::before { display: none !important; }
+.stat-card:hover {
+  box-shadow: var(--nm-l-in-s) !important;
+  transform: none !important;
+}
+.stat-val {
+  font-size: 20px !important; font-weight: 700 !important;
+  color: var(--c-sienna) !important;
+  font-family: var(--f-mono) !important;
+  display: block !important; line-height: 1.2 !important;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.9) !important;
+}
+.stat-lbl {
+  font-size: 9px !important; color: var(--c-ink-m) !important;
+  text-transform: uppercase !important; letter-spacing: 0.1em !important;
+  display: block !important; margin-top: 2px !important;
+}
+
+/* ─── RÉSUMÉ PROJET v3 ──────────────────────────────────────────────── */
+#mise-project-summary {
+  background: var(--c-parch) !important;
+  border: none !important;
+  border-radius: 10px !important;
+  box-shadow: var(--nm-l-out-s) !important;
+  padding: 10px 12px !important;
+  cursor: pointer !important;
+  transition: box-shadow var(--t) !important;
+  margin-bottom: 0 !important;
+}
+#mise-project-summary:hover {
+  box-shadow: var(--nm-l-in-s) !important;
+  transform: none !important;
+}
+#mise-proj-title {
+  font-family: var(--f-display) !important;
+  font-style: italic !important; font-size: 13px !important;
+  color: var(--c-ink) !important; font-weight: 400 !important;
+}
+#mise-proj-meta { font-size: 10px !important; color: var(--c-ink-m) !important; margin-top: 2px !important; }
+
+/* ─── WORD GOAL v3 ──────────────────────────────────────────────────── */
+.word-goal-bar-wrap { padding: 12px 14px !important; }
+.word-goal-header { display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 6px !important; }
+.word-goal-label { font-size: 10px !important; color: var(--c-ink-m) !important; font-weight: 600 !important; letter-spacing: 0.07em !important; text-transform: uppercase !important; }
+.word-goal-count { font-family: var(--f-mono) !important; font-size: 11px !important; color: var(--c-sienna) !important; font-weight: 700 !important; }
+.word-goal-track {
+  background: var(--c-parch) !important;
+  border-radius: 99px !important;
+  height: 6px !important;
+  box-shadow: var(--nm-l-in-s) !important;
+}
+.word-goal-fill {
+  background: linear-gradient(90deg, var(--c-sienna) 0%, var(--c-gold) 100%) !important;
+  border-radius: 99px !important;
+  height: 100% !important;
+  box-shadow: 0 0 8px rgba(200,160,48,0.3) !important;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1) !important;
+}
+.word-goal-input-row { display: flex !important; align-items: center !important; gap: 6px !important; margin-top: 6px !important; font-size: 11px !important; color: var(--c-ink-m) !important; }
+.word-goal-input-row input { width: 64px !important; font-size: 11px !important; }
+
+/* ─── NOTES v3 ──────────────────────────────────────────────────────── */
+.notes-manager-header {
+  padding: 10px 14px 8px !important;
+  border-bottom: 1px solid var(--c-parch-dd) !important;
+  flex-shrink: 0 !important;
+}
+.note-inline-toolbar {
+  display: flex !important; flex-wrap: wrap !important; gap: 4px !important;
+  padding: 8px 10px !important;
+  border-bottom: 1px solid var(--c-parch-dd) !important;
+  background: var(--c-parch-l) !important;
+}
+.nit-btn {
+  background: var(--c-parch) !important;
+  border: none !important;
+  border-radius: 6px !important;
+  box-shadow: var(--nm-l-out-s) !important;
+  padding: 4px 8px !important;
+  font-size: 10.5px !important; cursor: pointer !important;
+  transition: box-shadow var(--t) !important;
+  color: var(--c-ink-s) !important;
+}
+.nit-btn:hover { box-shadow: var(--nm-l-in-s) !important; }
+.nit-dot { width: 7px !important; height: 7px !important; border-radius: 50% !important; display: inline-block !important; margin-right: 4px !important; }
+
+.notes-filters {
+  display: flex !important; gap: 4px !important;
+  padding: 7px 10px !important;
+  flex-wrap: wrap !important;
+  border-bottom: 1px solid var(--c-parch-dd) !important;
+}
+.note-filter-btn {
+  background: var(--c-parch) !important;
+  border: none !important; border-radius: 6px !important;
+  box-shadow: var(--nm-l-out-s) !important;
+  padding: 4px 10px !important; font-size: 11px !important;
+  cursor: pointer !important; color: var(--c-ink-m) !important;
+  transition: box-shadow var(--t), color var(--t) !important;
+}
+.note-filter-btn:hover { box-shadow: var(--nm-l-in-s) !important; }
+.note-filter-btn.active {
+  box-shadow: var(--nm-l-in-s) !important;
+  color: var(--c-sienna) !important; font-weight: 600 !important;
+  background: var(--c-parch) !important;
+}
+.nf-dot { width: 8px !important; height: 8px !important; border-radius: 50% !important; display: inline-block !important; }
+
+/* ─── IMAGES sidebar v3 ─────────────────────────────────────────────── */
+.img-drop-zone {
+  background: var(--c-parch) !important; border: none !important;
+  border-radius: 10px !important; box-shadow: var(--nm-l-in-s) !important;
+  padding: 14px !important; text-align: center !important;
+  cursor: pointer !important; transition: box-shadow var(--t) !important;
+}
+.img-drop-zone:hover { box-shadow: var(--nm-l-in), 0 0 12px rgba(154,79,30,0.12) !important; }
+.img-drop-zone p { font-size: 11px !important; color: var(--c-ink-m) !important; margin-top: 4px !important; }
+
+.img-card {
+  background: var(--c-parch) !important; border: none !important;
+  border-radius: 9px !important; box-shadow: var(--nm-l-out-s) !important;
+  padding: 8px !important; transition: box-shadow var(--t) !important;
+}
+.img-card:hover { box-shadow: var(--nm-l-in-s) !important; }
+.img-thumb { border-radius: 5px !important; border: none !important; box-shadow: var(--nm-l-out-s) !important; }
+.img-action-btn {
+  background: var(--c-parch) !important; border: none !important;
+  border-radius: 5px !important; box-shadow: var(--nm-l-out-s) !important;
+  transition: box-shadow var(--t) !important; cursor: pointer !important;
+  width: 24px !important; height: 24px !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  font-size: 12px !important; color: var(--c-ink-s) !important;
+}
+.img-action-btn:hover { box-shadow: var(--nm-l-in-s) !important; }
+.img-action-btn.danger:hover { color: var(--c-err) !important; }
+
+/* ─── ÉDITEUR CENTRAL v3 ────────────────────────────────────────────── */
+.editor-area {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important; flex-direction: column !important;
+  overflow: hidden !important;
+  background: var(--c-depth) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* ── Toolbar éditeur v3 — compacte et raffinée ── */
+.toolbar {
+  background: var(--c-void) !important;
+  border-bottom: 1px solid var(--c-line-s) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02) !important;
+  padding: 0 14px !important;
+  height: var(--bar-h) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+}
+.toolbar-group {
+  display: flex !important; align-items: center !important; gap: 4px !important;
+  border-right: 1px solid var(--c-line) !important;
+  padding-right: 8px !important;
+}
+.toolbar-group:last-child { border-right: none !important; }
+
+.tool-btn {
+  background: var(--c-raise) !important;
+  border: none !important; border-radius: 6px !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  color: rgba(255,255,255,0.5) !important;
+  font-size: 11.5px !important; font-family: var(--f-body) !important;
+  padding: 4px 10px !important;
+  cursor: pointer !important;
+  transition: box-shadow var(--t), color var(--t) !important;
+  letter-spacing: 0.01em !important;
+  white-space: nowrap !important;
+}
+.tool-btn:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+  color: rgba(255,255,255,0.85) !important;
+  transform: none !important;
+  border-color: transparent !important;
+}
+.tool-btn.active {
+  box-shadow: var(--nm-d-in-s), 0 0 10px rgba(200,160,48,0.18) !important;
+  color: var(--c-gold) !important;
+  border-color: transparent !important;
+  background: var(--c-raise) !important;
+}
+.tool-btn.active * { color: var(--c-gold) !important; }
+.tool-btn-danger {
+  background: var(--c-raise) !important;
+  border: none !important; border-radius: 6px !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  color: rgba(200,64,64,0.6) !important;
+  font-size: 11.5px !important; font-family: var(--f-body) !important;
+  padding: 4px 10px !important; cursor: pointer !important;
+  transition: box-shadow var(--t), color var(--t) !important;
+}
+.tool-btn-danger:hover { box-shadow: var(--nm-d-in-s), 0 0 8px rgba(200,64,64,0.2) !important; color: var(--c-err) !important; }
+
+/* Zoom select toolbar */
+#preview-zoom {
+  font-family: var(--f-body) !important; font-size: 11px !important;
+  background: var(--c-raise) !important; border: none !important;
+  border-radius: 6px !important; box-shadow: var(--nm-d-in-s) !important;
+  color: rgba(255,255,255,0.55) !important; padding: 3px 8px !important;
+  cursor: pointer !important; outline: none !important;
+}
+
+/* ── Breadcrumb v3 — intégré dans la topbar, pas de rectangle séparé ── */
+#breadcrumb-bar {
+  background: transparent !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: auto !important;
+  display: flex !important; align-items: center !important; gap: 6px !important;
+  font-size: 11px !important; color: rgba(255,255,255,0.3) !important;
+  font-family: var(--f-body) !important;
+  overflow: hidden !important;
+  min-width: 0 !important;
+}
+.bc-item { color: rgba(255,255,255,0.35) !important; }
+.bc-item.current { color: var(--c-gold) !important; font-weight: 500 !important; }
+.bc-sep { color: rgba(255,255,255,0.15) !important; font-size: 10px !important; }
+.bc-chapter-pages { font-family: var(--f-mono) !important; font-size: 9.5px !important; color: rgba(255,255,255,0.22) !important; margin-left: 4px !important; }
+
+/* ── Zone de texte / Prévisualisation ── */
+.panes {
+  display: flex !important; flex: 1 !important;
+  overflow: hidden !important;
+  min-height: 0 !important;
+}
+
+.input-pane {
+  flex: 1 !important; min-width: 0 !important;
+  display: flex !important; flex-direction: column !important;
+  border-right: 1px solid rgba(0,0,0,0.15) !important;
+  overflow: hidden !important;
+  min-height: 0 !important;
+}
+
+/* Pane-label simplifié */
+.pane-label {
+  background: var(--c-surface) !important;
+  border-bottom: 1px solid var(--c-line-s) !important;
+  padding: 5px 16px !important;
+  min-height: 32px !important;
+  display: flex !important; align-items: center !important; gap: 8px !important;
+  font-size: 9px !important; font-weight: 700 !important;
+  letter-spacing: 0.14em !important; text-transform: uppercase !important;
+  color: rgba(255,255,255,0.2) !important;
+  box-shadow: none !important;
+  flex-shrink: 0 !important;
+}
+.pane-label-text { color: rgba(255,255,255,0.2) !important; }
+
+/* ── Boutons de formatage inline ── */
+.fmt-btns {
+  display: flex !important; align-items: center !important; gap: 2px !important;
+  margin-left: auto !important;
+}
+.fmt-btn {
+  background: var(--c-raise) !important; border: none !important;
+  border-radius: 5px !important; box-shadow: var(--nm-d-out-s) !important;
+  color: rgba(255,255,255,0.45) !important;
+  font-size: 11px !important; padding: 3px 7px !important;
+  cursor: pointer !important; transition: box-shadow var(--t), color var(--t) !important;
+  line-height: 1.3 !important; font-family: var(--f-body) !important;
+}
+.fmt-btn:hover { box-shadow: var(--nm-d-in-s) !important; color: rgba(255,255,255,0.85) !important; }
+.fmt-btn-tw.active { box-shadow: var(--nm-d-in-s) !important; color: var(--c-gold) !important; }
+.fmt-sep { width: 1px !important; height: 14px !important; background: var(--c-line) !important; margin: 0 2px !important; }
+#smartquotes-indicator {
+  font-size: 12px !important; color: rgba(255,255,255,0.3) !important;
+  cursor: pointer !important; padding: 2px 5px !important;
+  border-radius: 4px !important; transition: color var(--t) !important;
+  font-family: var(--f-read) !important;
+}
+#smartquotes-indicator:hover { color: var(--c-gold) !important; }
+
+/* ── Barre de recherche éditeur — structure neutre (pas de couleurs hardcodées) ── */
+.editor-search {
+  display: flex !important; align-items: center !important; gap: 3px !important;
+  margin-left: auto !important;
+  border-radius: 6px !important;
+  padding: 2px 6px 2px 8px !important;
+}
+.editor-search input {
+  border: none !important; background: transparent !important;
+  outline: none !important; font-family: var(--f-body) !important;
+  font-size: 11px !important;
+  width: 120px !important;
+}
+.es-count { font-size: 9.5px !important; white-space: nowrap !important; min-width: 30px !important; }
+.es-nav {
+  background: none !important; border: none !important; cursor: pointer !important;
+  font-size: 11px !important;
+  padding: 2px 4px !important; border-radius: 3px !important;
+  transition: color var(--t) !important;
+}
+.es-nav:disabled { opacity: 0.2 !important; }
+.es-close { background: none !important; border: none !important; cursor: pointer !important; font-size: 12px !important; padding: 2px 4px !important; border-radius: 3px !important; }
+
+/* Ligne de remplacement */
+.es-replace-row {
+  padding: 0 12px !important;
+  display: flex !important; gap: 6px !important; align-items: center !important;
+  max-height: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  transition: max-height 0.18s ease, opacity 0.15s ease, padding 0.15s ease !important;
+}
+.es-replace-row.visible {
+  max-height: 40px !important;
+  opacity: 1 !important;
+  padding: 4px 12px !important;
+  pointer-events: auto !important;
+}
+.es-replace-row input {
+  flex: 1 !important;
+  border: none !important; border-radius: 5px !important;
+  font-size: 11px !important;
+  padding: 3px 8px !important; outline: none !important; font-family: var(--f-body) !important;
+}
+.es-repl-btn {
+  border: none !important;
+  border-radius: 5px !important;
+  font-size: 10.5px !important;
+  padding: 3px 9px !important; cursor: pointer !important;
+  transition: box-shadow var(--t), color var(--t) !important; font-family: var(--f-body) !important;
+}
+
+/* ── Barre de recherche : couleurs thèmes CLAIRS ── */
+body:not(.dark-mode) .editor-search {
+  background: var(--cream) !important;
+  border: 1px solid var(--paper) !important;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.08) !important;
+}
+body:not(.dark-mode) .editor-search input { color: var(--ink-soft) !important; }
+body:not(.dark-mode) .editor-search input::placeholder { color: var(--ink-muted) !important; }
+body:not(.dark-mode) .es-count { color: var(--ink-muted) !important; }
+body:not(.dark-mode) .es-nav { color: var(--ink-muted) !important; }
+body:not(.dark-mode) .es-nav:hover { color: var(--ink) !important; background: rgba(0,0,0,0.06) !important; }
+body:not(.dark-mode) .es-close { color: var(--ink-muted) !important; }
+body:not(.dark-mode) .es-close:hover { color: var(--ink) !important; }
+body:not(.dark-mode) .es-replace-row { background: var(--paper) !important; border-bottom: 1px solid var(--cream) !important; }
+body:not(.dark-mode) .es-replace-row input { background: var(--parchment) !important; color: var(--ink-soft) !important; border: 1px solid var(--cream) !important; }
+body:not(.dark-mode) .es-replace-row input::placeholder { color: var(--ink-muted) !important; }
+body:not(.dark-mode) .es-repl-btn { background: var(--parchment) !important; color: var(--ink-soft) !important; border: 1px solid var(--cream) !important; }
+body:not(.dark-mode) .es-repl-btn:hover { background: var(--cream) !important; color: var(--ink) !important; }
+
+/* ── Barre de recherche : couleurs MODE SOMBRE ── */
+body.dark-mode .editor-search {
+  background: var(--c-raise) !important;
+  border: none !important;
+  box-shadow: var(--nm-d-in-s) !important;
+}
+body.dark-mode .editor-search input { color: rgba(255,255,255,0.7) !important; }
+body.dark-mode .editor-search input::placeholder { color: rgba(255,255,255,0.25) !important; }
+body.dark-mode .es-count { color: rgba(255,255,255,0.3) !important; }
+body.dark-mode .es-nav { color: rgba(255,255,255,0.35) !important; }
+body.dark-mode .es-nav:hover { color: rgba(255,255,255,0.8) !important; background: rgba(255,255,255,0.07) !important; }
+body.dark-mode .es-close { color: rgba(255,255,255,0.3) !important; }
+body.dark-mode .es-close:hover { color: rgba(255,255,255,0.7) !important; }
+body.dark-mode .es-replace-row { background: var(--c-surface) !important; border-bottom: 1px solid var(--c-line-s) !important; }
+body.dark-mode .es-replace-row input { background: var(--c-raise) !important; color: rgba(255,255,255,0.7) !important; box-shadow: var(--nm-d-in-s) !important; }
+body.dark-mode .es-repl-btn { background: var(--c-raise) !important; color: rgba(255,255,255,0.5) !important; box-shadow: var(--nm-d-out-s) !important; }
+body.dark-mode .es-repl-btn:hover { box-shadow: var(--nm-d-in-s) !important; color: rgba(255,255,255,0.85) !important; }
+
+/* ── TEXTAREA principal — l'éditeur ── */
+#raw-input {
+  flex: 1 !important;
+  min-height: 0 !important;
+  padding: 3rem 4rem !important;
+  font-family: var(--f-read) !important;
+  font-size: 17px !important;
+  line-height: 1.85 !important;
+  color: #2a2218 !important;
+  background: var(--c-parch-l) !important;
+  border: none !important; outline: none !important;
+  resize: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  caret-color: var(--c-sienna) !important;
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.editor-input-wrap {
+  flex: 1 !important;
+  min-height: 0 !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+#raw-input::placeholder { color: var(--c-parch-dd) !important; font-style: italic !important; }
+#raw-input::selection { background: rgba(154,79,30,0.15) !important; }
+
+/* ── Status bar v3 ── */
+.editor-statusbar {
+  background: var(--c-void) !important;
+  border-top: 1px solid var(--c-line-s) !important;
+  height: var(--status-h) !important;
+  display: flex !important; align-items: center !important;
+  padding: 0 14px !important; gap: 8px !important;
+  flex-shrink: 0 !important;
+  box-shadow: 0 -1px 0 rgba(255,255,255,0.02) !important;
+}
+.statusbar-item {
+  font-family: var(--f-mono) !important; font-size: 10px !important;
+  color: rgba(255,255,255,0.25) !important;
+}
+.statusbar-item span { color: rgba(255,255,255,0.38) !important; }
+.statusbar-sep { width: 1px !important; height: 10px !important; background: var(--c-line) !important; }
+.statusbar-sel { color: var(--c-gold) !important; }
+
+/* ── Prévisualisation ── */
+.preview-pane {
+  flex: 1 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  background: #ccc !important;
+}
+.preview-pane::-webkit-scrollbar { width: 6px !important; }
+.preview-pane::-webkit-scrollbar-track { background: #bbb !important; }
+.preview-pane::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25) !important; border-radius: 3px !important; }
+
+/* ─── SETTINGS MODAL v3 ─────────────────────────────────────────────── */
+.settings-modal-overlay {
+  display: none !important;
+  position: fixed !important; inset: 0 !important;
+  background: rgba(0,0,0,0.7) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 9000 !important;
+  align-items: center !important; justify-content: center !important;
+}
+.settings-modal-overlay.open { display: flex !important; }
+
+.settings-modal-box {
+  background: var(--c-parch) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.4),
+              20px 20px 50px rgba(0,0,0,0.2),
+              -10px -10px 30px rgba(255,255,255,0.55) !important;
+  width: min(760px, 94vw) !important;
+  max-height: 90vh !important;
+  display: flex !important; flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.settings-modal-header {
+  background: var(--c-void) !important;
+  padding: 16px 20px !important;
+  display: flex !important; align-items: center !important; justify-content: space-between !important;
+  border-bottom: 1px solid var(--c-line-s) !important;
+  flex-shrink: 0 !important;
+}
+.settings-modal-title {
+  font-family: var(--f-display) !important;
+  font-size: 1rem !important; font-style: italic !important;
+  color: rgba(255,255,255,0.9) !important;
+  letter-spacing: 0.02em !important;
+}
+.settings-modal-sub {
+  font-size: 10.5px !important; color: rgba(255,255,255,0.35) !important;
+  margin-top: 2px !important; letter-spacing: 0.02em !important;
+}
+.settings-modal-close {
+  width: 28px !important; height: 28px !important;
+  background: var(--c-raise) !important; border: none !important;
+  border-radius: 7px !important; box-shadow: var(--nm-d-out-s) !important;
+  color: rgba(255,255,255,0.45) !important; font-size: 13px !important;
+  cursor: pointer !important; display: flex !important;
+  align-items: center !important; justify-content: center !important;
+  transition: box-shadow var(--t), color var(--t) !important;
+}
+.settings-modal-close:hover { box-shadow: var(--nm-d-in-s) !important; color: rgba(255,255,255,0.9) !important; }
+
+/* Onglets settings */
+.settings-modal-tabs {
+  background: var(--c-parch-d) !important;
+  border-bottom: 1px solid var(--c-parch-dd) !important;
+  padding: 8px 16px 0 !important;
+  display: flex !important; gap: 4px !important;
+  box-shadow: none !important;
+  flex-shrink: 0 !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+.settings-modal-tabs::-webkit-scrollbar { display: none !important; }
+.settings-tab {
+  background: var(--c-parch-d) !important;
+  border: none !important;
+  border-radius: 8px 8px 0 0 !important;
+  padding: 8px 16px !important;
+  font-size: 11.5px !important; font-family: var(--f-body) !important;
+  color: var(--c-ink-m) !important; cursor: pointer !important;
+  transition: background var(--t), color var(--t), box-shadow var(--t) !important;
+  white-space: nowrap !important; font-weight: 400 !important;
+  box-shadow: none !important;
+}
+.settings-tab:hover {
+  background: var(--c-parch) !important;
+  box-shadow: var(--nm-l-out-s) !important;
+  color: var(--c-sienna) !important;
+}
+.settings-tab.active {
+  background: var(--c-parch) !important;
+  box-shadow: 0 -2px 0 var(--c-sienna) inset, var(--nm-l-out-s) !important;
+  color: var(--c-sienna) !important; font-weight: 600 !important;
+}
+
+.settings-modal-body {
+  background: var(--c-parch) !important;
+  flex: 1 !important; overflow-y: auto !important;
+  padding: 20px !important;
+}
+.settings-modal-body::-webkit-scrollbar { width: 4px !important; }
+.settings-modal-body::-webkit-scrollbar-thumb { background: var(--c-parch-dd) !important; border-radius: 2px !important; }
+
+.settings-section-title {
+  font-family: var(--f-display) !important;
+  font-size: 1rem !important; font-style: italic !important;
+  color: var(--c-sienna) !important;
+  margin-bottom: 4px !important; font-weight: 400 !important;
+}
+.settings-hint {
+  font-size: 11.5px !important; color: var(--c-ink-m) !important;
+  line-height: 1.55 !important; margin-bottom: 16px !important;
+}
+.settings-field { margin-bottom: 12px !important; }
+.settings-label {
+  display: block !important; font-size: 11.5px !important;
+  font-weight: 600 !important; color: var(--c-ink-s) !important;
+  margin-bottom: 5px !important; letter-spacing: 0.01em !important;
+}
+.settings-grid-2 {
+  display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important;
+}
+
+/* Inputs settings modal (light) */
+.settings-modal-box select, .settings-modal-box input[type="text"],
+.settings-modal-box input[type="number"], .settings-modal-box textarea {
+  font-family: var(--f-body) !important; font-size: 12px !important;
+  background: var(--c-parch) !important; border: none !important;
+  border-radius: 7px !important; box-shadow: var(--nm-l-in-s) !important;
+  color: var(--c-ink) !important; padding: 6px 10px !important;
+  outline: none !important; width: 100% !important;
+  transition: box-shadow var(--t) !important;
+}
+.settings-modal-box select:focus, .settings-modal-box input:focus,
+.settings-modal-box textarea:focus {
+  box-shadow: var(--nm-l-in-s), 0 0 0 2px rgba(154,79,30,0.2) !important;
+}
+
+.settings-modal-footer {
+  background: var(--c-parch-d) !important;
+  border-top: 1px solid var(--c-parch-dd) !important;
+  padding: 12px 20px !important;
+  display: flex !important; align-items: center !important;
+  justify-content: space-between !important;
+  flex-shrink: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ─── CONTEXT MENU v3 ───────────────────────────────────────────────── */
+/* ─── MENU CONTEXTUEL ÉDITEUR v3 — couleurs liées aux variables de thème ── */
+#annot-ctx-menu {
+  background: var(--c-lift, #221f1b) !important;
+  border: 1px solid var(--c-line, rgba(255,255,255,0.055)) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--nm-d-out), 0 20px 48px rgba(0,0,0,0.4) !important;
+  padding: 5px !important;
+}
+.actx-item {
+  border-radius: 6px !important; padding: 6px 10px !important;
+  color: var(--c-ink, rgba(255,255,255,0.65)) !important;
+  font-family: var(--f-body) !important;
+  background: transparent !important;
+  transition: background var(--t), color var(--t) !important;
+}
+.actx-item:hover {
+  background: var(--c-raise, rgba(255,255,255,0.06)) !important;
+  color: var(--c-ink-s, rgba(255,255,255,0.9)) !important;
+}
+.actx-section-label {
+  padding: 4px 10px 2px !important; font-size: 9px !important;
+  font-weight: 700 !important; letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: var(--c-ink-m, rgba(255,255,255,0.3)) !important;
+}
+.actx-sep {
+  margin: 3px 6px !important;
+  background: var(--c-line, rgba(255,255,255,0.055)) !important;
+  height: 1px !important;
+}
+.actx-shortcut {
+  color: var(--c-ink-f, rgba(255,255,255,0.2)) !important;
+  font-family: var(--f-mono) !important;
+}
+.actx-word-count {
+  color: var(--c-gold, #c8a030) !important;
+}
+
+/* Thèmes clairs — menu contextuel */
+html body.theme-light #annot-ctx-menu,
+html body.theme-jour_ivoire #annot-ctx-menu,
+html body.theme-jour_ardoise #annot-ctx-menu {
+  background: var(--parchment, #f6f3ec) !important;
+  border-color: var(--cream, #ddd8cf) !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+html body.theme-light .actx-item,
+html body.theme-jour_ivoire .actx-item,
+html body.theme-jour_ardoise .actx-item {
+  color: var(--ink, #1a1612) !important;
+}
+html body.theme-light .actx-item:hover,
+html body.theme-jour_ivoire .actx-item:hover,
+html body.theme-jour_ardoise .actx-item:hover {
+  background: var(--paper, #f0ede5) !important;
+  color: var(--ink, #1a1612) !important;
+}
+html body.theme-light .actx-section-label,
+html body.theme-jour_ivoire .actx-section-label,
+html body.theme-jour_ardoise .actx-section-label {
+  color: var(--ink-muted, #7a736a) !important;
+}
+html body.theme-light .actx-shortcut,
+html body.theme-jour_ivoire .actx-shortcut,
+html body.theme-jour_ardoise .actx-shortcut {
+  color: var(--ink-muted, #7a736a) !important;
+}
+html body.theme-light .actx-sep,
+html body.theme-jour_ivoire .actx-sep,
+html body.theme-jour_ardoise .actx-sep {
+  background: var(--cream, #ddd8cf) !important;
+}
+html body.theme-light .actx-word-count,
+html body.theme-jour_ivoire .actx-word-count,
+html body.theme-jour_ardoise .actx-word-count {
+  color: var(--accent, #8b4513) !important;
+}
+
+/* ─── ANNOTATIONS TOOLTIP v3 ────────────────────────────────────────── */
+#annot-tooltip {
+  background: var(--c-lift, #221f1b) !important;
+  border: 1px solid var(--c-line, rgba(255,255,255,0.055)) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--nm-d-out) !important;
+  color: var(--c-ink, rgba(255,255,255,0.8)) !important;
+}
+#annot-tooltip::after { border-top-color: var(--c-lift, #221f1b) !important; }
+.att-text { color: rgba(200,160,48,0.9) !important; }
+
+/* ─── SCROLLBARS globaux v3 ─────────────────────────────────────────── */
+.sidebar-main-scroll::-webkit-scrollbar { width: 3px !important; }
+.sidebar-main-scroll::-webkit-scrollbar-track { background: transparent !important; }
+.sidebar-main-scroll::-webkit-scrollbar-thumb { background: var(--c-parch-dd) !important; border-radius: 99px !important; }
+#raw-input::-webkit-scrollbar { width: 4px !important; }
+#raw-input::-webkit-scrollbar-track { background: var(--c-parch-d) !important; }
+#raw-input::-webkit-scrollbar-thumb { background: var(--c-parch-dd) !important; border-radius: 99px !important; }
+
+/* ─── FOCUS RING v3 ─────────────────────────────────────────────────── */
+:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2px var(--c-gold) !important;
+}
+
+/* ─── DARK MODE compatibility — surcharges dans le bloc final <style> ── */
+
+/* ─── ANIMATIONS v3 ─────────────────────────────────────────────────── */
+@keyframes panelSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.sidebar-tabpane.active {
+  animation: panelSlideIn 0.22s cubic-bezier(0.4,0,0.2,1) both !important;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.stat-card {
+  animation: fadeUp 0.3s cubic-bezier(0.4,0,0.2,1) both;
+}
+.stat-card:nth-child(1) { animation-delay: 0.04s; }
+.stat-card:nth-child(2) { animation-delay: 0.08s; }
+.stat-card:nth-child(3) { animation-delay: 0.12s; }
+.stat-card:nth-child(4) { animation-delay: 0.16s; }
+
+/* ─── RESPONSIVE minimal ────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  :root { --panel-w: 240px; }
+}
+@media (max-width: 700px) {
+  aside { display: none !important; }
+  .toolbar { gap: 3px !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MICRO-AJUSTEMENTS v3.1 — Corrections cohérence typographie & composants
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Icône nav-rail : taille unifiée à 16px ── */
+.nav-rail-icon { font-size: 16px !important; }
+
+/* ── 2. nav-badge : taille définitive 8px ── */
+.nav-badge { font-size: 8px !important; }
+
+/* ── 3. Accordéon sidebar — animation correcte fermeture/ouverture ──
+   La couche v3 définissait padding:0 14px 12px sur .sb-accordion-body
+   mais n'écrasait PAS le max-height:0 pour l'état fermé.
+   Résultat : le corps restait ouvert visuellement.
+   On rétablit le max-height animé correctement. */
+.sb-accordion-body {
+  overflow: hidden !important;
+  max-height: 0 !important;
+  transition: max-height 0.28s ease !important;
+  padding: 0 14px !important;
+}
+.sb-accordion.open .sb-accordion-body {
+  max-height: 3000px !important;
+  padding: 0 14px 12px !important;
+}
+
+/* ── 4. Flèche accordéon : sens cohérent ──
+   v1 : ouvert = rotate(180deg), fermé = rotate(0deg)
+   v2 : ouvert = rotate(0deg),   fermé = rotate(-90deg)   ← conflit
+   v3 : fermé  = rotate(-90deg)  mais ouvert non défini → hérite v1 (180deg)
+   Convention finale : fermé = rotate(-90deg), ouvert = rotate(0deg) */
+.sb-accordion-arrow {
+  font-size: 8px !important;
+  color: var(--c-ink-f, var(--ink-muted)) !important;
+  transition: transform 0.2s ease !important;
+  transform: rotate(-90deg) !important;
+}
+.sb-accordion.open .sb-accordion-arrow {
+  transform: rotate(0deg) !important;
+}
+
+/* ── 5. Titre accordéon — lisibilité ── */
+.sb-accordion-title {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--c-ink-m, var(--ink-muted)) !important;
+}
+.sb-accordion.open .sb-accordion-title {
+  color: var(--c-sienna, var(--accent)) !important;
+}
+
+/* ── 6. sidebar-title : 10px (9px trop petit) ── */
+.sidebar-title {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+}
+
+/* ── 7. stat-lbl : 10px (9px illisible) ── */
+.stat-lbl {
+  font-size: 10px !important;
+  letter-spacing: 0.09em !important;
+}
+
+/* ── 8. wt-stat-val : harmonisé à 18px (20px trop grand) ── */
+.wt-stat-val {
+  font-size: 18px !important;
+}
+
+/* ── 9. note-card-meta : 10px (9.5px → 10px) ── */
+.note-card-meta {
+  font-size: 10px !important;
+}
+
+/* ── 10. note-chapter-tag : 9.5px → 10px ── */
+.note-chapter-tag {
+  font-size: 10px !important;
+}
+
+/* ── 11. Onglets panneau outils (wt-tab) : icônes uniformes 16px ── */
+.wt-tab {
+  font-size: 16px !important;
+  padding: 8px 4px !important;
+}
+
+/* ── 12. adlg-ta (dialogue annotation) : aligner à 12px ── */
+.adlg-ta {
+  font-size: 12px !important;
+}
+
+/* ── 13. actx-item : taille homogène 12px + icône ── */
+.actx-item {
+  font-size: 12px !important;
+}
+.actx-shortcut {
+  font-size: 10px !important;
+}
+
+/* ── 14. Pref-desc : 10.5px → 11px pour meilleure lisibilité ── */
+.pref-desc {
+  font-size: 11px !important;
+  line-height: 1.5 !important;
+}
+
+/* ── 15. Tooltip nav-rail : titre 12px, desc 11px ── */
+.nav-rail-tooltip-title {
+  font-size: 12px !important;
+}
+.nav-rail-tooltip-desc {
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+}
+
+/* ── 16. Chips filtres notes : 11px stable ── */
+.note-filter-btn {
+  font-size: 11px !important;
+  padding: 4px 10px !important;
+}
+
+/* ── 17. wt-section-title : 10px cohérent ── */
+.wt-section-title {
+  font-size: 10px !important;
+  letter-spacing: 0.08em !important;
+}
+
+/* ── 18. wt-dismiss-btn : 12px (était 13px en v1) ── */
+.wt-dismiss-btn {
+  font-size: 12px !important;
+}
+
+/* ── 19. Barre de statut éditeur — hauteur minimale et font stable ── */
+.editor-statusbar {
+  font-size: 10px !important;
+  min-height: 24px !important;
+}
+.statusbar-item {
+  font-size: 10px !important;
+}
+
+/* ── 20. chapter-item : icône de statut et cadenas ── */
+.ch-status {
+  font-size: 10px !important;
+}
+.ch-lock {
+  font-size: 11px !important;
+}
+
+/* ── 21. Breadcrumb — cohérence taille ── */
+#breadcrumb-bar {
+  font-size: 11px !important;
+}
+.bc-chapter-pages {
+  font-size: 9.5px !important;
+}
+
+/* ── 22. settings-tab — padding et font homogènes ── */
+.settings-tab {
+  font-size: 11.5px !important;
+  padding: 8px 14px !important;
+}
+
+/* ── 23. Pomodoro toolbar button — coherence ── */
+#pomodoro-btn {
+  font-size: 11px !important;
+}
+
+/* ── 24. Toast — font stable 12.5px ── */
+#toast {
+  font-size: 12.5px !important;
+}
+
+/* ── 25. wt-issue message — lisibilité ── */
+.wt-issue-msg {
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+}
+.wt-issue-text {
+  font-size: 12px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/* ── TOPBAR 3-ZONES — Correctif final tous thèmes ─────────────────── */
+
+/* La topbar = --bar-h pour aligner avec nav-rail::before et sidebar-panel header */
+html body .pane-label.pane-label-topbar {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  height: var(--bar-h) !important;
+  min-height: var(--bar-h) !important;
+  padding: 0 14px 0 1rem !important;
+  gap: 0 !important;
+  overflow: visible !important;
+  background: var(--theme-toolbar-bg) !important;
+  border-bottom: 1px solid var(--theme-toolbar-border) !important;
+}
+/* Les 3 zones internes */
+html body .pane-label.pane-label-topbar .ptb-left  { display: flex !important; align-items: center !important; gap: 6px !important; flex-shrink: 0 !important; overflow: hidden !important; }
+html body .pane-label.pane-label-topbar .ptb-center { flex: 1 !important; min-width: 0 !important; display: flex !important; align-items: center !important; padding: 0 10px !important; overflow: hidden !important; }
+html body .pane-label.pane-label-topbar .ptb-right  { display: flex !important; align-items: center !important; gap: 5px !important; flex-shrink: 0 !important; margin-left: 10px !important; }
+
+/* Égalité de hauteur éditeur / prévisualisation */
+html body .panes { display: flex !important; flex: 1 !important; overflow: hidden !important; min-height: 0 !important; }
+html body .input-pane  { flex: 1 !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; min-height: 0 !important; }
+html body .preview-pane { flex: 1 !important; display: flex !important; flex-direction: column !important; overflow-y: auto !important; min-height: 0 !important; }
+
+
+  /* ── SURCHARGES FINALES THÈME — appliquées en dernier pour garantir la priorité ── */
+  /* Ces règles s'assurent que les variables --theme-* prennent le dessus            */
+  /* sur les couches CSS v1/v2/v3 antérieures avec background hardcodé               */
+
+  html body header,
+  html body > header {
+    background: var(--theme-header-bg) !important;
+    color: var(--theme-header-text) !important;
+    border-bottom-color: var(--theme-header-border) !important;
+  }
+  html body .nav-rail {
+    background: var(--theme-rail-bg) !important;
+    border-right-color: var(--theme-rail-border) !important;
+  }
+  html body .nav-rail::before {
+    background: var(--theme-rail-before-bg) !important;
+    border-bottom-color: var(--theme-rail-before-border) !important;
+  }
+  html body .nav-rail-btn {
+    color: var(--theme-icon-color) !important;
+  }
+  html body .nav-rail-btn:hover {
+    background: var(--theme-icon-hover-bg) !important;
+    color: var(--theme-icon-hover-color) !important;
+  }
+  html body .nav-rail-btn.active {
+    background: var(--theme-active-bg) !important;
+    color: var(--theme-active-color) !important;
+  }
+  html body .nav-rail-btn.active::before {
+    background: var(--theme-active-bar) !important;
+  }
+  html body .toolbar {
+    background: var(--theme-toolbar-bg) !important;
+    border-bottom-color: var(--theme-toolbar-border) !important;
+  }
+  html body .toolbar .fmt-btn,
+  html body .toolbar .tool-btn {
+    color: var(--theme-toolbar-btn) !important;
+  }
+  html body #editor-statusbar {
+    background: var(--theme-toolbar-bg) !important;
+    border-top-color: var(--theme-toolbar-border) !important;
+  }
+  html body aside .sidebar-panel > div:first-child,
+  html body aside [style*="height:43px"] {
+    background: var(--theme-panel-bar-bg) !important;
+    border-bottom-color: var(--theme-panel-bar-border) !important;
+  }
+  html body aside #sidebar-panel-title {
+    color: var(--theme-panel-bar-text) !important;
+  }
+
+/* ══════════════════════════════════════════════════════════════════════
+   PATCH THÈME v1002 — Cohérence chromatique totale des boutons
+   Tous les boutons et infobulles suivent --theme-active-color
+══════════════════════════════════════════════════════════════════════ */
+
+/* ────────────────────────────────────────────────────────────────────
+   1. BOUTON CHARGEMENT PROJET (header gauche)
+──────────────────────────────────────────────────────────────────── */
+html body header .btn-ghost {
+  color: var(--theme-active-color) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-active-color) 30%, transparent) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 8%, transparent) !important;
+}
+html body header .btn-ghost:hover {
+  background: color-mix(in srgb, var(--theme-active-color) 16%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-active-color) 50%, transparent) !important;
+}
+html body header .btn-ghost i,
+html body header .btn-ghost span { color: inherit !important; }
+
+/* ────────────────────────────────────────────────────────────────────
+   2. FLÈCHES HISTORIQUE (précédent / suivant)
+──────────────────────────────────────────────────────────────────── */
+html body .nav-hist-btn {
+  background: transparent !important;
+  border: none !important;
+  color: color-mix(in srgb, var(--theme-active-color) 55%, transparent) !important;
+}
+html body .nav-hist-btn:not(:disabled):hover {
+  color: var(--theme-active-color) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 10%, transparent) !important;
+}
+html body .nav-hist-btn:disabled { opacity: 0.2 !important; }
+
+/* ────────────────────────────────────────────────────────────────────
+   3. POMODORO
+──────────────────────────────────────────────────────────────────── */
+html body #pomodoro-btn {
+  background: transparent !important;
+  border: none !important;
+  color: color-mix(in srgb, var(--theme-active-color) 55%, transparent) !important;
+}
+html body #pomodoro-btn i { color: inherit !important; }
+html body #pomodoro-btn #pomodoro-display { color: inherit !important; }
+html body #pomodoro-btn:hover {
+  color: var(--theme-active-color) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 10%, transparent) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   4. INDICATEUR DE SAUVEGARDE
+──────────────────────────────────────────────────────────────────── */
+html body .save-indicator,
+html body #save-indicator {
+  background: transparent !important;
+  border: none !important;
+  color: color-mix(in srgb, var(--theme-active-color) 45%, transparent) !important;
+}
+html body #save-label { color: inherit !important; }
+
+/* ────────────────────────────────────────────────────────────────────
+   5. BOUTON SAUVEGARDER
+──────────────────────────────────────────────────────────────────── */
+html body #btn-save {
+  color: color-mix(in srgb, var(--theme-active-color) 70%, transparent) !important;
+  background: transparent !important;
+  border: 1px solid color-mix(in srgb, var(--theme-active-color) 20%, transparent) !important;
+}
+html body #btn-save:hover {
+  color: var(--theme-active-color) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 10%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-active-color) 40%, transparent) !important;
+}
+html body #btn-save i { color: inherit !important; }
+html body #btn-save span { color: inherit !important; }
+
+/* ────────────────────────────────────────────────────────────────────
+   6. BOUTON EXPORT + MENU EXPORT
+──────────────────────────────────────────────────────────────────── */
+html body #btn-export-toggle {
+  color: color-mix(in srgb, var(--theme-active-color) 70%, transparent) !important;
+  background: transparent !important;
+  border: 1px solid color-mix(in srgb, var(--theme-active-color) 20%, transparent) !important;
+}
+html body #btn-export-toggle:hover {
+  color: var(--theme-active-color) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 10%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-active-color) 40%, transparent) !important;
+}
+html body #btn-export-toggle i,
+html body #btn-export-toggle span { color: inherit !important; }
+/* Menu dropdown export : fond et bordure thème */
+html body #export-menu {
+  background: var(--c-lift, #221f1b) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-active-color) 20%, transparent) !important;
+}
+html body .hdr-export-item {
+  color: rgba(255,255,255,0.65) !important;
+}
+html body .hdr-export-item:hover {
+  background: color-mix(in srgb, var(--theme-active-color) 12%, transparent) !important;
+  color: var(--theme-active-color) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   7. BOUTON IA SWITCHER (✦ IA)
+──────────────────────────────────────────────────────────────────── */
+html body #ai-switcher-btn {
+  background: color-mix(in srgb, var(--theme-active-color) 10%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-active-color) 28%, transparent) !important;
+  color: var(--theme-active-color) !important;
+}
+html body #ai-switcher-btn:hover {
+  background: color-mix(in srgb, var(--theme-active-color) 18%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-active-color) 48%, transparent) !important;
+}
+html body #ai-switcher-btn * { color: inherit !important; }
+html body #ai-switcher-menu {
+  background: var(--c-lift, #221f1b) !important;
+  border-color: color-mix(in srgb, var(--theme-active-color) 18%, transparent) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   8. BOUTONS ICÔNES HEADER (focus, sombre, paramètres, raccourcis)
+──────────────────────────────────────────────────────────────────── */
+html body .btn-focus-toggle,
+html body .btn-dark-toggle,
+html body .btn-settings-toggle,
+html body .btn-help-toggle {
+  background: transparent !important;
+  color: color-mix(in srgb, var(--theme-active-color) 45%, transparent) !important;
+  border: none !important;
+}
+html body .btn-focus-toggle:hover,
+html body .btn-dark-toggle:hover,
+html body .btn-settings-toggle:hover,
+html body .btn-help-toggle:hover {
+  color: var(--theme-active-color) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 10%, transparent) !important;
+}
+html body .btn-settings-toggle.active {
+  color: var(--theme-active-color) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 14%, transparent) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   9. BOUTONS FORMAT BARRE TOPBAR (B I S B̶ ⌨ 💬 ↩↩ ✦→)
+──────────────────────────────────────────────────────────────────── */
+html body .pane-label-topbar .fmt-btn {
+  background: transparent !important;
+  border: none !important;
+  color: color-mix(in srgb, var(--theme-active-color) 50%, transparent) !important;
+}
+html body .pane-label-topbar .fmt-btn:hover {
+  background: color-mix(in srgb, var(--theme-active-color) 12%, transparent) !important;
+  color: var(--theme-active-color) !important;
+}
+html body .pane-label-topbar .fmt-btn b,
+html body .pane-label-topbar .fmt-btn i,
+html body .pane-label-topbar .fmt-btn u,
+html body .pane-label-topbar .fmt-btn s { color: inherit !important; }
+html body .fmt-btn-tw.active {
+  color: var(--theme-active-color) !important;
+}
+html body #btn-ai-continue {
+  color: var(--theme-active-color) !important;
+}
+html body #smartquotes-indicator:hover {
+  color: var(--theme-active-color) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   10. BOUTON FORMATER (✦ Formater)
+──────────────────────────────────────────────────────────────────── */
+html body .fmt-btn-format {
+  background: color-mix(in srgb, var(--theme-active-color) 8%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-active-color) 22%, transparent) !important;
+  color: var(--theme-active-color) !important;
+}
+html body .fmt-btn-format:hover {
+  background: color-mix(in srgb, var(--theme-active-color) 16%, transparent) !important;
+}
+html body .fmt-btn-format i { color: var(--theme-active-color) !important; }
+
+/* ────────────────────────────────────────────────────────────────────
+   11. BOUTONS VUE (Tout / Chapitre / split/edit/preview) + ISOLÉ
+──────────────────────────────────────────────────────────────────── */
+html body .tool-btn-sm {
+  background: transparent !important;
+  border: none !important;
+  color: color-mix(in srgb, var(--theme-active-color) 45%, transparent) !important;
+}
+html body .tool-btn-sm:hover {
+  color: var(--theme-active-color) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 10%, transparent) !important;
+}
+html body .tool-btn-sm.active {
+  color: var(--theme-active-color) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 14%, transparent) !important;
+}
+html body .tool-btn-sm i { color: inherit !important; }
+
+/* ────────────────────────────────────────────────────────────────────
+   12. ZOOM PRÉVISUALISATION (#preview-zoom)
+──────────────────────────────────────────────────────────────────── */
+html body #preview-zoom {
+  background: transparent !important;
+  border: none !important;
+  color: color-mix(in srgb, var(--theme-active-color) 60%, transparent) !important;
+}
+html body #preview-zoom:hover,
+html body #preview-zoom:focus {
+  color: var(--theme-active-color) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   13. BOUTON ✕ FERMER RECHERCHE et navigation recherche ▲▼±
+──────────────────────────────────────────────────────────────────── */
+html body .es-nav:hover {
+  color: var(--theme-active-color) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 10%, transparent) !important;
+}
+html body .es-close:hover {
+  color: var(--theme-active-color) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   14. BREADCRUMB — item courant couleur thème
+──────────────────────────────────────────────────────────────────── */
+html body .bc-item.current {
+  color: var(--theme-active-color) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   15. INFOBULLES — fond et texte adaptatifs au thème
+──────────────────────────────────────────────────────────────────── */
+/* Infobulle nav-rail */
+html body #nav-rail-rich-tooltip {
+  background: var(--c-lift, #221f1b) !important;
+  border-color: color-mix(in srgb, var(--theme-active-color) 20%, transparent) !important;
+}
+html body #nav-rail-rich-tooltip::before {
+  border-right-color: var(--c-lift, #221f1b) !important;
+}
+html body .nav-rail-tooltip-title {
+  color: var(--theme-active-color) !important;
+}
+html body .nav-rail-tooltip-desc {
+  color: rgba(255,255,255,0.55) !important;
+}
+/* En thème clair : fond clair, texte sombre */
+html body.theme-light #nav-rail-rich-tooltip {
+  background: var(--parchment, #f6f3ec) !important;
+  border-color: color-mix(in srgb, var(--theme-active-color) 25%, transparent) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
+}
+html body.theme-light #nav-rail-rich-tooltip::before {
+  border-right-color: var(--parchment, #f6f3ec) !important;
+}
+html body.theme-light .nav-rail-tooltip-title {
+  color: var(--theme-active-color) !important;
+}
+html body.theme-light .nav-rail-tooltip-desc {
+  color: var(--ink-soft, #3a3020) !important;
+}
+/* Infobulle annotation */
+html body #annot-tooltip {
+  background: var(--c-lift, #221f1b) !important;
+  color: rgba(255,255,255,0.75) !important;
+}
+html body.theme-light #annot-tooltip {
+  background: var(--parchment, #f6f3ec) !important;
+  color: var(--ink, #1a150e) !important;
+  border: 1px solid var(--cream, #ddd8cf) !important;
+}
+/* Infobulle onglets wt */
+html body #wt-tab-tooltip {
+  background: var(--c-lift, #221f1b) !important;
+  color: rgba(255,255,255,0.75) !important;
+}
+html body.theme-light #wt-tab-tooltip {
+  background: var(--parchment, #f6f3ec) !important;
+  color: var(--ink, #1a150e) !important;
+  border: 1px solid var(--cream, #ddd8cf) !important;
+}
+/* Attribut title natif → les tooltips HTML natifs ne sont pas stylables,
+   mais on sécurise tous les éléments custom */
+
+/* ────────────────────────────────────────────────────────────────────
+   16. THÈMES CLAIRS — surcharges supplémentaires
+──────────────────────────────────────────────────────────────────── */
+html body.theme-light header .btn-ghost,
+html body.theme-light #btn-save,
+html body.theme-light #btn-export-toggle {
+  background: color-mix(in srgb, var(--theme-active-color) 8%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-active-color) 25%, transparent) !important;
+  color: var(--theme-active-color) !important;
+}
+html body.theme-light .nav-hist-btn,
+html body.theme-light #pomodoro-btn,
+html body.theme-light .btn-focus-toggle,
+html body.theme-light .btn-dark-toggle,
+html body.theme-light .btn-settings-toggle,
+html body.theme-light .btn-help-toggle {
+  color: var(--theme-active-color) !important;
+  background: transparent !important;
+}
+html body.theme-light .pane-label-topbar .fmt-btn {
+  color: color-mix(in srgb, var(--theme-active-color) 55%, transparent) !important;
+}
+html body.theme-light .pane-label-topbar .fmt-btn:hover {
+  color: var(--theme-active-color) !important;
+  background: color-mix(in srgb, var(--theme-active-color) 10%, transparent) !important;
+}
+html body.theme-light .save-indicator,
+html body.theme-light #save-indicator {
+  color: color-mix(in srgb, var(--theme-active-color) 55%, transparent) !important;
+}
+
+/* ── Suppression totale des ombres extérieures ───────────────────── */
+:root {
+  --nm-d-out-s:     none !important;
+  --nm-d-out:       none !important;
+  --nm-convex-sm:   none !important;
+  --nm-convex:      none !important;
+  --nm-l-out-s:     none !important;
+  --nm-l-out:       none !important;
+  --nm-convex-l:    none !important;
+  --nm-convex-l-sm: none !important;
+  /* Ombres intérieures (état enfoncé/actif) conservées et légères */
+  --nm-d-in-s:     inset 1px 1px 4px rgba(0,0,0,0.4), inset -1px -1px 3px rgba(255,255,255,0.02) !important;
+  --nm-d-in:       inset 2px 2px 6px rgba(0,0,0,0.4), inset -1px -1px 4px rgba(255,255,255,0.02) !important;
+  --nm-concave-sm: inset 1px 1px 4px rgba(0,0,0,0.4), inset -1px -1px 3px rgba(255,255,255,0.02) !important;
+  --nm-concave:    inset 2px 2px 6px rgba(0,0,0,0.4), inset -1px -1px 4px rgba(255,255,255,0.02) !important;
+  --nm-l-in-s:     inset 1px 1px 4px rgba(0,0,0,0.08), inset -1px -1px 3px rgba(255,255,255,0.6) !important;
+  --nm-l-in:       inset 2px 2px 6px rgba(0,0,0,0.1), inset -1px -1px 4px rgba(255,255,255,0.65) !important;
+  --nm-concave-l:  inset 1px 1px 4px rgba(0,0,0,0.08), inset -1px -1px 3px rgba(255,255,255,0.6) !important;
+}
+
+/* ── Variables bouton thème — dérivées de --theme-active-color ───── */
+/* Ces variables sont recalculées via applyTheme mais aussi définies ici comme base */
+:root {
+  --theme-btn-bg:       var(--theme-active-color);
+  --theme-btn-glow:     0 0 10px rgba(0,0,0,0.0); /* neutre par défaut, surchargé */
+}
+
+/* ── Suppression des ombres extérieures hardcodées sur les barres ── */
+/* Header */
+html body header {
+  box-shadow: none !important;
+}
+/* Nav-rail latéral */
+html body .nav-rail {
+  box-shadow: none !important;
+}
+/* Toolbar éditeur */
+html body .toolbar {
+  box-shadow: none !important;
+}
+/* Sidebar aside */
+html body aside {
+  box-shadow: none !important;
+}
+/* Logo mark */
+html body .logo-mark {
+  background: var(--logo-mark-bg, var(--c-gold)) !important;
+  color: var(--logo-mark-fg, #fff) !important;
+  box-shadow: none !important;
+}
+/* Nav-rail rich tooltip */
+html body #nav-rail-rich-tooltip {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.35) !important;
+}
+/* Boutons header iconiques */
+html body .btn-focus-toggle,
+html body .btn-dark-toggle,
+html body .btn-settings-toggle,
+html body .btn-help-toggle,
+html body #btn-save,
+html body #pomodoro-btn,
+html body .nav-hist-btn,
+html body .btn-ghost,
+html body .btn-primary,
+html body .btn-accent,
+html body .tool-btn,
+html body .wt-run-btn {
+  box-shadow: none !important;
+}
+/* États hover (enfoncé) conservés */
+html body .btn-focus-toggle:hover,
+html body .btn-dark-toggle:hover,
+html body .btn-settings-toggle:hover,
+html body .btn-help-toggle:hover,
+html body #btn-save:hover,
+html body #pomodoro-btn:hover,
+html body .nav-hist-btn:not(:disabled):hover,
+html body .btn-ghost:hover,
+html body .btn-primary:hover,
+html body .btn-accent:hover,
+html body .tool-btn:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+}
+html body .wt-run-btn:hover:not(:disabled) {
+  box-shadow: none !important;
+  opacity: 0.82 !important;
+}
+
+/* ── tool-btn actif → couleur du thème ──────────────────────────── */
+html body .tool-btn.active {
+  background: var(--c-raise, var(--nm-bg-light)) !important;
+  color: var(--theme-active-color) !important;
+  box-shadow: var(--nm-concave-sm), 0 0 8px color-mix(in srgb, var(--theme-active-color) 30%, transparent) !important;
+}
+html body .tool-btn.active * {
+  color: var(--theme-active-color) !important;
+}
+html body .tool-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--theme-active-color) !important;
+}
+
+/* ── nav-rail-btn actif → couleur du thème (déjà OK, on renforce) ─ */
+html body .nav-rail-btn.active {
+  box-shadow: var(--nm-concave-sm) !important;
+  animation: none !important; /* désactive l'animation gold figée */
+}
+html body .nav-rail-btn.active::before {
+  box-shadow: 0 0 4px var(--theme-active-bar) !important;
+}
+
+/* ── btn-primary → suit le thème (texte couleur active) ─────────── */
+html body .btn-primary {
+  color: var(--theme-active-color) !important;
+  box-shadow: var(--nm-d-out-s) !important;
+}
+html body .btn-primary:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+}
+
+/* ── btn-ghost, btn-save, btn-dark-toggle etc. — ombres réduites ── */
+html body .btn-ghost {
+  box-shadow: var(--nm-d-out-s) !important;
+}
+html body .btn-ghost:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+}
+html body .btn-accent {
+  box-shadow: var(--nm-d-out-s) !important;
+}
+html body .btn-accent:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+}
+html body .btn-focus-toggle,
+html body .btn-dark-toggle,
+html body .btn-settings-toggle,
+html body .btn-help-toggle {
+  box-shadow: var(--nm-d-out-s) !important;
+}
+html body .btn-focus-toggle:hover,
+html body .btn-dark-toggle:hover,
+html body .btn-settings-toggle:hover,
+html body .btn-help-toggle:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+}
+html body #btn-save {
+  box-shadow: var(--nm-d-out-s) !important;
+}
+html body #btn-save:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+}
+html body .nav-hist-btn {
+  box-shadow: var(--nm-d-out-s) !important;
+}
+html body .nav-hist-btn:not(:disabled):hover {
+  box-shadow: var(--nm-d-in-s) !important;
+}
+html body #pomodoro-btn {
+  box-shadow: var(--nm-d-out-s) !important;
+}
+html body #pomodoro-btn:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+}
+html body .tool-btn {
+  box-shadow: var(--nm-d-out-s) !important;
+}
+html body .tool-btn:hover {
+  box-shadow: var(--nm-d-in-s) !important;
+}
+html body .logo-mark {
+  box-shadow: var(--nm-d-out-s) !important;
+}
+
+/* ── wt-run-btn (Analyser, Corriger, Synonymes, Cohérence…) ─────── */
+/* Bouton principal (fond accent) → devient couleur thème active */
+html body .wt-run-btn {
+  background: var(--theme-active-color) !important;
+  color: var(--ink, #1a150e) !important;
+  border: none !important;
+  box-shadow: var(--nm-d-out-s) !important;
+  transition: box-shadow 0.15s, opacity 0.15s !important;
+  font-weight: 600 !important;
+}
+html body .wt-run-btn:hover:not(:disabled) {
+  opacity: 0.88 !important;
+  box-shadow: var(--nm-d-in-s) !important;
+}
+html body .wt-run-btn:disabled {
+  opacity: 0.35 !important;
+  box-shadow: none !important;
+}
+
+/* Boutons secondaires (autofix, style IA, stats IA) — outline thème */
+html body #wt-btn-autofix,
+html body #wt-btn-style-ai,
+html body #wt-btn-stats-ai {
+  background: transparent !important;
+  color: var(--theme-active-color) !important;
+  border: 1px solid var(--theme-active-color) !important;
+  box-shadow: none !important;
+  opacity: 0.85 !important;
+}
+html body #wt-btn-autofix:hover,
+html body #wt-btn-style-ai:hover,
+html body #wt-btn-stats-ai:hover {
+  background: color-mix(in srgb, var(--theme-active-color) 12%, transparent) !important;
+  opacity: 1 !important;
+}
+
+/* Bouton cohérence — style spécial mais thème */
+html body #wt-btn-coherence {
+  background: color-mix(in srgb, var(--theme-active-color) 18%, transparent) !important;
+  color: var(--theme-active-color) !important;
+  border: 1px solid var(--theme-active-color) !important;
+}
+html body #wt-btn-coherence:hover {
+  background: color-mix(in srgb, var(--theme-active-color) 28%, transparent) !important;
+}
+
+/* Bouton rapport éditorial — accent mais thème */
+html body #wt-btn-rapport {
+  background: var(--theme-active-color) !important;
+  color: var(--ink, #1a150e) !important;
+  border-color: var(--theme-active-color) !important;
+}
+
+/* ── btn-settings-toggle actif → thème ──────────────────────────── */
+html body .btn-settings-toggle.active {
+  background: var(--c-raise, var(--nm-bg-light)) !important;
+  color: var(--theme-active-color) !important;
+  box-shadow: var(--nm-d-in-s) !important;
+}
+
+/* ── Thèmes clairs (jour_ivoire, jour_ardoise) — adaptation boutons */
+html body.theme-light .wt-run-btn {
+  color: #fff !important;
+}
+html body.theme-light #wt-btn-autofix,
+html body.theme-light #wt-btn-style-ai,
+html body.theme-light #wt-btn-stats-ai {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html body.theme-light .tool-btn {
+  background: rgba(0,0,0,0.05) !important;
+  box-shadow: var(--nm-l-out-s, 2px 2px 5px rgba(0,0,0,0.09), -1px -1px 4px rgba(255,255,255,0.7)) !important;
+  color: var(--ink, #1a150e) !important;
+}
+html body.theme-light .tool-btn:hover {
+  box-shadow: var(--nm-l-in-s, inset 2px 2px 5px rgba(0,0,0,0.09), inset -1px -1px 4px rgba(255,255,255,0.7)) !important;
+}
+html body.theme-light .tool-btn.active {
+  color: var(--theme-active-color) !important;
+  box-shadow: var(--nm-l-in-s, inset 2px 2px 5px rgba(0,0,0,0.09), inset -1px -1px 4px rgba(255,255,255,0.7)) !important;
+}
+html body.theme-light .btn-ghost,
+html body.theme-light .btn-primary,
+html body.theme-light .btn-accent,
+html body.theme-light .btn-focus-toggle,
+html body.theme-light .btn-dark-toggle,
+html body.theme-light .btn-settings-toggle,
+html body.theme-light .btn-help-toggle,
+html body.theme-light #btn-save,
+html body.theme-light .nav-hist-btn {
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.09), -1px -1px 4px rgba(255,255,255,0.65) !important;
+}
+html body.theme-light .btn-ghost:hover,
+html body.theme-light .btn-primary:hover,
+html body.theme-light .btn-focus-toggle:hover,
+html body.theme-light .btn-dark-toggle:hover,
+html body.theme-light .btn-settings-toggle:hover,
+html body.theme-light .btn-help-toggle:hover,
+html body.theme-light #btn-save:hover,
+html body.theme-light .nav-hist-btn:not(:disabled):hover {
+  box-shadow: inset 1px 1px 4px rgba(0,0,0,0.09), inset -1px -1px 3px rgba(255,255,255,0.65) !important;
+}
+
+</style>

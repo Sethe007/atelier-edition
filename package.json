@@ -1,0 +1,15 @@
+{
+  "name": "atelier-edition",
+  "version": "2.0.0",
+  "description": "Atelier Édition — Éditeur littéraire professionnel",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

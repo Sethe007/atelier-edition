@@ -1,0 +1,538 @@
+/* ── Export dropdown items ── */
+.hdr-export-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  color: rgba(255,255,255,0.65);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+.hdr-export-item:hover {
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.9);
+}
+
+/* ── Toolbar: breadcrumb intégré ── */
+#breadcrumb-bar {
+  height: auto !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 4px !important;
+}
+
+/* ── Nav-rail: retrait du pseudo ::before qui créait le bandeau fantôme ── */
+.nav-rail::before { display: none !important; }
+.nav-rail-buttons { padding-top: 8px !important; }
+
+/* ── Sidebar: align top avec toolbar ── */
+aside {
+  border-top: none !important;
+}
+.sidebar-panel > div:first-child,
+[style*="height:43px"] {
+  background: var(--c-void, #0a0907) !important;
+  height: 40px !important;
+}
+
+/* ── Pane-label — réduit, fusionné avec fmt-btns ── */
+.pane-label {
+  min-height: 30px !important;
+  padding: 4px 12px !important;
+}
+
+/* ── Scrollbar editor ── */
+#raw-input::-webkit-scrollbar { width: 5px !important; }
+#raw-input::-webkit-scrollbar-track { background: #f0ede5 !important; }
+#raw-input::-webkit-scrollbar-thumb { background: #d8d3c8 !important; border-radius: 99px !important; }
+#raw-input::-webkit-scrollbar-thumb:hover { background: #c4bdb0 !important; }
+
+/* ── Répétitions panel ── */
+#rep-panel {
+  background: var(--c-lift, #221f1b) !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  border-radius: 10px !important;
+  box-shadow: 6px 6px 20px rgba(0,0,0,0.5), -2px -2px 8px rgba(255,255,255,0.03) !important;
+}
+
+/* ── Annotation dialog ── */
+#annot-dialog {
+  background: #f5f3ec !important;
+  border-radius: 12px !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.3), 12px 12px 30px rgba(0,0,0,0.15), -6px -6px 20px rgba(255,255,255,0.6) !important;
+  border: none !important;
+}
+.adlg-header {
+  background: #0a0907 !important;
+  border-radius: 12px 12px 0 0 !important;
+  padding: 12px 16px !important;
+}
+.adlg-title-label { color: rgba(255,255,255,0.8) !important; font-family: 'Playfair Display', serif !important; font-style: italic !important; font-size: 13px !important; }
+.adlg-close {
+  background: rgba(255,255,255,0.08) !important; border: none !important;
+  border-radius: 6px !important; color: rgba(255,255,255,0.45) !important;
+  cursor: pointer !important; padding: 2px 8px !important; font-size: 13px !important;
+  transition: background 0.15s !important;
+}
+.adlg-close:hover { background: rgba(255,255,255,0.15) !important; color: rgba(255,255,255,0.85) !important; }
+.adlg-ta {
+  background: #f5f3ec !important; border: none !important;
+  box-shadow: inset 3px 3px 8px rgba(0,0,0,0.11), inset -2px -2px 6px rgba(255,255,255,0.75) !important;
+  border-radius: 7px !important; font-family: 'Crimson Text', serif !important;
+  font-size: 14px !important; color: #1a1612 !important; padding: 8px 10px !important;
+  outline: none !important; resize: none !important;
+  transition: box-shadow 0.15s !important;
+}
+.adlg-ta:focus { box-shadow: inset 3px 3px 8px rgba(0,0,0,0.12), inset -2px -2px 6px rgba(255,255,255,0.72), 0 0 0 2px rgba(154,79,30,0.2) !important; }
+.adlg-btn-save {
+  background: #f5f3ec !important; border: none !important;
+  border-radius: 7px !important;
+  box-shadow: 3px 3px 7px rgba(0,0,0,0.11), -2px -2px 6px rgba(255,255,255,0.75), 0 0 10px rgba(154,79,30,0.15) !important;
+  color: #9a4f1e !important; font-weight: 600 !important;
+  padding: 7px 18px !important; cursor: pointer !important;
+  transition: box-shadow 0.15s !important; font-family: 'DM Sans', sans-serif !important;
+}
+.adlg-btn-save:hover { box-shadow: inset 2px 2px 6px rgba(0,0,0,0.11), inset -2px -2px 5px rgba(255,255,255,0.72), 0 0 12px rgba(154,79,30,0.2) !important; }
+.adlg-btn-cancel {
+  background: transparent !important; border: none !important;
+  color: rgba(26,22,18,0.45) !important; font-size: 12px !important;
+  cursor: pointer !important; padding: 7px 12px !important;
+  font-family: 'DM Sans', sans-serif !important;
+  transition: color 0.15s !important;
+}
+.adlg-btn-cancel:hover { color: rgba(26,22,18,0.75) !important; }
+
+/* ── Pomodoro modal ── */
+.pomodoro-modal-box {
+  background: #f5f3ec !important;
+  border-radius: 14px !important;
+  box-shadow: 12px 12px 32px rgba(0,0,0,0.2), -8px -8px 24px rgba(255,255,255,0.65) !important;
+  border: none !important;
+}
+
+/* ── Project modal ── */
+.project-modal-box {
+  background: #f5f3ec !important;
+  border-radius: 14px !important;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.35), 16px 16px 40px rgba(0,0,0,0.15), -8px -8px 24px rgba(255,255,255,0.55) !important;
+  border: none !important;
+}
+.project-modal-header {
+  background: #0a0907 !important;
+  border-radius: 14px 14px 0 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+/* ── Corkboard ── */
+.cork-card {
+  border-radius: 10px !important;
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.2), -2px -2px 8px rgba(255,255,255,0.5) !important;
+  transition: box-shadow 0.2s, transform 0.2s !important;
+}
+.cork-card:hover {
+  box-shadow: 8px 8px 20px rgba(0,0,0,0.22), -4px -4px 12px rgba(255,255,255,0.55) !important;
+  transform: translateY(-3px) !important;
+}
+
+/* ── Timeline / Chronologie ── */
+.timeline-event {
+  background: #f5f3ec !important;
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 3px 3px 8px rgba(0,0,0,0.1), -2px -2px 6px rgba(255,255,255,0.75) !important;
+  transition: box-shadow 0.15s !important;
+}
+.timeline-event:hover {
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.1), inset -1px -1px 4px rgba(255,255,255,0.7), 0 0 8px rgba(154,79,30,0.1) !important;
+}
+
+/* ── Settings grid inline color pickers ── */
+.settings-modal-box input[type="color"] {
+  -webkit-appearance: none !important;
+  width: 36px !important; height: 28px !important;
+  border: none !important; border-radius: 6px !important;
+  box-shadow: 3px 3px 7px rgba(0,0,0,0.11), -2px -2px 5px rgba(255,255,255,0.72) !important;
+  cursor: pointer !important; padding: 2px !important;
+  background: transparent !important;
+}
+.settings-modal-box input[type="range"] {
+  -webkit-appearance: none !important;
+  background: transparent !important; border: none !important;
+  box-shadow: none !important; padding: 0 !important;
+  height: 4px !important; border-radius: 2px !important;
+}
+.settings-modal-box input[type="range"]::-webkit-slider-track {
+  background: #f5f3ec;
+  box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1), inset -1px -1px 3px rgba(255,255,255,0.7);
+  border-radius: 2px; height: 4px;
+}
+.settings-modal-box input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #f5f3ec;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15), -1px -1px 4px rgba(255,255,255,0.75), 0 0 6px rgba(154,79,30,0.2);
+  cursor: pointer; margin-top: -5px;
+  transition: box-shadow 0.15s;
+}
+.settings-modal-box input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.15), inset -1px -1px 3px rgba(255,255,255,0.7), 0 0 8px rgba(154,79,30,0.28);
+}
+
+/* ── Checkboxes neumorphiques ── */
+.settings-modal-box input[type="checkbox"],
+aside input[type="checkbox"] {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 16px !important; height: 16px !important;
+  border: none !important; border-radius: 4px !important;
+  background: #f5f3ec !important;
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1), inset -1px -1px 4px rgba(255,255,255,0.72) !important;
+  cursor: pointer !important; position: relative !important;
+  transition: box-shadow 0.15s !important;
+  vertical-align: middle !important; flex-shrink: 0 !important;
+}
+.settings-modal-box input[type="checkbox"]:checked,
+aside input[type="checkbox"]:checked {
+  background: #f5f3ec !important;
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1), inset -1px -1px 4px rgba(255,255,255,0.72), 0 0 0 2px rgba(154,79,30,0.3) !important;
+}
+.settings-modal-box input[type="checkbox"]:checked::after,
+aside input[type="checkbox"]:checked::after {
+  content: '✓' !important;
+  position: absolute !important; top: -1px !important; left: 2px !important;
+  font-size: 11px !important; font-weight: 700 !important;
+  color: #9a4f1e !important;
+}
+
+/* ── Sidebar scroll amélioré ── */
+.sidebar-main-scroll {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(154,79,30,0.18) transparent !important;
+}
+.notes-list-scroll {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(154,79,30,0.18) transparent !important;
+}
+
+/* ── Focus mode override ── */
+body.focus-mode header { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+body.focus-mode header:hover { opacity: 1; pointer-events: all; }
+body.focus-mode aside { transform: translateX(-100%); transition: transform 0.3s; }
+body.focus-mode aside:hover { transform: translateX(0); }
+
+/* ── AI Switcher dropdown ── */
+#ai-switcher-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+#ai-switcher-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(184,134,11,0.10);
+  border: 1px solid rgba(184,134,11,0.25);
+  border-radius: 6px;
+  color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+#ai-switcher-btn:hover {
+  background: rgba(184,134,11,0.18);
+  border-color: rgba(184,134,11,0.45);
+}
+#ai-switcher-btn .ai-sw-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  flex-shrink: 0;
+  box-shadow: 0 0 5px rgba(16,185,129,0.6);
+}
+#ai-switcher-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 210px;
+  background: #1a1714;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  box-shadow: 6px 6px 22px rgba(0,0,0,0.65), -2px -2px 8px rgba(255,255,255,0.03);
+  padding: 6px;
+  z-index: 1001;
+  animation: aiSwFadeIn 0.15s ease;
+}
+#ai-switcher-menu.open { display: block; }
+@keyframes aiSwFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ai-sw-header {
+  font-family: 'Playfair Display', serif;
+  font-size: 10px;
+  color: rgba(255,255,255,0.28);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 8px 6px;
+}
+.ai-sw-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  color: rgba(255,255,255,0.78);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  transition: background 0.12s;
+}
+.ai-sw-item:hover {
+  background: rgba(255,255,255,0.07);
+}
+.ai-sw-item.active {
+  background: rgba(184,134,11,0.13);
+  color: var(--gold);
+  font-weight: 500;
+}
+.ai-sw-item.active::after {
+  content: '✓';
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--gold);
+}
+.ai-sw-icon {
+  font-size: 14px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.ai-sw-info { flex: 1; min-width: 0; }
+.ai-sw-name { font-size: 12.5px; line-height: 1.2; }
+.ai-sw-model {
+  font-size: 10px;
+  color: rgba(255,255,255,0.35);
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+.ai-sw-sep {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 4px 0;
+}
+.ai-sw-empty {
+  padding: 10px;
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ── Sélection de texte ── */
+::selection {
+  background: rgba(154,79,30,0.15) !important;
+  color: inherit !important;
+}
+
+/* ── Kbd / raccourcis ── */
+kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  background: #1a1714;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: rgba(255,255,255,0.55);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.4);
+}
+
+/* ── Entrées animées au chargement ── */
+@keyframes v3Load {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+header     { animation: v3Load 0.3s cubic-bezier(0.4,0,0.2,1) both; }
+.nav-rail  { animation: v3Load 0.3s 0.05s cubic-bezier(0.4,0,0.2,1) both; }
+.editor-area { animation: v3Load 0.3s 0.1s cubic-bezier(0.4,0,0.2,1) both; }
+
+/* ══════════════════════════════════════════════════════════
+   MODE CHAPITRES ISOLÉS — Barre d'onglets
+   ══════════════════════════════════════════════════════════ */
+
+#chapter-tabs-bar {
+  /* Navigation par onglets remplacée par la Vue carte — toujours masquée */
+  display: none !important;
+}
+
+#chapter-tabs-list {
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+  gap: 0;
+}
+#chapter-tabs-list::-webkit-scrollbar { height: 3px; }
+#chapter-tabs-list::-webkit-scrollbar-track { background: transparent; }
+#chapter-tabs-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+.ch-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px 0 14px;
+  white-space: nowrap;
+  font-size: 11.5px;
+  font-family: 'DM Sans', sans-serif;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.12s, color 0.12s;
+  position: relative;
+  max-width: 180px;
+  flex-shrink: 0;
+  height: 36px;
+}
+.ch-tab:hover {
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.75);
+}
+.ch-tab.active {
+  background: rgba(184,134,11,0.10);
+  color: var(--gold);
+  font-weight: 500;
+}
+.ch-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px 2px 0 0;
+}
+.ch-tab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+  display: block;
+}
+.ch-tab-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+#chapter-tabs-add {
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  color: rgba(255,255,255,0.35);
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: background 0.12s, color 0.12s;
+}
+#chapter-tabs-add:hover {
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.7);
+}
+
+/* Indicateur de chapitre isolé dans le breadcrumb */
+#bc-isolated-badge {
+  display: none;
+  font-size: 9.5px;
+  background: rgba(184,134,11,0.18);
+  color: var(--gold);
+  border: 1px solid rgba(184,134,11,0.3);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.editor-isolated-mode #bc-isolated-badge { display: inline-block; }
+
+/* Scope select visible uniquement en mode isolé */
+.editor-isolated-mode #es-scope { display: inline-block !important; }
+
+/* ── CORRECTIF FINAL topbar 3-zones (post tous thèmes) ── */
+html body .pane-label.pane-label-topbar {
+  display: flex !important; flex-direction: row !important;
+  align-items: center !important; flex-wrap: nowrap !important;
+  /* --bar-h (40px) = même hauteur que nav-rail::before et sidebar-panel header
+     → aligne le bas des 3 barres hautes (sidebar / éditeur / preview) */
+  height: var(--bar-h) !important; min-height: var(--bar-h) !important;
+  /* padding-right 14px → le dernier élément ne sera jamais rogné */
+  padding: 0 14px 0 1rem !important; gap: 0 !important; overflow: visible !important;
+  background: var(--theme-toolbar-bg) !important;
+  border-bottom: 1px solid var(--theme-toolbar-border) !important;
+}
+html body .pane-label.pane-label-topbar .ptb-left  { display:flex!important; align-items:center!important; gap:6px!important; flex-shrink:0!important; overflow:hidden!important; }
+html body .pane-label.pane-label-topbar .ptb-center{ flex:1!important; min-width:0!important; display:flex!important; align-items:center!important; padding:0 8px!important; overflow:hidden!important; }
+/* margin-left:10px → respiration visuelle entre breadcrumb et zone droite */
+html body .pane-label.pane-label-topbar .ptb-right { display:flex!important; align-items:center!important; gap:5px!important; flex-shrink:0!important; margin-left:10px!important; }
+
+/* Barre de recherche déplacée dans ptb-left — annuler margin-left:auto hérité */
+html body .ptb-left .editor-search { margin-left: 0 !important; flex-shrink:0 !important; }
+/* Réduire légèrement la largeur de l'input pour ptb-left */
+html body .ptb-left .editor-search input { width: 100px !important; }
+
+/* Bouton Formater — ne jamais rétrécir, texte toujours entier */
+html body .fmt-btn-format {
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  min-width: max-content !important;
+}
+
+html body .panes        { display:flex!important; flex:1!important; overflow:hidden!important; min-height:0!important; }
+html body .input-pane   { flex:1!important; display:flex!important; flex-direction:column!important; overflow:hidden!important; min-height:0!important; }
+html body .preview-pane { flex:1!important; display:flex!important; flex-direction:column!important; overflow-y:auto!important; min-height:0!important; }
+
+/* ── Masquage des panneaux éditeur/prévisualisation ─────────────────────────
+   Doit surpasser les règles !important du thème v3 sur .input-pane/.preview-pane
+   On utilise la même spécificité (html body .xxx) + !important              */
+html body .input-pane.pane-hidden,
+html body .preview-pane.pane-hidden {
+  display: none !important;
+  flex: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+}

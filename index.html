@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atelier Édition — Éditeur Littéraire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300;1,8..60,400&family=DM+Sans:wght@300;400;500&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+<a href="#editor-main" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;padding:6px 14px;background:var(--accent,#8b4513);color:#fff;border-radius:4px;font-family:sans-serif;font-size:13px;text-decoration:none;" onfocus="this.style.left='8px'" onblur="this.style.left='-9999px'">Aller au contenu</a>
+
+<!-- ── HEADER v3 — Barre de commande épurée ── -->
+<header role="banner">
+
+  <!-- Logo -->
+  <div class="logo">
+    <div class="logo-mark">Æ</div>
+    <span style="font-family:'Playfair Display',serif;font-size:0.88rem;color:rgba(255,255,255,0.55);font-style:italic;letter-spacing:0.02em;">Atelier</span>
+  </div>
+
+  <!-- Séparateur vertical -->
+  <div style="width:1px;height:20px;background:rgba(255,255,255,0.08);flex-shrink:0;"></div>
+
+  <!-- Projets -->
+  <button class="btn btn-ghost" onclick="openProjectModal()" title="Gérer les projets" style="display:flex;align-items:center;gap:6px;padding:5px 11px;">
+    <i class="ti ti-books" style="font-size:13px;"></i>
+    <span data-i18n="btn_projects" style="font-size:11.5px;">Projets</span>
+  </button>
+
+  <!-- Titre projet centré -->
+  <span id="project-badge" title="Projet actif"></span>
+
+  <!-- ── Actions droite ── -->
+  <div class="header-actions">
+
+    <!-- Historique nav -->
+    <div id="nav-history-btns" style="display:flex;gap:2px;">
+      <button class="nav-hist-btn" id="nav-back-btn" onclick="navHistoryGo(-1)" title="Précédent" data-i18n-title="title_nav_back" disabled>
+        <i class="ti ti-arrow-left" style="font-size:13px;pointer-events:none;"></i>
+      </button>
+      <button class="nav-hist-btn" id="nav-fwd-btn"  onclick="navHistoryGo(1)"  title="Suivant"   data-i18n-title="title_nav_fwd"  disabled>
+        <i class="ti ti-arrow-right" style="font-size:13px;pointer-events:none;"></i>
+      </button>
+    </div>
+
+    <!-- Séparateur -->
+    <div style="width:1px;height:20px;background:rgba(255,255,255,0.07);flex-shrink:0;"></div>
+
+    <!-- Pomodoro -->
+    <button id="pomodoro-btn" onclick="openPomodoroModal()" title="Minuterie Pomodoro" data-i18n-title="title_pomodoro" style="display:flex;align-items:center;gap:5px;">
+      <i class="ti ti-clock" style="font-size:13px;color:rgba(255,255,255,0.35);"></i>
+      <span id="pomodoro-display" data-i18n="pomo_idle" style="font-family:'JetBrains Mono',monospace;font-size:11px;">25:00</span>
+    </button>
+
+    <!-- Indicateur sauvegarde -->
+    <div class="save-indicator" id="save-indicator" title="État de la sauvegarde">
+      <div class="dot" id="save-dot"></div>
+      <span id="save-label" style="font-family:'JetBrains Mono',monospace;font-size:10px;">—</span>
+    </div>
+
+    <!-- Sauvegarder -->
+    <button class="btn btn-ghost" onclick="saveProject()" id="btn-save">
+      <i class="ti ti-device-floppy" style="font-size:13px;"></i>
+      <span data-i18n="btn_save">Sauvegarder</span>
+    </button>
+
+    <!-- Séparateur -->
+    <div style="width:1px;height:20px;background:rgba(255,255,255,0.07);flex-shrink:0;"></div>
+
+    <!-- Export dropdown -->
+    <div style="position:relative;" id="export-dropdown-wrap">
+      <button class="btn btn-ghost" onclick="toggleExportMenu()" id="btn-export-toggle" title="Exporter" style="display:flex;align-items:center;gap:5px;">
+        <i class="ti ti-download" style="font-size:13px;"></i>
+        <span style="font-size:11.5px;">Exporter</span>
+        <i class="ti ti-chevron-down" style="font-size:10px;opacity:0.5;"></i>
+      </button>
+      <!-- Menu export -->
+      <div id="export-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:180px;background:#1a1714;border:1px solid rgba(255,255,255,0.08);border-radius:10px;box-shadow:6px 6px 20px rgba(0,0,0,0.6),-2px -2px 8px rgba(255,255,255,0.03);padding:5px;z-index:999;">
+        <button onclick="printPDF();toggleExportMenu()" class="hdr-export-item">
+          <i class="ti ti-file-type-pdf" style="font-size:14px;color:#e05050;"></i> PDF imprimable
+        </button>
+        <button onclick="exportWord();toggleExportMenu()" class="hdr-export-item">
+          <i class="ti ti-file-type-doc" style="font-size:14px;color:#4a90d9;"></i> Word (.docx)
+        </button>
+        <button onclick="exportEpub();toggleExportMenu()" class="hdr-export-item">
+          <i class="ti ti-book" style="font-size:14px;color:#c8a030;"></i> ePub
+        </button>
+        <div style="height:1px;background:rgba(255,255,255,0.06);margin:3px 0;"></div>
+        <button onclick="exportMarkdown();toggleExportMenu()" class="hdr-export-item">
+          <i class="ti ti-markdown" style="font-size:14px;color:rgba(255,255,255,0.4);"></i> Markdown
+        </button>
+      </div>
+    </div>
+
+    <!-- ── AI Switcher ── -->
+    <div id="ai-switcher-wrap">
+      <button id="ai-switcher-btn" onclick="toggleAiSwitcher(event)" title="Changer d'IA active">
+        <span class="ai-sw-dot" id="ai-sw-dot"></span>
+        <span id="ai-sw-label">✦ IA</span>
+        <i class="ti ti-chevron-down" style="font-size:9px;opacity:0.55;"></i>
+      </button>
+      <div id="ai-switcher-menu">
+        <div class="ai-sw-header">IA active</div>
+        <div id="ai-sw-list"><!-- rempli par JS --></div>
+        <div class="ai-sw-sep"></div>
+        <button class="ai-sw-item" onclick="openSettingsModal();closeAiSwitcher();document.getElementById('settings-tab-ia')?.click();" style="color:rgba(255,255,255,0.4);font-size:11.5px;">
+          <span class="ai-sw-icon">⚙</span>
+          <span>Configurer les IA…</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Séparateur -->
+    <div style="width:1px;height:20px;background:rgba(255,255,255,0.07);flex-shrink:0;"></div>
+
+    <!-- Utilitaires icônes -->
+    <button class="btn-focus-toggle"   onclick="toggleFocusMode()"   id="btn-focus"    title="Mode focus (F11)"          aria-label="Mode focus"    data-i18n-title="title_focus_mode"><i class="ti ti-maximize"  aria-hidden="true"></i></button>
+    <button class="btn-dark-toggle"    onclick="toggleDarkMode()"    id="btn-dark"     title="Mode sombre"               aria-label="Mode sombre"   data-i18n-title="title_dark_mode"><i class="ti ti-moon"      aria-hidden="true"></i></button>
+    <button class="btn-settings-toggle" onclick="openSettingsModal()" id="btn-settings" title="Paramètres du projet"     aria-label="Paramètres"    data-i18n-title="title_settings"><i class="ti ti-settings"   aria-hidden="true"></i></button>
+    <button class="btn-help-toggle"    onclick="openHelpModal()"     id="btn-help"     title="Raccourcis clavier"        aria-label="Aide"          data-i18n-title="title_help"><i class="ti ti-keyboard"       aria-hidden="true"></i></button>
+
+  </div>
+</header>
+
+<!-- ── WORKSPACE ── -->
+<div class="workspace">
+
+  <!-- SIDEBAR -->
+  <aside aria-label="Barre latérale">
+
+    <!-- ── BARRE D'ICÔNES VERTICALE (nav-rail) ── -->
+    <nav class="nav-rail" id="sidebar-nav-rail" aria-label="Panneaux de navigation">
+
+      <div class="nav-rail-buttons">
+
+      <!-- Mise en page -->
+      <button class="nav-rail-btn active" id="nrb-mise" onclick="switchSidebarTab('mise')"
+        aria-label="Mise en page" data-nrt="nrb_mise_title" data-nrd="nrb_mise_desc">
+        <span class="nav-rail-icon"><i class="ti ti-layout-sidebar" aria-hidden="true"></i></span>
+      </button>
+
+      <!-- Structure / Vue carte — fusionné -->
+      <button class="nav-rail-btn" id="nrb-corkboard" onclick="switchSidebarTab('corkboard')"
+        aria-label="Vue carte" data-nrt="nrb_corkboard_title" data-nrd="nrb_corkboard_desc">
+        <span class="nav-rail-icon"><i class="ti ti-layout-board" aria-hidden="true"></i></span>
+      </button>
+
+      <!-- Images -->
+      <button class="nav-rail-btn" id="nrb-images" onclick="switchSidebarTab('images')"
+        aria-label="Images" data-nrt="nrb_images_title" data-nrd="nrb_images_desc">
+        <span class="nav-rail-icon"><i class="ti ti-photo" aria-hidden="true"></i></span>
+      </button>
+
+      <div class="nav-rail-sep"></div>
+
+      <!-- Notes -->
+      <button class="nav-rail-btn" id="nrb-notes" onclick="switchSidebarTab('notes')"
+        aria-label="Notes d'auteur" data-i18n-title="title_notes_tab" data-nrt="nrb_notes_title" data-nrd="nrb_notes_desc" style="position:relative;">
+        <span class="nav-rail-icon"><i class="ti ti-message-circle-2" aria-hidden="true"></i></span>
+        <span id="notes-tab-badge" class="nav-badge" style="display:none">0</span>
+      </button>
+
+      <!-- Statistiques -->
+      <button class="nav-rail-btn" id="nrb-stats" onclick="switchSidebarTab('stats')"
+        aria-label="Statistiques" data-nrt="nrb_stats_title" data-nrd="nrb_stats_desc">
+        <span class="nav-rail-icon"><i class="ti ti-chart-bar" aria-hidden="true"></i></span>
+      </button>
+
+      <div class="nav-rail-sep"></div>
+
+      <!-- Correcteur -->
+      <button class="nav-rail-btn" id="nrb-correct" onclick="switchSidebarToolTab('correct')"
+        aria-label="Correcteur" data-nrt="nrb_correct_title" data-nrd="nrb_correct_desc">
+        <span class="nav-rail-icon"><i class="ti ti-writing-sign" aria-hidden="true"></i></span>
+        <span id="wt-error-badge-rail" class="nav-badge" style="display:none;"></span>
+      </button>
+
+      <!-- Analyse de style -->
+      <button class="nav-rail-btn" id="nrb-style" onclick="switchSidebarToolTab('style')"
+        aria-label="Analyse de style" data-nrt="nrb_style_title" data-nrd="nrb_style_desc">
+        <span class="nav-rail-icon"><i class="ti ti-palette" aria-hidden="true"></i></span>
+      </button>
+
+      <!-- Statistiques avancées -->
+      <button class="nav-rail-btn" id="nrb-stats-adv" onclick="switchSidebarToolTab('stats')"
+        aria-label="Statistiques avancées" data-nrt="nrb_stats_adv_title" data-nrd="nrb_stats_adv_desc">
+        <span class="nav-rail-icon"><i class="ti ti-chart-histogram" aria-hidden="true"></i></span>
+      </button>
+
+      <!-- Synonymes -->
+      <button class="nav-rail-btn" id="nrb-syn" onclick="switchSidebarToolTab('syn')"
+        aria-label="Synonymes" data-nrt="nrb_syn_title" data-nrd="nrb_syn_desc">
+        <span class="nav-rail-icon"><i class="ti ti-books" aria-hidden="true"></i></span>
+      </button>
+
+      <!-- Cohérence narrative -->
+      <button class="nav-rail-btn" id="nrb-coherence" onclick="switchSidebarToolTab('coherence')"
+        aria-label="Cohérence narrative" data-nrt="nrb_coherence_title" data-nrd="nrb_coherence_desc">
+        <span class="nav-rail-icon"><i class="ti ti-puzzle" aria-hidden="true"></i></span>
+      </button>
+
+      <div class="nav-rail-sep"></div>
+
+      <!-- Corkboard fusionné avec structure → nrb-corkboard déjà en haut -->
+
+      <!-- Versions snapshots -->
+      <button class="nav-rail-btn" id="nrb-versions" onclick="switchSidebarTab('versions')"
+        aria-label="Versions" data-nrt="nrb_versions_title" data-nrd="nrb_versions_desc">
+        <span class="nav-rail-icon"><i class="ti ti-history" aria-hidden="true"></i></span>
+        <span id="versions-badge" class="nav-badge" style="display:none;">0</span>
+      </button>
+
+      </div><!-- /nav-rail-buttons -->
+
+    </nav>
+
+    <!-- ── PANNEAU CONTENU ── -->
+    <div class="sidebar-panel">
+
+      <!-- Bandeau d'alignement — même hauteur que la toolbar de l'éditeur -->
+      <div style="height:var(--toolbar-h);background:var(--theme-panel-bar-bg);border-bottom:1px solid var(--theme-panel-bar-border);flex-shrink:0;display:flex;align-items:center;padding:0 14px;">
+        <span id="sidebar-panel-title" style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--theme-panel-bar-text);font-family:'DM Sans',sans-serif;">Mise en page</span>
+      </div>
+
+      <!-- Ancien sélecteur d'onglets (masqué, gardé pour compatibilité JS) -->
+      <div class="sidebar-tabs" style="display:none;">
+        <button class="sidebar-tab active" id="sb-tab-mise" onclick="switchSidebarTab('mise')" data-i18n-title="title_layout" title="Mise en page, format, structure" data-i18n="tab_layout">⚙ Mise en page</button>
+        <button class="sidebar-tab" id="sb-tab-notes" onclick="switchSidebarTab('notes')" data-i18n-title="title_notes_tab" title="Gestionnaire de notes d'auteur [NOTE: …]"><span data-i18n="tab_notes">💬 Notes</span></button>
+      </div>
+
+    <!-- PANNEAU : MISE EN PAGE -->
+    <div class="sidebar-tabpane active sidebar-main-scroll" id="sb-pane-mise">
+
+      <!-- ── Résumé projet cliquable ── -->
+      <div style="padding:0.85rem 1.1rem 0;border-bottom:1px solid var(--cream);">
+        <div id="mise-project-summary" onclick="openSettingsModal()" data-i18n-title="title_open_settings" title="Ouvrir les paramètres du projet" style="margin-bottom:0.85rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div id="mise-proj-title" data-i18n="sidebar_title_label">— Titre non défini —</div>
+              <div id="mise-proj-meta" data-i18n="sidebar_author_label">Auteur · Genre · Type</div>
+            </div>
+            <i class="ti ti-settings" style="font-size:13px;color:var(--ink-muted);opacity:0.6;"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Accordéon : Paramètres typographiques ── -->
+      <div class="sb-accordion open" id="acc-params">
+        <button class="sb-accordion-header" onclick="toggleAccordion('acc-params')" aria-expanded="true" aria-controls="acc-params-body">
+          <span class="sb-accordion-title" data-i18n="acc_typo">Paramètres typographiques</span>
+          <span class="sb-accordion-arrow" aria-hidden="true">▼</span>
+        </button>
+        <div class="sb-accordion-body">
+          <div class="param-row">
+            <span class="param-label" data-i18n="param_fontsize">Corps du texte</span>
+            <input type="number" id="font-size" value="12" min="9" max="14" step="0.5" onchange="applySettings()"> pt
+          </div>
+          <div class="param-row">
+            <span class="param-label" data-i18n="param_lineheight">Interligne</span>
+            <select id="line-height" onchange="applySettings()">
+              <option value="1.6">1,6</option>
+              <option value="1.75" selected>1,75</option>
+              <option value="2.0">2,0</option>
+            </select>
+          </div>
+          <div class="param-row">
+            <span class="param-label" data-i18n="param_indent">Tabulation</span>
+            <select id="indent-size" onchange="applySettings()">
+              <option value="1em">1 em</option>
+              <option value="1.5em" selected>1,5 em</option>
+              <option value="2em">2 em</option>
+            </select>
+          </div>
+          <div class="param-row">
+            <span class="param-label" data-i18n="param_format">Format</span>
+            <select id="page-format" onchange="applySettings()">
+              <optgroup label="— Mise en page édition —">
+                <option value="A4">A4 · 210×297 mm (manuscrit)</option>
+                <option value="ROMAN">Roman · 135×215 mm (standard)</option>
+                <option value="A5">A5 · 148×210 mm (poche moyen)</option>
+                <option value="POCHE">Poche · 110×178 mm (grand poche)</option>
+              </optgroup>
+              <optgroup label="— Soumission éditeur —">
+                <option value="SUBMIT_AMI">Soumission Pro (double interligne)</option>
+                <option value="SUBMIT_STD">Soumission standard FR</option>
+              </optgroup>
+            </select>
+          </div>
+          <div id="submit-info-box" style="display:none;background:var(--paper);border:1px solid var(--cream);border-radius:5px;padding:8px 10px;margin-top:6px;font-size:11px;color:var(--ink-soft);line-height:1.55;">
+            <div id="submit-info-text"></div>
+          </div>
+          <div class="param-row" id="row-folio-start">
+            <span class="param-label" data-i18n="param_folio_start">1ère page numérotée</span>
+            <input type="number" id="folio-start" value="1" min="1" max="999" onchange="applySettings()">
+          </div>
+          <div class="param-row" id="row-header-courant">
+            <span class="param-label" data-i18n="param_header_courant">En-tête courant</span>
+            <input type="text" id="header-courant" aria-label="En-tête courant" placeholder="Titre ou auteur" data-i18n-placeholder="search_placeholder" style="width:120px;font-size:12px;" oninput="markUnsaved();formatRoman()">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Page de garde → dans modal Paramètres ── -->
+      <div class="sb-accordion" id="acc-garde" style="display:none;">
+        <button class="sb-accordion-header" onclick="toggleAccordion('acc-garde')" aria-expanded="false" aria-controls="acc-garde-body">
+          <span class="sb-accordion-title">Page de garde</span>
+          <span class="sb-accordion-arrow" aria-hidden="true">▼</span>
+        </button>
+        <div class="sb-accordion-body">
+          <div class="param-row">
+            <span class="param-label" data-i18n="field_title_label">Titre</span>
+            <input type="text" id="pg-titre" aria-label="Titre du roman" placeholder="Titre du roman" data-i18n-placeholder="field_title_placeholder" style="width:120px;font-size:12px;" oninput="markUnsaved();formatRoman()">
+          </div>
+          <div class="param-row">
+            <span class="param-label" data-i18n="field_author_label">Auteur</span>
+            <input type="text" id="pg-auteur" aria-label="Nom de l'auteur" placeholder="Prénom Nom" data-i18n-placeholder="field_author_placeholder" style="width:120px;font-size:12px;" oninput="markUnsaved();formatRoman()">
+          </div>
+          <div class="param-row">
+            <span class="param-label" data-i18n="field_subtitle_label">Sous-titre</span>
+            <input type="text" id="pg-soustitre" aria-label="Sous-titre" placeholder="Sous-titre" style="width:120px;font-size:12px;" oninput="markUnsaved();formatRoman()">
+          </div>
+          <div class="param-row">
+            <span class="param-label">Genre</span>
+            <input type="text" id="pg-genre" aria-label="Genre littéraire" placeholder="Roman, Nouvelles…" style="width:120px;font-size:12px;" oninput="markUnsaved();formatRoman()">
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /sb-pane-mise -->
+
+    <!-- PANNEAU STRUCTURE supprimé — fusionné dans le panneau corkboard ci-dessous -->
+
+    <!-- Popup résumé IA chapitre -->
+    <!-- chapter-summary-popup déplacé dans <body> via JS pour éviter le clipping -->
+    <!-- PANNEAU : IMAGES -->
+    <div class="sidebar-tabpane sidebar-main-scroll" id="sb-pane-images" style="display:none;">
+      <div style="padding:1rem 1.25rem;">
+        <div class="img-drop-zone" onclick="document.getElementById('img-input').click()">
+          <input type="file" id="img-input" accept="image/*" onchange="handleImageUpload(event)">
+          <div class="icon">🖼</div>
+          <p data-i18n="img_drop_hint">Cliquez ou déposez une image</p>
+        </div>
+        <div id="img-list"></div>
+      </div>
+    </div><!-- /sb-pane-images -->
+
+    <!-- PANNEAU : NOTES -->
+    <div class="sidebar-tabpane" id="sb-pane-notes" style="display:none;flex-direction:column;overflow:hidden;">
+
+      <!-- En-tête avec barre de progression -->
+      <div class="notes-manager-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);" data-i18n="notes_panel_title">Notes d'auteur</span>
+        </div>
+        <span id="notes-counter-text" style="font-size:10.5px;color:var(--ink-soft);">0 notes</span>
+        <div class="notes-progress-bar">
+          <div class="notes-progress-fill" id="notes-progress-fill" style="width:0%"></div>
+        </div>
+        <div class="notes-progress-label">
+          <span id="notes-done-count">0 traitées</span>
+          <span id="notes-remain-count">0 restantes</span>
+        </div>
+      </div>
+
+      <!-- Barre d'insertion rapide — couleurs uniquement -->
+      <div class="note-inline-toolbar">
+        <button class="nit-btn nit-color" id="nit-jaune"  onclick="insertNoteHL('jaune')"  title="Annoter en jaune"  data-i18n-title="title_nit_jaune"  style="--nit-c:#ca8a04;--nit-bg:rgba(253,224,71,0.35)"><span class="nit-dot" style="background:#ca8a04"></span><span data-i18n="nit_color_jaune">Jaune</span></button>
+        <button class="nit-btn nit-color" id="nit-rose"   onclick="insertNoteHL('rose')"   title="Annoter en rose"   data-i18n-title="title_nit_rose"   style="--nit-c:#be185d;--nit-bg:rgba(249,168,212,0.35)"><span class="nit-dot" style="background:#be185d"></span><span data-i18n="nit_color_rose">Rose</span></button>
+        <button class="nit-btn nit-color" id="nit-vert"   onclick="insertNoteHL('vert')"   title="Annoter en vert"   data-i18n-title="title_nit_vert"   style="--nit-c:#15803d;--nit-bg:rgba(134,239,172,0.35)"><span class="nit-dot" style="background:#15803d"></span><span data-i18n="nit_color_vert">Vert</span></button>
+        <button class="nit-btn nit-color" id="nit-bleu"   onclick="insertNoteHL('bleu')"   title="Annoter en bleu"   data-i18n-title="title_nit_bleu"   style="--nit-c:#1d4ed8;--nit-bg:rgba(147,197,253,0.35)"><span class="nit-dot" style="background:#1d4ed8"></span><span data-i18n="nit_color_bleu">Bleu</span></button>
+        <button class="nit-btn nit-color" id="nit-violet" onclick="insertNoteHL('violet')" title="Annoter en violet" data-i18n-title="title_nit_violet" style="--nit-c:#7c3aed;--nit-bg:rgba(196,181,253,0.35)"><span class="nit-dot" style="background:#7c3aed"></span><span data-i18n="nit_color_violet">Violet</span></button>
+        <button class="nit-btn nit-color" id="nit-orange" onclick="insertNoteHL('orange')" title="Annoter en orange" data-i18n-title="title_nit_orange" style="--nit-c:#c2410c;--nit-bg:rgba(253,186,116,0.35)"><span class="nit-dot" style="background:#c2410c"></span><span data-i18n="nit_color_orange">Orange</span></button>
+        <button class="nit-btn nit-color" id="nit-rouge"  onclick="insertNoteHL('rouge')"  title="Annoter en rouge"  data-i18n-title="title_nit_rouge"  style="--nit-c:#dc2626;--nit-bg:rgba(252,165,165,0.35)"><span class="nit-dot" style="background:#dc2626"></span><span data-i18n="nit_color_rouge">Rouge</span></button>
+        <button class="nit-btn nit-color" id="nit-cyan"   onclick="insertNoteHL('cyan')"   title="Annoter en cyan"   data-i18n-title="title_nit_cyan"   style="--nit-c:#0e7490;--nit-bg:rgba(103,232,249,0.35)"><span class="nit-dot" style="background:#0e7490"></span><span data-i18n="nit_color_cyan">Cyan</span></button>
+      </div>
+
+      <!-- Filtres : statut + couleurs uniquement -->
+      <div class="notes-filters">
+        <button class="note-filter-btn active" id="nf-all"    onclick="noteFilter('all')"    data-i18n="nf_all">Toutes</button>
+        <button class="note-filter-btn"        id="nf-todo"   onclick="noteFilter('todo')"   data-i18n="nf_todo">À faire</button>
+        <button class="note-filter-btn"        id="nf-done"   onclick="noteFilter('done')"   data-i18n="nf_done">Traitées</button>
+      </div>
+      <div class="notes-filters notes-color-filters">
+        <button class="note-filter-btn nf-color" id="nf-jaune"  onclick="noteFilter('color:jaune')"  style="--nf-c:#ca8a04" title="Jaune"  data-i18n-title="color_jaune" ><span class="nf-dot" style="background:#ca8a04"></span></button>
+        <button class="note-filter-btn nf-color" id="nf-rose"   onclick="noteFilter('color:rose')"   style="--nf-c:#be185d" title="Rose"   data-i18n-title="color_rose"  ><span class="nf-dot" style="background:#be185d"></span></button>
+        <button class="note-filter-btn nf-color" id="nf-vert"   onclick="noteFilter('color:vert')"   style="--nf-c:#15803d" title="Vert"   data-i18n-title="color_vert"  ><span class="nf-dot" style="background:#15803d"></span></button>
+        <button class="note-filter-btn nf-color" id="nf-bleu"   onclick="noteFilter('color:bleu')"   style="--nf-c:#1d4ed8" title="Bleu"   data-i18n-title="color_bleu"  ><span class="nf-dot" style="background:#1d4ed8"></span></button>
+        <button class="note-filter-btn nf-color" id="nf-violet" onclick="noteFilter('color:violet')" style="--nf-c:#7c3aed" title="Violet" data-i18n-title="color_violet"><span class="nf-dot" style="background:#7c3aed"></span></button>
+        <button class="note-filter-btn nf-color" id="nf-orange" onclick="noteFilter('color:orange')" style="--nf-c:#c2410c" title="Orange" data-i18n-title="color_orange"><span class="nf-dot" style="background:#c2410c"></span></button>
+        <button class="note-filter-btn nf-color" id="nf-rouge"  onclick="noteFilter('color:rouge')"  style="--nf-c:#dc2626" title="Rouge"  data-i18n-title="color_rouge" ><span class="nf-dot" style="background:#dc2626"></span></button>
+        <button class="note-filter-btn nf-color" id="nf-cyan"   onclick="noteFilter('color:cyan')"   style="--nf-c:#0e7490" title="Cyan"   data-i18n-title="color_cyan"  ><span class="nf-dot" style="background:#0e7490"></span></button>
+      </div>
+
+      <!-- Liste des notes -->
+      <div class="notes-list-scroll" id="notes-list">
+        <div class="note-empty-state">
+          <span class="icon">💬</span>
+          Aucune note dans le texte.<br>
+          Utilisez <strong>[NOTE: texte]</strong><br>
+          ou les boutons d'insertion ci-dessus.
+        </div>
+      </div>
+
+      <!-- Actions bas -->
+      <div class="notes-actions-bar">
+        <button class="notes-action-btn" onclick="notesRefresh()" data-i18n-title="notes_refresh_btn" title="Relire les notes depuis le texte">⟳ Rafraîchir</button>
+      </div>
+
+    </div><!-- /sb-pane-notes -->
+
+    <!-- PANNEAU : STATISTIQUES -->
+    <div class="sidebar-tabpane" id="sb-pane-stats" style="display:none;flex-direction:column;overflow-y:auto;">
+      <div class="sidebar-section" style="border-bottom:1px solid var(--cream);">
+        <div class="sidebar-title" data-i18n="sidebar_stats">Statistiques</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-val" id="stat-words">0</span>
+            <span class="stat-lbl" data-i18n="stat_words">mots</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-val" id="stat-chars">0</span>
+            <span class="stat-lbl" data-i18n="stat_chars">caractères</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-val" id="stat-chapters">0</span>
+            <span class="stat-lbl" data-i18n="stat_chapters">chapitres</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-val" id="stat-pages">~0</span>
+            <span class="stat-lbl" id="stat-pages-lbl" data-i18n="stat_pages">pages est.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Objectif de mots -->
+      <div class="word-goal-bar-wrap">
+        <div class="word-goal-header">
+          <span class="word-goal-label" data-i18n="word_goal_session">Objectif session</span>
+          <span class="word-goal-count" id="wg-count">0 / 500</span>
+        </div>
+        <div class="word-goal-track">
+          <div class="word-goal-fill" id="wg-fill" style="width:0%"></div>
+        </div>
+        <div class="word-goal-input-row">
+          <label for="wg-target" data-i18n="word_goal_target">Cible :</label>
+          <input type="number" id="wg-target" min="50" max="50000" step="50" value="500" oninput="saveWordGoalPref();updateWordGoal()">
+          <span style="font-size:10.5px;color:var(--ink-muted);" data-i18n="word_goal_unit">mots</span>
+          <button onclick="resetWordGoal()" style="margin-left:auto;font-size:10px;padding:2px 7px;border:1px solid var(--cream);border-radius:3px;background:transparent;cursor:pointer;color:var(--ink-muted);font-family:'DM Sans',sans-serif;" data-i18n-title="word_goal_reset_title" title="Réinitialiser le compteur de session">↺</button>
+        </div>
+        <!-- Objectif journalier -->
+        <div style="margin-top:8px;padding-top:7px;border-top:1px dashed var(--cream);">
+          <div class="word-goal-header">
+            <span class="word-goal-label" style="color:var(--gold);" data-i18n="word_goal_daily">📅 Objectif du jour</span>
+            <span class="word-goal-count" id="wg-daily-count" style="color:var(--gold);">0 / 1 000</span>
+          </div>
+          <div class="word-goal-track">
+            <div class="word-goal-fill" id="wg-daily-fill" style="width:0%;background:linear-gradient(90deg,#d4a843,#c9956a);"></div>
+          </div>
+          <div class="word-goal-input-row" style="margin-top:5px;">
+            <label for="wg-daily-target" data-i18n="word_goal_target">Cible :</label>
+            <input type="number" id="wg-daily-target" min="100" max="100000" step="100" value="1000" oninput="saveDailyGoalPref();updateDailyWordGoal()">
+            <span style="font-size:10.5px;color:var(--ink-muted);" data-i18n="word_daily_unit">mots/jour</span>
+            <button onclick="resetDailyGoal()" style="margin-left:auto;font-size:10px;padding:2px 7px;border:1px solid var(--cream);border-radius:3px;background:transparent;cursor:pointer;color:var(--ink-muted);font-family:'DM Sans',sans-serif;" data-i18n-title="word_daily_reset_title" title="Réinitialiser l'objectif du jour">↺</button>
+          </div>
+          <div id="wg-daily-info" style="font-size:9.5px;color:var(--ink-muted);margin-top:3px;text-align:right;font-style:italic;"></div>
+        </div>
+      </div>
+    </div><!-- /sb-pane-stats -->
+
+    <!-- PANNEAU : OUTILS D'ÉCRITURE -->
+    <div class="sidebar-tabpane" id="sb-pane-outils" style="display:none;flex-direction:column;overflow:hidden;">
+
+      <!-- Config IA compacte -->
+      <div style="padding:7px 12px;border-bottom:1px solid var(--cream);background:var(--parchment);display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <span class="wt-api-status-dot" id="wt-api-dot-sb" style="flex-shrink:0;"></span>
+        <span style="font-size:11px;color:var(--ink-soft);flex:1;" data-i18n="wt_ai_config">Configuration IA</span>
+        <button onclick="openSettingsModal('api')" style="font-size:10px;padding:3px 8px;border:1px solid var(--cream);border-radius:4px;background:transparent;color:var(--ink-muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.12s;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background='transparent'" data-i18n="btn_config_ia">⚙ Config IA</button>
+      </div>
+
+      <!-- Corps scrollable -->
+      <div class="wt-body" id="wt-body" style="flex:1;overflow-y:auto;padding:12px;min-height:0;">
+
+        <!-- TAB: CORRECTEUR -->
+        <div id="wt-pane-correct">
+          <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
+            <span style="font-size:10px;color:var(--ink-muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;" data-i18n="wt_engine_label">Moteur</span>
+            <div style="display:flex;gap:4px;flex:1;">
+              <button id="eng-lt"     class="wt-engine-btn active" onclick="setCorrectEngine('lt')"     data-i18n-title="title_engine_lt"     title="LanguageTool — gratuit, sans clé API"><span data-i18n="engine_lt">🛡 LT</span></button>
+              <button id="eng-claude" class="wt-engine-btn"        onclick="setCorrectEngine('claude')" data-i18n-title="title_engine_ai"     title="Nécessite une clé API du fournisseur sélectionné — correction contextuelle IA"><span data-i18n="engine_ai">✦ IA</span></button>
+              <button id="eng-both"   class="wt-engine-btn"        onclick="setCorrectEngine('both')"   data-i18n-title="title_engine_both"   title="Les deux combinés pour un résultat complet"><span data-i18n="engine_both">⚡ Les deux</span></button>
+            </div>
+          </div>
+          <div id="wt-engine-info" style="font-size:10.5px;color:var(--ink-muted);font-style:italic;margin-bottom:8px;padding:6px 8px;background:var(--paper);border-radius:4px;border:1px solid var(--cream);line-height:1.5;" data-i18n="wt_engine_info_lt">
+            🛡 <strong>LanguageTool</strong> — Gratuit, sans clé API.
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
+            <label style="display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--ink-muted);cursor:pointer;">
+              <input type="checkbox" id="wt-chapter-only" style="margin:0;"> <span data-i18n="wt_chapter_only">Chapitre actif seulement</span>
+            </label>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:2px;">
+            <button class="wt-run-btn" id="wt-btn-correct"  onclick="runCorrector()"  style="flex:1;margin:0;" data-i18n="btn_analyze">🔍 Analyser</button>
+            <button class="wt-run-btn" id="wt-btn-autofix"  onclick="runAutoFix()"   style="flex:1;margin:0;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_autofix">⚡ Corriger</button>
+          </div>
+          <div id="wt-correct-results">
+            <div class="wt-empty" data-i18n="wt_empty_correct_full">Cliquez sur <strong>Analyser</strong> pour lancer la vérification.</div>
+          </div>
+        </div>
+
+        <!-- TAB: STYLE -->
+        <div id="wt-pane-style" style="display:none;">
+          <div style="display:flex;gap:6px;margin-bottom:2px;">
+            <button class="wt-run-btn" id="wt-btn-style"    onclick="runStyleAnalysis()" style="flex:1;margin:0;" data-i18n="btn_style_analyze">📊 Style</button>
+            <button class="wt-run-btn" id="wt-btn-style-ai" onclick="runStyleAI()"       style="flex:1;margin:0;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_style_ai">✦ IA</button>
+          </div>
+          <div id="wt-style-ai-box" style="display:none;margin-bottom:8px;padding:10px 12px;background:var(--parchment);border:1px solid var(--cream);border-radius:6px;font-size:11.5px;line-height:1.7;color:var(--ink-soft);"></div>
+          <div id="wt-style-results">
+            <div class="wt-empty" data-i18n="wt_empty_style">Cliquez sur Analyser pour obtenir des statistiques de style.</div>
+          </div>
+        </div>
+
+        <!-- TAB: STATS AVANCÉES -->
+        <div id="wt-pane-stats" style="display:none;">
+          <div style="display:flex;gap:6px;margin-bottom:2px;">
+            <button class="wt-run-btn" id="wt-btn-stats"    onclick="runStatsAnalysis()" style="flex:1;margin:0;" data-i18n="btn_stats_calc">📈 Calculer</button>
+            <button class="wt-run-btn" id="wt-btn-stats-ai" onclick="runStatsAI()"       style="flex:1;margin:0;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_stats_ai">✦ IA</button>
+          </div>
+          <div id="wt-stats-ai-box" style="display:none;margin-bottom:8px;padding:10px 12px;background:var(--parchment);border:1px solid var(--cream);border-radius:6px;font-size:11.5px;line-height:1.7;color:var(--ink-soft);"></div>
+          <div id="wt-stats-results">
+            <div class="wt-empty" data-i18n="wt_empty_stats">Cliquez pour obtenir des statistiques détaillées.</div>
+          </div>
+        </div>
+
+        <!-- TAB: SYNONYMES -->
+        <div id="wt-pane-syn" style="display:none;">
+          <!-- En-tête : indicateur IA -->
+          <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;margin-bottom:8px;background:var(--paper);border:1px solid var(--cream);border-radius:5px;font-size:10px;color:var(--ink-muted);">
+            <span id="wt-syn-dot" style="width:7px;height:7px;border-radius:50%;background:#6b7280;flex-shrink:0;transition:background .3s;"></span>
+            <span id="wt-syn-source-label" data-i18n="synonyms_hint">Synonymes IA · Clé API requise</span>
+          </div>
+          <!-- Champ de recherche -->
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <input type="text" id="wonef-search-input" placeholder="Mot à chercher…" data-i18n-placeholder="synonyms_placeholder"
+              style="flex:1;font-size:12px;padding:5px 8px;border:1px solid var(--cream);border-radius:4px;background:var(--parchment);color:var(--ink);outline:none;"
+              onkeydown="if(event.key==='Enter')runSynonyms()">
+          </div>
+          <!-- Hint sélection -->
+          <div class="wt-selection-hint" id="wt-syn-hint" style="margin-bottom:6px;">
+            Sélectionnez un mot dans l'éditeur <em>ou</em> tapez-le ci-dessus.
+          </div>
+          <!-- Bouton -->
+          <button class="wt-run-btn" id="wt-btn-syn" onclick="runSynonyms()">🔍 Chercher les synonymes</button>
+          <!-- Résultats -->
+          <div id="wt-syn-results"></div>
+        </div>
+
+        <!-- TAB: COHÉRENCE NARRATIVE IA -->
+        <div id="wt-pane-coherence" style="display:none;">
+          <div style="margin-bottom:10px;">
+            <button class="wt-run-btn" id="wt-btn-coherence" onclick="runCoherenceCheck()" data-i18n="btn_coherence" style="width:100%;margin:0;background:var(--gold-dark);color:var(--ink);border-color:var(--gold);font-weight:500;">
+              🧩 Vérifier la cohérence narrative
+            </button>
+            <div style="font-size:9.5px;color:var(--ink-muted);font-style:italic;margin-top:5px;line-height:1.5;text-align:center;" data-i18n="coherence_sub_hint">
+              Personnages · Lieux · Continuité — IA requise
+            </div>
+          </div>
+          <div id="wt-coherence-results">
+            <div class="wt-empty" data-i18n="wt_empty_coherence">Cliquez pour analyser la cohérence de votre roman (personnages, lieux, continuité).</div>
+          </div>
+        </div>
+
+        <!-- TAB: RAPPORT ÉDITORIAL -->
+        <div id="wt-pane-rapport" style="display:none;">
+          <div style="margin-bottom:10px;">
+            <button class="wt-run-btn" id="wt-btn-rapport" onclick="runRapportEditorial()" style="width:100%;margin:0;background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500;" data-i18n="btn_rapport">
+              📋 Rapport éditorial
+            </button>
+            <div style="font-size:9.5px;color:var(--ink-muted);font-style:italic;margin-top:5px;line-height:1.5;text-align:center;" data-i18n="rapport_sub_hint">
+              Analyse complète · IA requise
+            </div>
+          </div>
+          <div id="wt-rapport-results">
+            <div class="wt-empty" data-i18n="wt_empty_rapport_full">Cliquez sur <strong>Générer le rapport</strong> pour lancer l'analyse complète.</div>
+          </div>
+        </div>
+
+      </div><!-- /wt-body -->
+
+      <!-- Rapport éditorial — bouton bas fixe -->
+      <div class="wt-rapport-btn" id="wt-rapport-footer" style="flex-shrink:0;">
+        <button onclick="switchWtTab('rapport'); runRapportEditorial();" data-i18n="btn_rapport_footer" title="Lance les 3 analyses et compile un rapport éditorial structuré (IA requise)">
+          📋 Générer le rapport éditorial
+        </button>
+      </div>
+
+    </div><!-- /sb-pane-outils -->
+
+    <!-- PANNEAU : VERSIONS / SNAPSHOTS -->
+    <div class="sidebar-tabpane sidebar-main-scroll" id="sb-pane-versions" style="display:none;">
+      <div style="padding:1rem 1.25rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <span class="sidebar-title" data-i18n="versions_title">Versions du chapitre</span>
+          <button onclick="createSnapshot()" class="btn btn-ghost" style="font-size:11px;padding:4px 10px;border:1px solid var(--accent-light);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;" data-i18n="versions_save_btn">+ Snapshot</button>
+        </div>
+        <div style="font-size:11px;color:var(--ink-muted);margin-bottom:10px;" data-i18n="versions_hint">Sauvegardez des instantanés nommés de votre chapitre actif.</div>
+        <div id="versions-chapter-select-row" style="margin-bottom:10px;">
+          <select id="versions-chapter-sel" style="width:100%;font-size:12px;font-family:'DM Sans',sans-serif;border:1px solid var(--cream);border-radius:4px;background:var(--paper);color:var(--ink);padding:4px 8px;" onchange="versionsRefreshList()">
+            <option value="" data-i18n="versions_select_chapter">— Choisir un chapitre —</option>
+          </select>
+        </div>
+        <div id="versions-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+    </div><!-- /sb-pane-versions -->
+
+    <!-- PANNEAU : VUE CARTE (structure + corkboard fusionnés) -->
+    <div class="sidebar-tabpane sidebar-main-scroll" id="sb-pane-corkboard" style="display:none;">
+      <!-- chapter-list caché — nécessaire pour compatibilité JS updateChapterList -->
+      <div id="chapter-list" style="display:none;"></div>
+      <div style="padding:0.75rem 1rem 1rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;">
+          <span class="sidebar-title" style="margin-bottom:0;">Vue carte</span>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <input type="text" id="cork-tag-filter" aria-label="Filtrer par tag" placeholder="Filtrer par tag…" style="width:95px;font-size:11px;font-family:'DM Sans',sans-serif;border:1px solid var(--cream);border-radius:4px;background:var(--paper);color:var(--ink);padding:3px 7px;" oninput="corkboardRender()">
+            <button id="cork-add-chapter-btn" title="Nouveau chapitre (mode isolé)"
+              style="width:24px;height:24px;border-radius:5px;border:1px solid var(--cream);background:var(--paper);color:var(--ink-muted);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;font-family:'DM Sans',sans-serif;transition:background 0.12s,color 0.12s;"
+              onmouseenter="this.style.background='var(--cream)';this.style.color='var(--accent)';"
+              onmouseleave="this.style.background='var(--paper)';this.style.color='var(--ink-muted)';"
+              onclick="corkAddChapter()">+</button>
+          </div>
+        </div>
+        <div id="corkboard-cards" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+    </div><!-- /sb-pane-corkboard -->
+
+    </div><!-- /sidebar-panel -->
+
+    <!-- ZONE FIXE BASSE MASQUÉE — contenu déplacé dans sb-pane-stats -->
+    <div class="sidebar-bottom-fixed" style="display:none;">
+    </div><!-- /sidebar-bottom-fixed -->
+
+  </aside>
+  <div id="sidebar-resize-handle" title="Redimensionner la barre latérale"></div>
+
+  <!-- ÉDITEUR + PRÉVISUALISATION -->
+  <main class="editor-area" id="editor-main" role="main" aria-label="Zone d'édition">
+
+    <!-- ══ BARRE PRINCIPALE ══ -->
+    <div class="pane-label pane-label-topbar">
+
+      <!-- Zone gauche : label + formatage -->
+      <div class="ptb-left">
+        <span class="pane-label-text" data-i18n="pane_raw_text">Texte brut</span>
+        <div class="ptb-vsep"></div>
+        <div class="fmt-btns">
+          <button class="fmt-btn" onclick="edWrap('**','**')" title="Gras (Ctrl+B)" aria-label="Gras"><b>B</b></button>
+          <button class="fmt-btn" onclick="edWrap('*','*')"   title="Italique (Ctrl+I)" aria-label="Italique"><i>I</i></button>
+          <button class="fmt-btn" onclick="edWrap('__','__')" title="Souligné (Ctrl+U)" aria-label="Souligné"><u>S</u></button>
+          <button class="fmt-btn" onclick="edWrap('~~','~~')" title="Barré (Ctrl+Alt+X)" aria-label="Barré"><s>B̶</s></button>
+          <div class="fmt-sep"></div>
+          <button class="fmt-btn fmt-btn-tw" id="btn-typewriter" onclick="toggleTypewriter()" title="Mode machine à écrire (Ctrl+Maj+T)" aria-label="Mode machine à écrire" aria-pressed="false">⌨</button>
+          <button class="fmt-btn fmt-btn-tw" onclick="insertComment()" title="Note d'auteur (Ctrl+Maj+N)" aria-label="Insérer une note d'auteur">💬</button>
+          <div class="fmt-sep"></div>
+          <span id="smartquotes-indicator" onclick="toggleSmartQuotes()" title="">« »</span>
+          <button class="fmt-btn fmt-btn-tw" onclick="toggleRepPanel()" title="Répétitions proches — détecte les mots répétés dans un rayon de 200 mots" id="btn-rep-detect">↩↩</button>
+          <div class="fmt-sep"></div>
+          <button class="fmt-btn fmt-btn-tw" onclick="aiContinueText()" id="btn-ai-continue" title="Continuation IA — génère une suite de texte à partir du contexte autour du curseur (nécessite une clé API)" style="color:var(--gold);font-weight:600;">✦→</button>
+        </div>
+        <div class="ptb-vsep"></div>
+        <div class="editor-search" id="editor-search">
+          <input type="text" id="es-input" aria-label="Rechercher dans le document" placeholder="Rechercher…" data-i18n-placeholder="placeholder_search" oninput="esSearch()" onkeydown="esKeyNav(event)" onfocus="_esActive=true" onblur="setTimeout(()=>{if(document.activeElement!==document.getElementById('raw-input'))_esActive=false;},100)" autocomplete="off" spellcheck="false">
+          <span class="es-count" id="es-count"></span>
+          <button class="es-nav" id="es-prev" onclick="esNav(-1)" title="Précédent" disabled>▲</button>
+          <button class="es-nav" id="es-next" onclick="esNav(1)"  title="Suivant"   disabled>▼</button>
+          <button class="es-nav" onclick="esToggleReplace()" title="Remplacer" id="es-repl-toggle" style="font-size:11px;padding:2px 5px;">±</button>
+          <select id="es-scope" title="Portée" style="display:none;font-size:10px;font-family:'DM Sans',sans-serif;border:none;background:transparent;color:var(--ink-muted);cursor:pointer;outline:none;padding:2px;max-width:80px;" onchange="esSearch()">
+            <option value="all">Tout</option>
+            <option value="chapter">Chapitre</option>
+          </select>
+          <button class="es-close" onclick="esClear()" title="Fermer">✕</button>
+        </div>
+      </div>
+
+      <!-- Zone centre : breadcrumb -->
+      <div class="ptb-center">
+        <div id="breadcrumb-bar" style="border:none;background:transparent;padding:0;margin:0;min-height:auto;display:flex;align-items:center;gap:5px;overflow:hidden;min-width:0;">
+          <i class="ti ti-book-2" style="font-size:11px;opacity:0.35;flex-shrink:0;"></i>
+          <span class="bc-item" id="bc-root" data-i18n="bc_novel" style="font-size:11px;flex-shrink:0;">Roman</span>
+          <span class="bc-sep" style="font-size:9px;flex-shrink:0;">›</span>
+          <span class="bc-item current" id="bc-chapter" data-i18n="bc_no_chapter" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span>
+          <span class="bc-chapter-pages" id="bc-pages" style="flex-shrink:0;"></span>
+          <span id="bc-isolated-badge" style="flex-shrink:0;">ISOLÉ</span>
+        </div>
+      </div>
+
+      <!-- Zone droite : actions + vues + zoom -->
+      <div class="ptb-right">
+        <button class="fmt-btn fmt-btn-format" onclick="formatRoman()" title="Formater (Ctrl+Maj+F)">
+          <i class="ti ti-sparkles" style="font-size:12px;color:var(--gold);pointer-events:none;"></i>
+          <span style="font-size:11px;margin-left:3px;" data-i18n="btn_format">Formater</span>
+        </button>
+        <div class="ptb-vsep"></div>
+        <div style="display:flex;align-items:center;gap:2px;">
+          <button class="tool-btn tool-btn-sm active" id="btn-split"   onclick="setView('split')"   title="Côte à côte"><i class="ti ti-layout-columns" style="font-size:13px;pointer-events:none;"></i></button>
+          <button class="tool-btn tool-btn-sm"        id="btn-edit"    onclick="setView('edit')"    title="Édition"><i class="ti ti-pencil" style="font-size:13px;pointer-events:none;"></i></button>
+          <button class="tool-btn tool-btn-sm"        id="btn-preview" onclick="setView('preview')" title="Prévisualisation"><i class="ti ti-file-text" style="font-size:13px;pointer-events:none;"></i></button>
+        </div>
+        <div class="ptb-vsep"></div>
+        <button class="tool-btn tool-btn-sm" id="btn-isolated-mode" onclick="toggleIsolatedMode()" title="Mode chapitres isolés (Ctrl+Maj+I)">
+          <i class="ti ti-layout-navbar" style="font-size:13px;pointer-events:none;"></i>
+        </button>
+        <div class="ptb-vsep"></div>
+        <i class="ti ti-zoom-in" style="font-size:12px;opacity:0.4;flex-shrink:0;"></i>
+        <select id="preview-zoom" onchange="setPreviewZoom(this.value)" title="Zoom">
+          <option value="0.5">50%</option>
+          <option value="0.65">65%</option>
+          <option value="0.8">80%</option>
+          <option value="1" selected>100%</option>
+          <option value="1.2">120%</option>
+        </select>
+      </div>
+
+      <!-- Writing tools badge (compat JS) -->
+      <div style="display:none;">
+        <button id="wt-toggle-btn" style="display:none;"></button>
+        <span id="wt-error-badge" style="display:none;"></span>
+      </div>
+    </div>
+
+    <!-- ── BARRE D'ONGLETS CHAPITRES (mode isolé) ── -->
+    <div id="chapter-tabs-bar" style="display:none;">
+      <div id="chapter-tabs-list"></div>
+      <button id="chapter-tabs-add" onclick="isolatedAddChapter()" title="Nouveau chapitre">
+        <i class="ti ti-plus"></i>
+      </button>
+    </div>
+
+    <!-- Panneau répétitions flottant -->
+    <div id="rep-panel" role="dialog" aria-modal="true" aria-label="Remplacement">
+      <div style="font-weight:600;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px;" data-i18n="rep_title">Répétitions proches</div>
+      <div id="rep-list"></div>
+    </div>
+
+    <div class="panes" id="panes">
+      <!-- Zone de saisie -->
+      <div class="input-pane" id="input-pane">
+        <div class="es-replace-row" id="es-replace-row">
+          <input type="text" id="es-repl-input" aria-label="Remplacer par" placeholder="Remplacer par…" data-i18n-placeholder="placeholder_replace_by" autocomplete="off" spellcheck="false" onkeydown="esReplKeyNav(event)">
+          <button class="es-repl-btn" onclick="esReplaceOne()" data-i18n="btn_replace_one">Remplacer</button>
+          <button class="es-repl-btn" onclick="esReplaceAll()" data-i18n="btn_replace_all">Tout remplacer</button>
+        </div>
+        <div class="editor-input-wrap">
+          <!-- Mirror overlay annotations (invisible à l'export/preview) -->
+          <div id="annot-mirror" aria-hidden="true"></div>
+          <!-- Context menu éditeur -->
+          <div id="annot-ctx-menu" role="menu" aria-label="Menu contextuel éditeur">
+
+            <!-- ── Orthographe (LanguageTool) ── -->
+            <div id="actx-spell-section" style="display:none;">
+              <div class="actx-section-label">✦ Orthographe</div>
+              <div id="actx-spell-loading" style="padding:5px 12px 4px;font-size:11px;font-family:'DM Sans',sans-serif;color:var(--ink-muted);font-style:italic;display:none;">Vérification…</div>
+              <div id="actx-spell-suggestions"></div>
+              <div class="actx-sep"></div>
+            </div>
+
+            <!-- ── Presse-papiers ── -->
+            <div class="actx-section-label" data-i18n="ctx_section_clipboard">Presse-papiers</div>
+            <button class="actx-item actx-sel-only" id="actx-cut"   onclick="ctxCut()"  >
+              <span class="actx-item-left" data-i18n="ctx_cut">✂ Couper</span><span class="actx-shortcut">Ctrl+X</span>
+            </button>
+            <button class="actx-item actx-sel-only" id="actx-copy"  onclick="ctxCopy()" >
+              <span class="actx-item-left" data-i18n="ctx_copy">⎘ Copier</span><span class="actx-shortcut">Ctrl+C</span>
+            </button>
+            <button class="actx-item" id="actx-paste" onclick="ctxPaste()">
+              <span class="actx-item-left" data-i18n="ctx_paste">📋 Coller</span><span class="actx-shortcut">Ctrl+V</span>
+            </button>
+            <button class="actx-item" id="actx-copy-all" onclick="ctxCopyAll()">
+              <span class="actx-item-left" data-i18n="ctx_copy_all">📄 Copier tout le texte</span>
+            </button>
+
+            <div class="actx-sep"></div>
+
+            <!-- ── Édition ── -->
+            <div class="actx-section-label" data-i18n="ctx_section_edit">Édition</div>
+            <button class="actx-item" id="actx-select-all" onclick="ctxSelectAll()">
+              <span class="actx-item-left" data-i18n="ctx_select_all">⬜ Tout sélectionner</span><span class="actx-shortcut">Ctrl+A</span>
+            </button>
+            <button class="actx-item" id="actx-undo" onclick="ctxUndo()">
+              <span class="actx-item-left" data-i18n="ctx_undo">↩ Annuler</span><span class="actx-shortcut">Ctrl+Z</span>
+            </button>
+            <button class="actx-item" id="actx-redo" onclick="ctxRedo()">
+              <span class="actx-item-left" data-i18n="ctx_redo">↪ Rétablir</span><span class="actx-shortcut">Ctrl+Y</span>
+            </button>
+
+            <div class="actx-sep"></div>
+
+            <!-- ── Mise en forme (sélection seulement) ── -->
+            <div class="actx-section-label actx-sel-only" data-i18n="ctx_section_format">Mise en forme</div>
+            <button class="actx-item actx-sel-only" onclick="ctxWrap('*','*')">
+              <span class="actx-item-left" data-i18n="ctx_italic"><em style="font-family:'Source Serif 4',serif">I</em> Mettre en italique</span><span class="actx-shortcut">*texte*</span>
+            </button>
+            <button class="actx-item actx-sel-only" onclick="ctxWrap('**','**')">
+              <span class="actx-item-left" data-i18n="ctx_bold"><strong>B</strong> Mettre en gras</span><span class="actx-shortcut">**texte**</span>
+            </button>
+            <button class="actx-item actx-sel-only" onclick="ctxWrap('_','_')">
+              <span class="actx-item-left" data-i18n="ctx_underline"><u style="text-underline-offset:2px">S</u> Souligner</span><span class="actx-shortcut">_texte_</span>
+            </button>
+            <div class="actx-word-count actx-sel-only" id="actx-word-count"></div>
+
+            <div class="actx-sep actx-sel-only"></div>
+
+            <!-- ── Notes d'auteur (sélection seulement) ── -->
+            <div class="actx-section-label actx-sel-only" data-i18n="ctx_section_note">Note d'auteur</div>
+            <button class="actx-item actx-sel-only" onclick="annotCtxAddNote()">
+              <span class="actx-item-left" data-i18n="ctx_add_note">💬 Ajouter une note…</span>
+            </button>
+            <div class="actx-colors-wrap">
+              <div class="actx-colors" id="actx-colors"></div>
+            </div>
+
+            <div class="actx-sep"></div>
+
+            <!-- ── Outils ── -->
+            <div class="actx-section-label" data-i18n="ctx_section_tools">Outils</div>
+            <button class="actx-item actx-sel-only" id="actx-search-word" onclick="ctxSearchWord()">
+              <span class="actx-item-left" data-i18n="ctx_search_word">🔍 Chercher dans le texte</span>
+            </button>
+            <button class="actx-item" onclick="ctxInsertSceneBreak()">
+              <span class="actx-item-left" data-i18n="ctx_scene_break">— Insérer un saut de scène</span>
+            </button>
+            <button class="actx-item" onclick="ctxInsertImageTag()">
+              <span class="actx-item-left" data-i18n="ctx_image_tag">🖼 Insérer une balise image…</span>
+            </button>
+
+          </div>
+          <!-- Dialogue création/édition d'annotation -->
+          <div id="annot-dialog-overlay">
+            <div id="annot-dialog" role="dialog" aria-modal="true" aria-label="Annotation">
+              <div class="adlg-header">
+                <span id="adlg-title-label" data-i18n="adlg_title">Nouvelle annotation</span>
+                <button class="adlg-close" onclick="annotDialogCancel()">✕</button>
+              </div>
+              <div class="adlg-excerpt" id="adlg-excerpt"></div>
+              <textarea class="adlg-ta" id="adlg-note-text" rows="3" placeholder="Votre commentaire…" data-i18n-placeholder="adlg_placeholder"></textarea>
+              <div class="adlg-row">
+                <span data-i18n="adlg_color">Couleur :</span>
+                <div class="adlg-colors" id="adlg-colors"></div>
+              </div>
+              <div class="adlg-row">
+                <span data-i18n="adlg_priority">Priorité :</span>
+                <div class="adlg-prios" id="adlg-prios">
+                  <button class="adlg-prio active" data-prio="none" onclick="annotDlgSetPrio(this)">—</button>
+                  <button class="adlg-prio" data-prio="low"  onclick="annotDlgSetPrio(this)">🟢</button>
+                  <button class="adlg-prio" data-prio="mid"  onclick="annotDlgSetPrio(this)">🟡</button>
+                  <button class="adlg-prio" data-prio="high" onclick="annotDlgSetPrio(this)">🔴</button>
+                </div>
+              </div>
+              <div class="adlg-footer">
+                <button class="adlg-btn-cancel" onclick="annotDialogCancel()" data-i18n="adlg_cancel">Annuler</button>
+                <button class="adlg-btn-save"   onclick="annotDialogSave()"   data-i18n="adlg_save">Enregistrer</button>
+              </div>
+            </div>
+          </div>
+        <textarea id="raw-input" spellcheck="true" lang="fr" placeholder="Collez ici le texte de votre roman...
+
+L'application détecte automatiquement :
+• Les titres de chapitres (Chapitre I, CHAPITRE UN, I., etc.)
+• Les sous-titres et scènes
+• Les sauts de scène (*** ou ---)
+
+Elle applique ensuite les standards de l'édition :
+• Texte justifié avec tabulation en début de paragraphe
+• Titres centrés, hiérarchisés et bien dimensionnés
+• Typographie professionnelle
+
+Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRawInput()"></textarea>
+        </div><!-- /.editor-input-wrap -->
+        <div class="editor-statusbar" id="editor-statusbar">
+          <div class="statusbar-item">Ln <span id="sb-line">1</span></div>
+          <div class="statusbar-sep"></div>
+          <div class="statusbar-item">Col <span id="sb-col">1</span></div>
+          <div class="statusbar-sep"></div>
+          <div class="statusbar-item" id="sb-sel-wrap" style="display:none"><span class="statusbar-sel" id="sb-sel"></span> <span id="sb-sel-label" data-i18n="sb_selected">sélectionnés</span></div>
+          <div class="statusbar-sep" id="sb-sel-sep" style="display:none"></div>
+          <div class="statusbar-item"><span data-i18n="sb_tab_label">Tab</span> <span id="sb-tab">2 <span data-i18n="sb_tab_spaces">esp.</span></span></div>
+        </div>
+      </div>
+
+      <!-- Prévisualisation -->
+      <div class="preview-pane" id="preview-pane">
+        <div id="pages-container">
+          <div class="preview-placeholder" style="height:100%;min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--ink-muted);text-align:center;">
+            <div style="font-size:48px;opacity:0.3;">📖</div>
+            <p style="font-size:14px;max-width:220px;line-height:1.6;" data-i18n="preview_empty">Votre roman mis en page apparaîtra ici.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</main><!-- /editor-main -->
+
+  <!-- ANCIEN PANNEAU OUTILS (droite) — masqué, contenu déplacé dans sidebar ✍ -->
+  <div class="writing-tools-panel collapsed" id="wt-panel" style="display:none!important;width:0;border:none;">
+    <!-- Contenu déplacé dans #sb-pane-outils — panel vide conservé pour compat JS -->
+  </div><!-- /writing-tools-panel -->
+
+</div><!-- /workspace -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ── MODAL PARAMÈTRES DU PROJET ─────────────────────── -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="settings-modal-overlay" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title-h">
+  <div class="settings-modal-box">
+
+    <!-- Header -->
+    <div class="settings-modal-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="logo-mark" style="width:30px;height:30px;font-size:13px;">Æ</div>
+        <div>
+          <div class="settings-modal-title" id="settings-modal-title-h" data-i18n="settings_modal_title">Paramètres du projet</div>
+          <div class="settings-modal-sub" data-i18n="settings_modal_sub">Fiche Œuvre · Personnages · Lieux · Configuration IA</div>
+        </div>
+      </div>
+      <button class="settings-modal-close" onclick="closeSettingsModal()" data-i18n-title="title_close" title="Fermer (Échap)" aria-label="Fermer les paramètres">✕</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="settings-modal-tabs">
+      <button class="settings-tab active" id="stab-oeuvre"   onclick="switchSettingsTab('oeuvre')"   title="Informations sur l'œuvre"           data-i18n="stab_oeuvre">Œuvre</button>
+      <button class="settings-tab"        id="stab-auteur"   onclick="switchSettingsTab('auteur')"   title="Auteur et page de garde"            data-i18n="stab_auteur">Auteur</button>
+      <button class="settings-tab"        id="stab-persos"   onclick="switchSettingsTab('persos')"   title="Fiches personnages"                 data-i18n="stab_persos">Personnages</button>
+      <button class="settings-tab"        id="stab-lieux"    onclick="switchSettingsTab('lieux')"    title="Fiches lieux"                       data-i18n="stab_lieux">Lieux</button>
+      <button class="settings-tab"        id="stab-api"      onclick="switchSettingsTab('api')"      title="Configuration IA et clés API"        data-i18n="stab_api">Config IA</button>
+      <button class="settings-tab"        id="stab-prompts"  onclick="switchSettingsTab('prompts')"  title="Éditer les prompts IA utilisés par chaque module" data-i18n="stab_prompts">Prompts IA</button>
+      <button class="settings-tab"        id="stab-prefs"    onclick="switchSettingsTab('prefs')"    title="Préférences générales de l'application" data-i18n="stab_prefs">Préférences</button>
+    </div>
+
+    <!-- Body -->
+    <div class="settings-modal-body">
+
+      <!-- ── ONGLET ŒUVRE ── -->
+      <div id="spane-oeuvre" class="settings-pane active">
+        <div class="settings-section-title" data-i18n="settings_oeuvre_title">Fiche Œuvre</div>
+        <p class="settings-hint" data-i18n="settings_oeuvre_hint">Ces informations alimentent l'IA pour contextualiser ses analyses et suggestions.</p>
+
+        <div class="settings-grid-2">
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="oeuvre_type_label">Type d'œuvre</label>
+            <select id="sm-oeuvre-type" onchange="syncSettingsField('oeuvre-type','sm-oeuvre-type')">
+              <option value="" data-i18n="opt_choose">— choisir —</option>
+              <option value="Roman" data-i18n="opt_roman">Roman</option>
+              <option value="Nouvelle" data-i18n="opt_nouvelle">Nouvelle</option>
+              <option value="Novella">Novella</option>
+              <option value="Recueil de nouvelles" data-i18n="opt_recueil">Recueil de nouvelles</option>
+              <option value="Article" data-i18n="opt_article">Article</option>
+              <option value="Essai" data-i18n="opt_essai">Essai</option>
+              <option value="Scénario" data-i18n="opt_scenario">Scénario</option>
+              <option value="Poésie" data-i18n="opt_poesie">Poésie</option>
+              <option value="Pièce de théâtre" data-i18n="opt_theatre">Pièce de théâtre</option>
+            </select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="oeuvre_genre_label">Genre littéraire</label>
+            <select id="sm-oeuvre-genre" onchange="syncSettingsField('oeuvre-genre','sm-oeuvre-genre')">
+              <option value="" data-i18n="opt_choose">— choisir —</option>
+              <optgroup data-i18n-label="optgroup_fantastique" label="— Fantastique & Imaginaire —">
+                <option value="Fantasy classique">Fantasy classique</option>
+                <option value="Héroïc Fantasy">Héroïc Fantasy</option>
+                <option value="Dark Fantasy">Dark Fantasy</option>
+                <option value="Fantasy épique">Fantasy épique</option>
+                <option value="Fantasy urbaine">Fantasy urbaine</option>
+                <option value="Science-Fiction">Science-Fiction</option>
+                <option value="Space Opera">Space Opera</option>
+                <option value="Cyberpunk">Cyberpunk</option>
+                <option value="Steampunk">Steampunk</option>
+                <option value="Post-apocalyptique" data-i18n="opt_postapo">Post-apocalyptique</option>
+                <option value="Dystopie" data-i18n="opt_dystopie">Dystopie</option>
+                <option value="Uchronie">Uchronie</option>
+                <option value="Fantastique" data-i18n="opt_fantastique">Fantastique</option>
+                <option value="Horreur" data-i18n="opt_horreur">Horreur</option>
+                <option value="Gothique" data-i18n="opt_gothique">Gothique</option>
+              </optgroup>
+              <optgroup data-i18n-label="optgroup_litterature" label="— Littérature générale —">
+                <option value="Littérature blanche" data-i18n="opt_litterature_blanche">Littérature blanche</option>
+                <option value="Roman historique" data-i18n="opt_roman_historique">Roman historique</option>
+                <option value="Roman policier" data-i18n="opt_roman_policier">Roman policier</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Roman psychologique" data-i18n="opt_roman_psy">Roman psychologique</option>
+                <option value="Roman sentimental" data-i18n="opt_roman_sentimental">Roman sentimental</option>
+                <option value="Roman d'aventure" data-i18n="opt_roman_aventure">Roman d'aventure</option>
+                <option value="Roman initiatique" data-i18n="opt_roman_initiatique">Roman initiatique</option>
+                <option value="Autobiographie / Autofiction" data-i18n="opt_autobio">Autobiographie / Autofiction</option>
+                <option value="Satire" data-i18n="opt_satire">Satire</option>
+              </optgroup>
+              <optgroup data-i18n-label="optgroup_jeunesse" label="— Jeunesse —">
+                <option value="Jeunesse" data-i18n="opt_jeunesse">Jeunesse</option>
+                <option value="Young Adult">Young Adult</option>
+                <option value="New Adult">New Adult</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="oeuvre_epoque_label">Époque / Période</label>
+            <select id="sm-oeuvre-epoque" onchange="syncSettingsField('oeuvre-epoque','sm-oeuvre-epoque')">
+              <option value="" data-i18n="opt_choose">— choisir —</option>
+              <option value="Antiquité" data-i18n="opt_antiquite">Antiquité</option>
+              <option value="Moyen Âge" data-i18n="opt_moyen_age">Moyen Âge</option>
+              <option value="Renaissance" data-i18n="opt_renaissance">Renaissance</option>
+              <option value="XVIIe siècle">XVIIe siècle</option>
+              <option value="XVIIIe siècle">XVIIIe siècle</option>
+              <option value="XIXe siècle">XIXe siècle</option>
+              <option value="Début XXe (1900–1939)" data-i18n="opt_debut_xxe">Début XXe (1900–1939)</option>
+              <option value="Milieu XXe (1940–1980)" data-i18n="opt_milieu_xxe">Milieu XXe (1940–1980)</option>
+              <option value="Contemporain (1980–2024)" data-i18n="opt_contemporain">Contemporain (1980–2024)</option>
+              <option value="Futur proche" data-i18n="opt_futur_proche">Futur proche</option>
+              <option value="Futur lointain" data-i18n="opt_futur_lointain">Futur lointain</option>
+              <option value="Monde secondaire / fictif" data-i18n="opt_monde_fictif">Monde secondaire / fictif</option>
+              <option value="Époque indéterminée" data-i18n="opt_epoque_indet">Époque indéterminée</option>
+            </select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="oeuvre_monde_label">Monde / Univers</label>
+            <select id="sm-oeuvre-monde" onchange="syncSettingsField('oeuvre-monde','sm-oeuvre-monde')">
+              <option value="" data-i18n="opt_choose">— choisir —</option>
+              <option value="Réaliste (notre monde)" data-i18n="opt_realiste">Réaliste (notre monde)</option>
+              <option value="Monde secondaire inventé" data-i18n="opt_monde_invente">Monde secondaire inventé</option>
+              <option value="Monde post-apocalyptique" data-i18n="opt_monde_postapo">Monde post-apocalyptique</option>
+              <option value="Monde dystopique" data-i18n="opt_monde_dystopique">Monde dystopique</option>
+              <option value="Monde médiéval fantastique" data-i18n="opt_monde_medieval">Monde médiéval fantastique</option>
+              <option value="Monde futuriste high-tech" data-i18n="opt_monde_futuriste">Monde futuriste high-tech</option>
+              <option value="Monde spatial / galactique" data-i18n="opt_monde_spatial">Monde spatial / galactique</option>
+              <option value="Monde mythologique" data-i18n="opt_monde_mytho">Monde mythologique</option>
+              <option value="Monde parallèle / dimension alternative" data-i18n="opt_monde_parallele">Monde parallèle / dimension alternative</option>
+            </select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="oeuvre_narration_label">Point de vue narratif</label>
+            <select id="sm-oeuvre-narration" onchange="syncSettingsField('oeuvre-narration','sm-oeuvre-narration')">
+              <option value="" data-i18n="opt_choose">— choisir —</option>
+              <option value="1ère personne (je)" data-i18n="opt_narr_1">1ère personne (je)</option>
+              <option value="3ème personne omniscient" data-i18n="opt_narr_3omni">3ème personne omniscient</option>
+              <option value="3ème personne focal. interne" data-i18n="opt_narr_3focal">3ème personne focal. interne</option>
+              <option value="2ème personne (tu)" data-i18n="opt_narr_2">2ème personne (tu)</option>
+              <option value="Narration multiple (plusieurs POV)" data-i18n="opt_narr_multi">Narration multiple (plusieurs POV)</option>
+              <option value="Narration non-fiable" data-i18n="opt_narr_nonfiable">Narration non-fiable</option>
+            </select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="oeuvre_temps_label">Temps narratif principal</label>
+            <select id="sm-oeuvre-temps" onchange="syncSettingsField('oeuvre-temps','sm-oeuvre-temps')">
+              <option value="" data-i18n="opt_choose">— choisir —</option>
+              <option value="Passé simple + imparfait (récit classique)" data-i18n="opt_temps_passe">Passé simple + imparfait</option>
+              <option value="Présent narratif" data-i18n="opt_temps_present">Présent narratif</option>
+              <option value="Passé composé (récit oral/moderne)" data-i18n="opt_temps_passe_comp">Passé composé</option>
+              <option value="Mélange de temps (flashbacks)" data-i18n="opt_temps_melange">Mélange (flashbacks)</option>
+            </select>
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="oeuvre_registre_label">Registre de langue</label>
+            <select id="sm-oeuvre-registre" onchange="syncSettingsField('oeuvre-registre','sm-oeuvre-registre')">
+              <option value="" data-i18n="opt_choose">— choisir —</option>
+              <option value="Soutenu / littéraire" data-i18n="opt_reg_soutenu">Soutenu / littéraire</option>
+              <option value="Standard / neutre" data-i18n="opt_reg_standard">Standard / neutre</option>
+              <option value="Familier / populaire" data-i18n="opt_reg_familier">Familier / populaire</option>
+              <option value="Argotique" data-i18n="opt_reg_argotique">Argotique</option>
+              <option value="Archaïsant / médiéval" data-i18n="opt_reg_archaic">Archaïsant / médiéval</option>
+              <option value="Technique / scientifique" data-i18n="opt_reg_technique">Technique / scientifique</option>
+              <option value="Mélange de registres" data-i18n="opt_reg_melange">Mélange de registres</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-field" style="margin-top:12px;">
+          <label class="settings-label"><span data-i18n="oeuvre_notes_label">Notes libres</span> <span style="font-weight:400;color:var(--ink-muted);" data-i18n="oeuvre_notes_sublabel">(résumé, tons, thèmes, avertissements de contenu…)</span></label>
+          <textarea id="sm-oeuvre-notes" rows="4" placeholder="Ex : roman de dark fantasy, héros anti-héros, violence stylisée assumée, argot médiéval inventé…" data-i18n-placeholder="oeuvre_notes_placeholder" oninput="syncSettingsTextarea('oeuvre-notes','sm-oeuvre-notes')" style="width:100%;font-size:12px;font-family:'DM Sans',sans-serif;border:1px solid var(--cream);border-radius:4px;padding:7px 9px;background:var(--paper);color:var(--ink);resize:vertical;outline:none;line-height:1.5;min-height:80px;"></textarea>
+        </div>
+      </div>
+
+      <!-- ── ONGLET AUTEUR ── -->
+      <div id="spane-auteur" class="settings-pane" style="display:none;">
+        <div class="settings-section-title" data-i18n="settings_auteur_title">Auteur & Page de garde</div>
+        <p class="settings-hint" data-i18n="settings_auteur_hint">Ces informations apparaissent sur la page de garde du document exporté.</p>
+
+        <div class="settings-grid-2">
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="auteur_titre_label">Titre du roman</label>
+            <input type="text" id="sm-pg-titre" placeholder="Le Nom de la Rose" data-i18n-placeholder="auteur_titre_placeholder" oninput="syncSettingsInput('pg-titre','sm-pg-titre');updateMiseSummary()" style="width:100%;">
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="auteur_nom_label">Nom de l'auteur</label>
+            <input type="text" id="sm-pg-auteur" placeholder="Prénom Nom" data-i18n-placeholder="field_author_placeholder" data-i18n-placeholder="auteur_nom_placeholder" oninput="syncSettingsInput('pg-auteur','sm-pg-auteur');updateMiseSummary()" style="width:100%;">
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="auteur_soustitre_label">Sous-titre</label>
+            <input type="text" id="sm-pg-soustitre" placeholder="Sous-titre (optionnel)" data-i18n-placeholder="auteur_soustitre_placeholder" oninput="syncSettingsInput('pg-soustitre','sm-pg-soustitre')" style="width:100%;">
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="auteur_genre_label">Genre (page de garde)</label>
+            <input type="text" id="sm-pg-genre" placeholder="Roman, Nouvelles…" data-i18n-placeholder="auteur_genre_placeholder" oninput="syncSettingsInput('pg-genre','sm-pg-genre')" style="width:100%;">
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="param_header_courant">En-tête courant</label>
+            <input type="text" id="sm-header-courant" placeholder="Titre ou auteur (en-tête des pages)" data-i18n-placeholder="auteur_header_placeholder" oninput="syncSettingsInput('header-courant','sm-header-courant')" style="width:100%;">
+          </div>
+          <div class="settings-field">
+            <label class="settings-label" data-i18n="param_folio_start">1ère page numérotée</label>
+            <input type="number" id="sm-folio-start" value="1" min="1" max="999" oninput="syncSettingsNumber('folio-start','sm-folio-start')" style="width:80px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ONGLET PERSONNAGES ── -->
+      <div id="spane-persos" class="settings-pane" style="display:none;">
+        <div class="settings-section-title" data-i18n="settings_persos_title">Fiches Personnages</div>
+        <p class="settings-hint" data-i18n="settings_persos_hint">Les noms et variantes sont transmis à l'IA pour ne jamais être signalés comme fautes.</p>
+
+        <div id="sm-perso-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;">
+          <div id="perso-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <button onclick="addPerso();refreshSmPersoList();" style="width:100%;padding:8px;font-size:12px;font-family:'DM Sans',sans-serif;border:1.5px dashed var(--accent-light);border-radius:6px;background:transparent;color:var(--accent);cursor:pointer;transition:background .12s;" onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background='transparent'" data-i18n="settings_persos_add">
+          + Ajouter un personnage
+        </button>
+      </div>
+
+      <!-- ── ONGLET LIEUX ── -->
+      <div id="spane-lieux" class="settings-pane" style="display:none;">
+        <div class="settings-section-title" data-i18n="settings_lieux_title">Fiches Lieux</div>
+        <p class="settings-hint" data-i18n="settings_lieux_hint">Les noms de lieux et leurs variantes sont exclus des corrections orthographiques.</p>
+
+        <div id="sm-lieu-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;">
+          <div id="lieu-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <button onclick="addLieu();refreshSmLieuList();" style="width:100%;padding:8px;font-size:12px;font-family:'DM Sans',sans-serif;border:1.5px dashed var(--accent-light);border-radius:6px;background:transparent;color:var(--accent);cursor:pointer;transition:background .12s;" onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background='transparent'" data-i18n="settings_lieux_add">
+          + Ajouter un lieu
+        </button>
+      </div>
+
+      <!-- ── ONGLET CONFIG IA ── -->
+      <div id="spane-api" class="settings-pane" style="display:none;">
+        <div class="settings-section-title" data-i18n="settings_api_title">Configuration IA</div>
+        <p class="settings-hint" data-i18n="settings_api_hint">Sélectionnez votre fournisseur et entrez votre clé API pour activer le correcteur IA, l'analyse de style et le rapport éditorial.</p>
+
+        <div class="settings-field" style="margin-bottom:14px;">
+          <label class="settings-label" data-i18n="api_provider_label">Fournisseur IA</label>
+          <div style="display:flex;gap:4px;border:1px solid var(--cream);border-radius:6px;overflow:hidden;">
+            <button id="sm-prov-claude"      class="sm-engine-btn active" onclick="setAiProvider('claude');updateSmProviderBtns('claude')"          title="Anthropic Claude">✦ Claude</button>
+            <button id="sm-prov-openai"      class="sm-engine-btn"        onclick="setAiProvider('openai');updateSmProviderBtns('openai')"          title="OpenAI GPT">⬡ OpenAI</button>
+            <button id="sm-prov-gemini"      class="sm-engine-btn"        onclick="setAiProvider('gemini');updateSmProviderBtns('gemini')"          title="Google Gemini">✦ Gemini</button>
+            <button id="sm-prov-groq"        class="sm-engine-btn"        onclick="setAiProvider('groq');updateSmProviderBtns('groq')"              data-i18n-title="api_groq_title" title="Groq — Gratuit sans CB · console.groq.com">⚡ Groq</button>
+            <button id="sm-prov-openrouter"  class="sm-engine-btn"        onclick="setAiProvider('openrouter');updateSmProviderBtns('openrouter')"  data-i18n-title="api_openrouter_title" title="OpenRouter — 200+ modèles, certains gratuits · openrouter.ai">⇄ OpenRouter</button>
+          </div>
+        </div>
+
+        <div class="settings-field" style="margin-bottom:14px;">
+          <label class="settings-label"><span data-i18n="api_key_label">Clé API</span> <span id="sm-provider-hint-label" style="font-weight:400;color:var(--ink-muted);"></span></label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="password" id="sm-api-key" aria-label="Clé API Anthropic" placeholder="sk-ant-…" autocomplete="off" style="flex:1;font-family:monospace;font-size:12px;">
+            <button class="btn btn-accent" style="font-size:12px;padding:6px 14px;white-space:nowrap;" onclick="saveProviderConfig()" data-i18n="api_save_btn">💾 Enregistrer</button>
+          </div>
+          <div id="sm-api-status" style="font-size:10.5px;color:var(--ink-muted);margin-top:5px;font-style:italic;"></div>
+        </div>
+
+        <div class="settings-field" style="margin-bottom:14px;">
+          <label class="settings-label" data-i18n="api_model_label">Modèle</label>
+          <select id="sm-model-select" style="width:100%;font-size:12px;" onchange="onModelChangeFromModal()"></select>
+        </div>
+
+        <!-- ── Modules IA activés — propres à chaque provider ── -->
+        <div class="settings-field" style="margin-bottom:14px;">
+          <label class="settings-label">
+            <span data-i18n="api_modules_label">Modules actifs pour ce provider</span>
+            <span id="ia-modules-provider-label" style="font-weight:400;color:var(--accent);margin-left:4px;font-size:10px;"></span>
+          </label>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--paper);border:1px solid var(--cream);border-radius:5px;cursor:pointer;"
+              data-i18n-title="module_correct_title" title="Correcteur IA — analyse et suggestions de correction phrase par phrase">
+              <span style="font-size:11px;color:var(--ink-soft);" data-i18n="module_correct_label">🔍 Correcteur IA</span>
+              <input type="checkbox" id="ia-toggle-correct" checked onchange="updateIaModules()"
+                style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;">
+            </label>
+
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--paper);border:1px solid var(--cream);border-radius:5px;cursor:pointer;"
+              data-i18n-title="module_style_title" title="Analyse de style — rythme, images, syntaxe">
+              <span style="font-size:11px;color:var(--ink-soft);" data-i18n="module_style_label">🎨 Analyse de style</span>
+              <input type="checkbox" id="ia-toggle-style" checked onchange="updateIaModules()"
+                style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;">
+            </label>
+
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--paper);border:1px solid var(--cream);border-radius:5px;cursor:pointer;"
+              data-i18n-title="module_rapport_title" title="Rapport éditorial — diagnostic global du chapitre">
+              <span style="font-size:11px;color:var(--ink-soft);" data-i18n="module_rapport_label">📋 Rapport éditorial</span>
+              <input type="checkbox" id="ia-toggle-rapport" checked onchange="updateIaModules()"
+                style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;">
+            </label>
+
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--paper);border:1px solid var(--cream);border-radius:5px;cursor:pointer;"
+              data-i18n-title="module_stats_title" title="Analyse statistique IA — analyse en chaîne sur tout le roman (N appels API)">
+              <span style="font-size:11px;color:var(--ink-soft);" data-i18n="module_stats_label">📈 Analyse statistique IA <span style="font-size:9.5px;color:var(--ink-muted);" data-i18n="module_stats_sub">(N appels)</span></span>
+              <input type="checkbox" id="ia-toggle-stats" checked onchange="updateIaModules()"
+                style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;">
+            </label>
+
+          </div>
+          <div style="font-size:9.5px;color:var(--ink-muted);margin-top:6px;font-style:italic;" data-i18n="api_modules_save_hint">
+            Cliquez <strong>💾 Enregistrer</strong> pour valider — les modules sont mémorisés par fournisseur.
+          </div>
+        </div>
+
+        <div id="api-info-box" style="padding:10px 12px;background:var(--paper);border:1px solid var(--cream);border-radius:6px;font-size:10.5px;color:var(--ink-muted);line-height:1.6;">
+          <span data-i18n="api_info_key">💾 La clé API est <strong>sauvegardée avec le projet</strong> (.json). Protégez votre fichier projet.</span><br>
+          ⚡ <strong>Groq</strong> <span data-i18n="api_info_groq">est gratuit sans CB — obtenez une clé sur</span> <a href="https://console.groq.com" target="_blank" style="color:var(--accent);">console.groq.com</a><br>
+          ⇄ <strong>OpenRouter</strong> <span data-i18n="api_info_openrouter">est gratuit sans CB — obtenez une clé sur</span> <a href="https://openrouter.ai/keys" target="_blank" style="color:var(--accent);">openrouter.ai/keys</a><br>
+          🛡 <span data-i18n="api_info_lt">Le correcteur <strong>LanguageTool</strong> fonctionne toujours sans clé API.</span>
+        </div>
+      </div>
+
+      <!-- ── ONGLET PROMPTS IA ── -->
+      <div id="spane-prompts" class="settings-pane" style="display:none;">
+        <div class="settings-section-title" data-i18n="settings_prompts_title">Prompts IA</div>
+        <p class="settings-hint" data-i18n="settings_prompts_hint">Personnalisez les instructions envoyées à l'IA pour chaque module. Les modifications sont sauvegardées avec le projet. <strong>Les valeurs par défaut</strong> sont toujours restaurables.</p>
+
+        <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+          <button onclick="resetAllPromptsToDefault()" style="font-size:11px;padding:5px 12px;border:1px solid var(--cream);border-radius:4px;background:var(--paper);color:var(--ink-soft);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background='var(--paper)'" data-i18n-title="prompt_reset_all_title" title="Remet tous les prompts aux valeurs d'origine" data-i18n="prompt_reset_all">↺ Tout réinitialiser</button>
+          <button onclick="savePrompts()" style="font-size:11px;padding:5px 12px;border:1px solid var(--accent);border-radius:4px;background:var(--accent);color:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .12s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'" data-i18n="prompt_save_btn">💾 Enregistrer les prompts</button>
+        </div>
+
+        <div id="prompts-accordion" style="display:flex;flex-direction:column;gap:8px;"></div>
+
+        <div style="margin-top:10px;padding:9px 11px;background:var(--paper);border:1px solid var(--cream);border-radius:6px;font-size:10px;color:var(--ink-muted);line-height:1.6;">
+          ℹ️ Le contexte de l'œuvre (<em>fiche Œuvre, personnages, lieux</em>) est injecté automatiquement — inutile de le réécrire dans les prompts.<br>
+          ✦ Utilisez <code style="font-size:9.5px;background:var(--cream);padding:1px 4px;border-radius:2px;">{contexte_oeuvre}</code> pour indiquer où il sera inséré si vous voulez le repositionner.
+        </div>
+      </div>
+
+      <!-- ── ONGLET PRÉFÉRENCES ── -->
+      <div id="spane-prefs" class="settings-pane" style="display:none;">
+        <div class="settings-section-title" data-i18n="settings_prefs_title">Préférences</div>
+        <p class="settings-hint">Paramètres généraux de l'application. Ces réglages s'appliquent à toutes les sessions.</p>
+
+        <!-- ── SECTION : INTERFACE ──────────────────────────────── -->
+        <div class="pref-section">
+          <div class="pref-section-title" data-i18n="pref_section_interface">🌐 Interface</div>
+
+          <!-- Langue de l'interface -->
+          <div class="pref-row">
+            <div class="pref-row-left">
+              <div class="pref-label" data-i18n="pref_ui_lang_label">Langue de l'interface</div>
+              <div class="pref-desc" data-i18n="pref_ui_lang_desc">Langue de tous les menus, boutons et messages de l'application.</div>
+            </div>
+            <div class="pref-row-right">
+              <select id="pref-ui-langue" class="pref-select" onchange="savePref('ui_lang', this.value); applyI18n(); if(typeof ACPrefs!=='undefined'){ ACPrefs.set('lang', this.value); ACPrefs.refreshUI(); }">
+                <option value="fr">🇫🇷 Français</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="pt">🇵🇹 Português</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Thème visuel -->
+          <div class="pref-row">
+            <div class="pref-row-left">
+              <div class="pref-label" data-i18n="pref_theme_label">Thème de l'interface</div>
+              <div class="pref-desc" data-i18n="pref_theme_desc">Couleur du header, de la barre latérale et des icônes.</div>
+            </div>
+            <div class="pref-row-right">
+              <select id="pref-theme" class="pref-select" onchange="applyTheme(this.value, true);">
+                <option value="ardoise">① Ardoise Bleue &amp; Cuivre</option>
+                <option value="foret">② Forêt Profonde &amp; Or Vert</option>
+                <option value="sepia">③ Sépia Ancien &amp; Or</option>
+                <option value="art_nouveau">④ Journal Art Nouveau</option>
+                <option value="jour_ivoire">⑤ Jour — Ivoire &amp; Encre</option>
+                <option value="jour_ardoise">⑥ Jour — Ardoise Claire</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Aperçu du thème -->
+          <div id="theme-preview" style="margin-top:6px;border-radius:6px;overflow:hidden;border:1px solid var(--cream);height:36px;display:flex;align-items:stretch;"></div>
+
+        </div>
+
+        <!-- ── SECTION : IA ─────────────────────────────────────── -->
+        <div class="pref-section">
+          <div class="pref-section-title" data-i18n="pref_section_ia">✦ Intelligence artificielle</div>
+
+          <!-- Langue de sortie IA -->
+          <div class="pref-row">
+            <div class="pref-row-left">
+              <div class="pref-label" data-i18n="pref_ia_lang_label">Langue de sortie IA</div>
+              <div class="pref-desc" data-i18n="pref_ia_lang_desc">Langue dans laquelle l'IA rédige tous ses retours — corrections, analyses, rapports, propositions.</div>
+            </div>
+            <div class="pref-row-right">
+              <select id="pref-ia-langue" class="pref-select" onchange="savePref('ia_langue', this.value)">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="de">Deutsch</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Português</option>
+                <option value="nl">Nederlands</option>
+                <option value="pl">Polski</option>
+                <option value="ar">العربية</option>
+                <option value="zh">中文</option>
+                <option value="ja">日本語</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── SECTION : CORRECTION AUTOMATIQUE ─────────────── -->
+        <div class="pref-section" id="pref-section-autocorrect">
+          <div class="pref-section-title">&#10000; Correction automatique</div>
+
+          <div class="pref-row">
+            <div class="pref-row-left">
+              <div class="pref-label">Activer la correction automatique</div>
+              <div class="pref-desc">Corrections mécaniques légères en temps réel — sans réécriture, sans IA.</div>
+            </div>
+            <div class="pref-row-right">
+              <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                <input type="checkbox" id="ac-enabled" onchange="ACPrefs.set('enabled', this.checked); ACPrefs.refreshUI();">
+                <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+              </label>
+            </div>
+          </div>
+
+          <div id="ac-suboptions">
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Majuscules automatiques</div>
+                <div class="pref-desc">Majuscule après . ? ! et en début de paragraphe.</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-capitals" onchange="ACPrefs.set('capitals', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Supprimer les doubles espaces</div>
+                <div class="pref-desc">Bonjour&amp;nbsp;&amp;nbsp;monde &rarr; Bonjour monde</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-dbl-spaces" onchange="ACPrefs.set('dblSpaces', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Espaces de fin de ligne</div>
+                <div class="pref-desc">Supprime les espaces traînants à la fin de chaque ligne.</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-trailing-spaces" onchange="ACPrefs.set('trailingSpaces', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Apostrophes typographiques</div>
+                <div class="pref-desc">l'homme → l’homme</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-apostrophes" onchange="ACPrefs.set('apostrophes', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Guillemets typographiques</div>
+                <div class="pref-desc">FR : « Bonjour » &mdash; EN : “Hello” &mdash; ES : «Hola»</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-quotes" onchange="ACPrefs.set('quotes', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Ponctuation normalisée</div>
+                <div class="pref-desc">FR : Bonjour! → Bonjour ! &mdash; EN/ES : Hello ! → Hello!</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-punctuation" onchange="ACPrefs.set('punctuation', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Répétitions accidentelles</div>
+                <div class="pref-desc">the the → the &middot; de de → de (mots courts uniquement)</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-repetitions" onchange="ACPrefs.set('repetitions', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Ponctuation excessive</div>
+                <div class="pref-desc">Bonjour..... → Bonjour…</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-ellipsis" onchange="ACPrefs.set('ellipsis', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Accord nominal (pluriel)</div>
+                <div class="pref-desc">FR : les fleur → les fleurs · des chat → des chats</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-plural-noun" onchange="ACPrefs.set('pluralNoun', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Accord sujet-verbe (pluriel)</div>
+                <div class="pref-desc">FR : les chats mange → les chats mangent &middot; EN : the cats runs → the cats run &middot; ES : los gatos corre → los gatos corren</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-plural-verb" onchange="ACPrefs.set('pluralVerb', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Accord nom-adjectif (pluriel)</div>
+                <div class="pref-desc">FR : des résultats positif → des résultats positifs &middot; EN/ES : accord adjectif-nom au pluriel</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-plural-adj" onchange="ACPrefs.set('pluralAdj', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Orthographe lexicale</div>
+                <div class="pref-desc">Corrige les mots mal orthographiés selon un dictionnaire FR/EN/ES (sans réécriture).</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-spell" onchange="ACPrefs.set('spell', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pref-row">
+              <div class="pref-row-left">
+                <div class="pref-label">Participes passés (avoir)</div>
+                <div class="pref-desc">FR : j'ai parle → j'ai parlé &middot; il a manger → il a mangé</div>
+              </div>
+              <div class="pref-row-right">
+                <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
+                  <input type="checkbox" id="ac-participes" onchange="ACPrefs.set('participes', this.checked)">
+                  <span class="pref-toggle-slider" style="position:absolute;inset:0;background:var(--cream);border-radius:20px;cursor:pointer;transition:background .15s;"></span>
+                </label>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+      </div>
+
+    </div><!-- /settings-modal-body -->
+
+    <!-- Footer -->
+    <div class="settings-modal-footer">
+      <span style="font-size:11px;color:var(--ink-muted);font-style:italic;">Les modifications sont appliquées immédiatement.</span>
+      <button class="btn btn-accent" onclick="closeSettingsModal()" data-i18n="settings_corrections_close">Fermer</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="project-modal-overlay open" id="project-modal" role="dialog" aria-modal="true" aria-labelledby="project-modal-title-h">
+  <div class="project-modal-box">
+    <div class="project-modal-logo">
+      <div class="logo-mark">Æ</div>
+      <span data-i18n="modal_welcome_title">Atelier Édition</span>
+    </div>
+    <div class="project-modal-title" id="project-modal-title-h">Bienvenue dans votre atelier</div>
+    <p class="project-modal-sub">Créez un nouveau projet ou chargez un projet existant depuis un fichier <strong>.json</strong>.</p>
+    <div class="project-options">
+      <button class="project-option-btn" onclick="chooseNew()">
+        <span class="opt-icon">✦</span>
+        <span class="opt-label" data-i18n="modal_new_btn">Nouveau projet</span>
+        <span class="opt-desc" data-i18n="modal_new_desc">Démarrer un roman ou un document vierge</span>
+      </button>
+      <button class="project-option-btn" onclick="chooseLoad()">
+        <span class="opt-icon">📂</span>
+        <span class="opt-label" data-i18n="modal_load_btn">Charger un projet</span>
+        <span class="opt-desc" data-i18n="modal_load_desc">Ouvrir un fichier .json sauvegardé</span>
+      </button>
+    </div>
+    <!-- Section restauration autosave (injectée dynamiquement si des saves existent) -->
+    <div id="ls-restore-section" class="ls-restore-section" style="display:none;">
+      <div class="ls-restore-label">💾 Sauvegardes automatiques</div>
+      <div class="ls-restore-list" id="ls-restore-list"></div>
+    </div>
+    <div class="project-name-area" id="project-name-area">
+      <label data-i18n="modal_project_name">Nom du projet</label>
+      <input type="text" id="project-name-input" placeholder="ex : Mon Roman, Recueil de nouvelles…" maxlength="60">
+    </div>
+    <div class="project-modal-actions">
+      <button class="btn btn-ghost" style="color:var(--ink-soft);border-color:var(--cream);" onclick="skipProjectModal()" id="project-skip-btn" style="display:none;" data-i18n="modal_skip_btn">Continuer sans projet</button>
+      <button class="btn btn-accent" onclick="confirmProjectChoice()" id="project-confirm-btn" style="display:none;" data-i18n="modal_create_btn">Créer le projet</button>
+    </div>
+  </div>
+</div>
+<input type="file" id="project-load-input" accept=".json" style="display:none;" onchange="loadProjectFile(event)">
+
+<!-- MODAL IMAGE -->
+<div class="modal-overlay" id="img-modal" role="dialog" aria-modal="true" aria-label="Image">
+  <div class="modal-box">
+    <h3 data-i18n="img_modal_title">Image ajoutée</h3>
+    <label data-i18n="img_modal_name_label">Nom de référence (utilisez [IMAGE:nom] dans le texte)</label>
+    <input type="text" id="img-name-input" data-i18n-placeholder="img_modal_name_placeholder" placeholder="ex: carte, portrait, illustration1">
+    <label data-i18n="img_modal_caption_label">Légende (optionnel)</label>
+    <input type="text" id="img-caption-input" data-i18n-placeholder="img_modal_caption_placeholder" placeholder="ex: La carte du royaume...">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="color:var(--ink-soft);border-color:var(--cream);" onclick="closeImgModal()" data-i18n="img_modal_cancel">Annuler</button>
+      <button class="btn btn-accent" onclick="confirmImage()" data-i18n="img_modal_confirm">Insérer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Hidden API/Provider controls for backward JS compatibility — real UI is in settings modal -->
+<div style="display:none;" aria-hidden="true">
+  <input type="password" id="wt-api-key" autocomplete="off">
+  <select id="wt-model-select" onchange="onModelChange()"></select>
+  <div id="wt-provider-hint"></div>
+  <button id="prov-claude"      class="wt-engine-btn active" onclick="setAiProvider('claude')"></button>
+  <button id="prov-openai"      class="wt-engine-btn"        onclick="setAiProvider('openai')"></button>
+  <button id="prov-gemini"      class="wt-engine-btn"        onclick="setAiProvider('gemini')"></button>
+  <button id="prov-groq"        class="wt-engine-btn"        onclick="setAiProvider('groq')"></button>
+  <button id="prov-openrouter"  class="wt-engine-btn"        onclick="setAiProvider('openrouter')"></button>
+  <span id="wt-api-chevron"></span>
+</div>
+
+<!-- COMPTEUR FLOTTANT MODE FOCUS -->
+<div class="focus-word-counter" id="focus-word-counter">0 mots</div>
+  <script src="/legacy-bundle.js"></script>
+</body>
+</html>

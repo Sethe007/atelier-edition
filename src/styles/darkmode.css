@@ -1,0 +1,146 @@
+/* ══════════════════════════════════════════════════════════
+   CORRECTIFS GLOBAUX — v1001.6
+   Toutes les couleurs dynamiques passent par les variables
+   CSS injectées par applyDarkModeVars(). Ce bloc gère
+   uniquement les valeurs HARDCODÉES qui échappent aux vars.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Barre recherche/remplacement — règles consolidées dans le bloc principal ── */
+
+/* ── Barre de remplacement masquée par défaut ── */
+html body .es-replace-row:not(.visible) { max-height:0 !important; opacity:0 !important; padding-top:0 !important; padding-bottom:0 !important; pointer-events:none !important; overflow:hidden !important; border-bottom:none !important; }
+html body .es-replace-row.visible { max-height:40px !important; opacity:1 !important; padding:4px 12px !important; pointer-events:auto !important; overflow:visible !important; }
+
+/* ── Menu contextuel thème clair ── */
+html body.theme-light #annot-ctx-menu,
+html body.theme-jour_ivoire #annot-ctx-menu,
+html body.theme-jour_ardoise #annot-ctx-menu { background: var(--parchment) !important; border-color: var(--cream) !important; }
+html body.theme-light .actx-item, html body.theme-jour_ivoire .actx-item, html body.theme-jour_ardoise .actx-item { color: var(--ink) !important; }
+html body.theme-light .actx-item:hover, html body.theme-jour_ivoire .actx-item:hover, html body.theme-jour_ardoise .actx-item:hover { background: var(--paper) !important; }
+html body.theme-light .actx-section-label, html body.theme-light .actx-shortcut,
+html body.theme-jour_ivoire .actx-section-label, html body.theme-jour_ivoire .actx-shortcut,
+html body.theme-jour_ardoise .actx-section-label, html body.theme-jour_ardoise .actx-shortcut { color: var(--ink-muted) !important; }
+html body.theme-light .actx-sep, html body.theme-jour_ivoire .actx-sep, html body.theme-jour_ardoise .actx-sep { background: var(--cream) !important; }
+html body.theme-light #annot-tooltip, html body.theme-jour_ivoire #annot-tooltip, html body.theme-jour_ardoise #annot-tooltip { background: var(--parchment) !important; color: var(--ink) !important; border-color: var(--cream) !important; }
+
+/* ══════════════════════════════════════════════════════════
+   DARK MODE — Overrides des valeurs HARDCODÉES uniquement
+   Les vars CSS font 95% du travail. Ce bloc corrige le reste.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── body ── */
+html body.dark-mode { background: #0d0d0d !important; color: #e8e8e8 !important; }
+
+/* ── Éditeur de texte (raw-input) — critique ── */
+html body.dark-mode #raw-input {
+  background: #161616 !important;
+  color: #e0ddd8 !important;
+  caret-color: #c99a0f !important;
+}
+html body.dark-mode #raw-input::placeholder { color: rgba(232,232,232,0.25) !important; }
+html body.dark-mode #raw-input::selection { background: rgba(201,154,15,0.25) !important; color: #e8e8e8 !important; }
+
+/* ── Stat cards (background: #fff hardcodé) ── */
+html body.dark-mode .stat-card {
+  background: #1f1f1f !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+}
+html body.dark-mode .stat-card:hover {
+  background: #2a2a2a !important;
+  border-color: rgba(255,255,255,0.15) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+}
+html body.dark-mode .stat-val   { color: #c87840 !important; text-shadow: none !important; }
+html body.dark-mode .stat-lbl   { color: rgba(232,232,232,0.42) !important; }
+html body.dark-mode #mise-project-summary { background: #1f1f1f !important; border-color: rgba(255,255,255,0.08) !important; color: rgba(232,232,232,0.72) !important; }
+
+/* ── Inputs sidebar (background: #fff !important hardcodé) ── */
+html body.dark-mode aside select,
+html body.dark-mode aside input[type="number"],
+html body.dark-mode aside input[type="text"],
+html body.dark-mode aside input[type="password"],
+html body.dark-mode aside textarea,
+html body.dark-mode .sidebar-panel select,
+html body.dark-mode .sidebar-panel input[type="number"],
+html body.dark-mode .sidebar-panel input[type="text"],
+html body.dark-mode .sidebar-panel input[type="password"],
+html body.dark-mode .sidebar-panel textarea,
+html body.dark-mode .sidebar-tabpane select,
+html body.dark-mode .sidebar-tabpane input[type="number"],
+html body.dark-mode .sidebar-tabpane input[type="text"],
+html body.dark-mode .sidebar-tabpane input[type="password"],
+html body.dark-mode .sidebar-tabpane textarea {
+  background: #1f1f1f !important;
+  color: #e8e8e8 !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* ── Settings tab active (background: #fff !important) ── */
+html body.dark-mode .settings-tab.active {
+  background: #2a2a2a !important;
+  color: #c87840 !important;
+}
+html body.dark-mode .settings-tab:hover {
+  background: rgba(200,120,64,0.1) !important;
+  color: #c87840 !important;
+}
+
+/* ── Img cards (background: #fff !important) ── */
+html body.dark-mode .img-card {
+  background: #1f1f1f !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+
+/* ── Pane label (gradient hardcodé) ── */
+html body.dark-mode .pane-label {
+  background: linear-gradient(180deg, #1a1a1a 0%, #161616 100%) !important;
+  border-bottom-color: rgba(255,255,255,0.07) !important;
+  color: rgba(232,232,232,0.38) !important;
+}
+
+/* ── Cork cards ── */
+html body.dark-mode .cork-card { background: #1f1f1f !important; border-color: rgba(255,255,255,0.10) !important; }
+html body.dark-mode .cork-card:hover { border-color: #c87840 !important; }
+html body.dark-mode .cork-card-title { color: #e8e8e8 !important; }
+html body.dark-mode .cork-card-summary { color: rgba(232,232,232,0.42) !important; }
+html body.dark-mode #cork-tag-filter { background: #1f1f1f !important; color: #e8e8e8 !important; border-color: rgba(255,255,255,0.12) !important; }
+
+/* ── Version cards ── */
+html body.dark-mode .version-card { background: #1f1f1f !important; border-color: rgba(255,255,255,0.08) !important; color: rgba(232,232,232,0.72) !important; }
+
+/* ── Wt-run-btn (inline styles JS avec var(--paper)) ── */
+html body.dark-mode .wt-run-btn { background: #1f1f1f !important; border-color: #c87840 !important; color: #c87840 !important; }
+html body.dark-mode #wt-btn-coherence { background: #2a1e00 !important; color: #c99a0f !important; border-color: #c99a0f !important; }
+html body.dark-mode #wt-btn-rapport { background: #c87840 !important; color: #fff !important; border-color: #c87840 !important; }
+
+/* ── Issue/résultats correcteur ── */
+html body.dark-mode .wt-issue { background: #1f1f1f !important; border-color: rgba(255,255,255,0.10) !important; }
+html body.dark-mode .wt-issue:hover { background: #2a2a2a !important; }
+html body.dark-mode .wt-issue-text { color: #e8e8e8 !important; }
+html body.dark-mode .wt-issue-msg { color: rgba(232,232,232,0.42) !important; }
+html body.dark-mode .wt-dismiss-btn { color: rgba(232,232,232,0.38) !important; }
+html body.dark-mode .wt-stat { background: #1f1f1f !important; border-color: rgba(255,255,255,0.08) !important; }
+html body.dark-mode .wt-stat-label { color: rgba(232,232,232,0.42) !important; }
+
+/* ── Modal projet (project-modal-box) ── */
+html body.dark-mode .project-modal-box {
+  background: #161616 !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+}
+html body.dark-mode .project-modal-title,
+html body.dark-mode .project-modal-logo span { color: #e8e8e8 !important; }
+html body.dark-mode .project-modal-sub { color: rgba(232,232,232,0.42) !important; }
+html body.dark-mode .project-modal-actions { border-top-color: rgba(255,255,255,0.08) !important; }
+html body.dark-mode .project-option-btn { background: #1f1f1f !important; border-color: rgba(255,255,255,0.10) !important; }
+html body.dark-mode .project-option-btn:hover { background: #2a2a2a !important; border-color: #c87840 !important; }
+html body.dark-mode .project-option-btn .opt-label { color: #e8e8e8 !important; }
+html body.dark-mode .project-option-btn .opt-desc { color: rgba(232,232,232,0.42) !important; }
+html body.dark-mode .project-name-area label { color: rgba(232,232,232,0.72) !important; }
+html body.dark-mode .project-name-area input { background: #1f1f1f !important; color: #e8e8e8 !important; border-color: rgba(255,255,255,0.12) !important; }
+html body.dark-mode .project-badge { background: #1f1f1f !important; border-color: rgba(255,255,255,0.10) !important; color: rgba(232,232,232,0.42) !important; }
+
+/* ── Prévisualisation — NON impactée ── */
+html body.dark-mode .book-page { background: #f5f2ec !important; color: #111 !important; }
+html body.dark-mode .book-page * { color: inherit !important; }
+html body.dark-mode .preview-pane { background: #161616 !important; }
