@@ -164,7 +164,7 @@ function _aiCloseBtn(boxId) {
 /**
  * Branche API OpenAI-compatible partagée entre OpenAI et Groq.
  */
-async function _callOpenAIcompat(url, key, system, user, model, tokens, label) {
+async function _callOpenAIcompat(url, key, system, user, model, tokens, label, signal) {
   const isOpenRouter = url.includes('openrouter.ai');
   const headers = {
     'Content-Type': 'application/json',
@@ -176,6 +176,7 @@ async function _callOpenAIcompat(url, key, system, user, model, tokens, label) {
   }
   const res = await fetch(url, {
     method: 'POST',
+    signal: signal || undefined,
     headers,
     body: JSON.stringify({
       model, max_tokens: tokens,

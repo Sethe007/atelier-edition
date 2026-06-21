@@ -1332,10 +1332,15 @@ async function _runSynonymsForWord(word) {
   if (hint) hint.style.display = 'none';
   if (res)  res.innerHTML     = spinnerHtml('Synonymes…');
 
-  const data = await _synAICall(word);
-  _synRender(word, data, res);
-  if (btn) btn.disabled = false;
-  _synUpdateDot();
+  try {
+    const data = await _synAICall(word);
+    _synRender(word, data, res);
+  } catch(e) {
+    if (res) res.innerHTML = `<span style="color:#dc2626;font-size:10.5px;">Erreur : ${e.message}</span>`;
+  } finally {
+    if (btn) btn.disabled = false;
+    _synUpdateDot();
+  }
 }
 
 // ── Point d'entrée (bouton / touche Entrée) ───────────────────────────
@@ -1357,10 +1362,15 @@ async function runSynonyms() {
   if (hint) hint.style.display = 'none';
   if (res)  res.innerHTML      = spinnerHtml('Synonymes…');
 
-  const data = await _synAICall(word);
-  _synRender(word, data, res);
-  if (btn) btn.disabled = false;
-  _synUpdateDot();
+  try {
+    const data = await _synAICall(word);
+    _synRender(word, data, res);
+  } catch(e) {
+    if (res) res.innerHTML = `<span style="color:#dc2626;font-size:10.5px;">Erreur : ${e.message}</span>`;
+  } finally {
+    if (btn) btn.disabled = false;
+    _synUpdateDot();
+  }
 }
 
 // ── Mise à jour du dot indicateur ────────────────────────────────────
@@ -1597,6 +1607,7 @@ async function runRapportEditorial() {
   const res  = document.getElementById('wt-rapport-results');
   btn.disabled = true;
   btn.textContent = '⏳ Analyse en cours…';
+  try {
   res.innerHTML = `
     <div style="padding:16px 0;color:var(--ink-muted);font-size:11.5px;font-style:italic;line-height:2;">
       <div id="rp-step-lt"  style="opacity:.4;">🛡 LanguageTool — vérification grammaire…</div>
@@ -1785,8 +1796,10 @@ async function runRapportEditorial() {
   }
 
   res.innerHTML = rapportHTML;
-  btn.disabled = false;
-  btn.textContent = '📋 Générer le rapport éditorial';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📋 Générer le rapport éditorial';
+  }
 }
 
 function copyRapportToClipboard() {

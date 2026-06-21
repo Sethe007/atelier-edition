@@ -20,7 +20,24 @@ function setCorrectEngine(engine) {
 // Une seule fonction gère tous les providers. Les prompts varient,
 // la mécanique d'appel est centralisée ici.
 // ═══════════════════════════════════════════════════════════════════
+// ── AbortController — annulation des requêtes IA en cours ──
+let _aiAbortController = null;
+
+/** Annule toute requête IA en cours. Sans effet si rien ne tourne. */
+function cancelCurrentAI() {
+  if (_aiAbortController) {
+    _aiAbortController.abort();
+    _aiAbortController = null;
+  }
+}
+
 async function callAI(systemPrompt, userMsg, maxTokens = 1024) {
+  // Annuler tout appel précédent et créer un nouveau signal
+  cancelCurrentAI();
+  const _ctrl = new AbortController();
+  _aiAbortController = _ctrl;
+  const _signal = _ctrl.signal;
+
   // Toujours lire le provider et la clé depuis localStorage (source de vérité)
   // _wtProvider peut être périmé si loadApiKey() n'a pas encore tourné
   const _lsConfig = (function(){ try { return JSON.parse(localStorage.getItem('ia_config') || '{}'); } catch(e){ return {}; } })();
@@ -69,6 +86,7 @@ async function callAI(systemPrompt, userMsg, maxTokens = 1024) {
       case 'claude': {
         const res = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
+          signal: _signal,
           headers: {
             'Content-Type': 'application/json',
             'x-api-key': activeKey,
@@ -94,7 +112,7 @@ async function callAI(systemPrompt, userMsg, maxTokens = 1024) {
       case 'openai':
         return await _callOpenAIcompat(
           'https://api.openai.com/v1/chat/completions',
-          activeKey, systemPrompt, userMsg, model, maxTokens, 'OpenAI'
+          activeKey, systemPrompt, userMsg, model, maxTokens, 'OpenAI', _signal
         );
 
       // ── Gemini (Google) ──────────────────────────────────────
@@ -102,6 +120,7 @@ async function callAI(systemPrompt, userMsg, maxTokens = 1024) {
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeKey}`;
         const res = await fetch(endpoint, {
           method: 'POST',
+          signal: _signal,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             system_instruction: { parts: [{ text: systemPrompt }] },
@@ -121,26 +140,30 @@ async function callAI(systemPrompt, userMsg, maxTokens = 1024) {
       case 'groq':
         return await _callOpenAIcompat(
           'https://api.groq.com/openai/v1/chat/completions',
-          activeKey, systemPrompt, userMsg, model, maxTokens, 'Groq'
+          activeKey, systemPrompt, userMsg, model, maxTokens, 'Groq', _signal
         );
 
       // ── OpenRouter (200+ modèles) ─────────────────────────────
       case 'openrouter':
         return await _callOpenAIcompat(
           'https://openrouter.ai/api/v1/chat/completions',
-          activeKey, systemPrompt, userMsg, model, maxTokens, 'OpenRouter'
+          activeKey, systemPrompt, userMsg, model, maxTokens, 'OpenRouter', _signal
         );
 
       default:
         throw new Error(`Provider inconnu : ${activeProv}`);
     }
   } catch(e) {
+    if (e.name === 'AbortError') return { error: 'Requête annulée.', aborted: true };
     let msg = e.message;
     if (msg === 'Failed to fetch' || msg.includes('NetworkError') || msg.includes('fetch')) {
       const providerNames = { claude: 'Anthropic', openai: 'OpenAI', gemini: 'Google Gemini', groq: 'Groq', openrouter: 'OpenRouter' };
       msg = `Impossible de contacter ${providerNames[activeProv] || activeProv} — vérifiez votre connexion ou votre clé API.`;
     }
     return { error: msg };
+  } finally {
+    // Libérer le controller si c'est encore le nôtre (pas annulé par un appel plus récent)
+    if (_aiAbortController === _ctrl) _aiAbortController = null;
   }
 }
 
@@ -1555,6 +1578,7 @@ async function runCorrector() {
   const btn = document.getElementById('wt-btn-correct');
   const res = document.getElementById('wt-correct-results');
   btn.disabled = true;
+  try {
 
   // ── Texte nettoyé envoyé à LanguageTool ──────────────
   const cleanText = cleanForAnalysis(text);
@@ -1684,7 +1708,9 @@ async function runCorrector() {
 
   if (errors.length) showToast(errors.join(' — '), 6000, 'error');
   renderCorrectorResults(allIssues, sources.join(' + '), text);
-  btn.disabled = false;
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 function renderCorrectorResults(issues, source, originalText) {
