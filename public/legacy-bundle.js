@@ -25401,7 +25401,7 @@ function ltPostFilter(issues) {
 
     const isSpeculative = ['Fantasy','Science-Fiction','Space Opera','Cyberpunk','Steampunk',
       'Post-apocalyptique','Dystopie','Uchronie','Fantastique','Horreur'].some(g => genre.includes(g));
-    if (isSpeculative && ruleId.includes('MORFOLOGIK') && raw.length <= 12) return false;
+    if (isSpeculative && ruleId.includes('MORFOLOGIK') && raw.length <= 12 && /^[A-ZÀ-Ÿ]/.test(raw)) return false;
 
     return true;
   });
@@ -27277,6 +27277,10 @@ function wtApplySuggestion(raw, suggestion, e) {
   const h = SE.fuzzyFind(raw) || SE.findOne(raw);
   if (h) {
     taReplace(ta, h.start, h.end, suggestion);
+    // Synchroniser le moteur d'autocorrect pour éviter qu'il re-traite et reverte
+    if (typeof SafeCorrectionEngine !== 'undefined' && SafeCorrectionEngine.notifyExternalEdit) {
+      SafeCorrectionEngine.notifyExternalEdit(ta.value);
+    }
     markUnsaved(); onRawInput();
     showToast(_t('toast_correction_ok'), 2000, 'ok');
   }
@@ -33074,9 +33078,6 @@ var _i18n = {
     modal_project_name:          'Nom du projet',
     modal_skip_btn:              'Continuer sans projet',
     modal_create_btn:            'Créer le projet',
-  },
-
-
     // ── Labels manquants ajoutés ────────────────────────────────────────────
     unsaved_label:             'Non sauvegardé',
     project_label_prefix:      'Projet : ',
@@ -33093,6 +33094,8 @@ var _i18n = {
     prompts_reset_confirm:     'Remettre tous les prompts aux valeurs par défaut ?',
     drag_to_reorder:           'Glisser pour réorganiser',
     search_all_title:          'Rechercher dans tout le projet (Ctrl+Shift+G)',
+  },
+
   // ── ENGLISH ────────────────────────────────────────────────────────────────
   en: {
     // Header
@@ -41837,6 +41840,9 @@ const SpellEngine = {
     'maniere':'manière','manieres':'manières',
     'facon':'façon','facons':'façons',
     'caractere':'caractère','caracteres':'caractères',
+    // Prépositions avec terminaison fautive
+    'avecs':'avec','sanse':'sans','poure':'pour','pares':'par',
+    'sures':'sur','souss':'sous',
   },
 
   // Dictionnaire EN : forme incorrecte → forme correcte
@@ -42324,7 +42330,17 @@ var SafeCorrectionEngine = (() => {
     ACPrefs.refreshUI();
   }
 
-  return { init, attach, onPrefsChange, applyAll };
+  /** Notifie le moteur d'une modification externe pour éviter
+   *  qu'un debounce en attente ne reverte la correction appliquée. */
+  function notifyExternalEdit(newText) {
+    _lastText = (newText !== undefined) ? newText : null;
+    clearTimeout(_debounceTimer);
+    _debounceTimer = null;
+    _correctionCooldown = true;
+    setTimeout(() => { _correctionCooldown = false; }, 1200);
+  }
+
+  return { init, attach, onPrefsChange, applyAll, notifyExternalEdit };
 })();
 
 // initPrefsPane est déjà patchée directement dans le corps de la fonction
