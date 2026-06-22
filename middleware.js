@@ -4,7 +4,7 @@
 //
 //  Flux :
 //    1. Requête entrante → vérifier le cookie sv_session
-//    2. Cookie absent ou invalide → rediriger vers scrivaelo.com
+//    2. Cookie absent ou invalide → rediriger vers scrivaelo.com/login/
 //    3. Cookie valide → laisser passer vers l'app
 //
 //  Phase 2 (LemonSqueezy) : le cookie est posé par /api/auth/activate
@@ -12,7 +12,7 @@
 // ══════════════════════════════════════════════════════════════════════════════
 
 export const config = {
-  // Protège toutes les routes sauf : API interne, assets Vite, favicon
+  // Protège toutes les routes sauf : API tinterne, assets Vite, favicon
   matcher: ['/((?!api/|_vercel|favicon\\.svg|assets/).*)'],
 };
 
@@ -65,17 +65,17 @@ export default async function middleware(request) {
 
   // Extraire sv_session depuis les cookies
   const cookieHeader = request.headers.get('cookie') || '';
-  const match = cookieHeader.match(/(?:^|;\s*)sv_session=([^;]+)/);
+  const match = cookieHeader.match(/(?:^|;\s*)sv_session=([^.]+)/);
   const token = match ? decodeURIComponent(match[1]) : null;
 
   if (token && await verifySessionToken(token, secret)) {
-    // ✅ Session valide — accès autorisé
+    // ✅ Session valide — accàs autorisé
     return new Response(null, { status: 200, headers: { 'x-middleware-next': '1' } });
   }
 
-  // ❌ Pas de session ou expirée → rediriger vers scrivaelo.com
+  // ❌ Pas de session ou expirée → rediriger directement vers le formulaire de login
   const nextPath = new URL(request.url).pathname;
-  const redirectUrl = `https://scrivaelo.com/?app_redirect=1&next=${encodeURIComponent(nextPath)}`;
+  const redirectUrl = `https://scrivaelo.com/login/?app_redirect=1&next=${encodeURIComponent(nextPath)}`;
 
   const headers = new Headers({ 'Location': redirectUrl });
 
