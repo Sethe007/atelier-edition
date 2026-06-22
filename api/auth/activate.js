@@ -27,9 +27,11 @@ async function validateSupabaseToken(token) {
 }
 
 export default async function handler(request) {
-  const params  = new URL(request.url).searchParams;
-  const token   = params.get('token')?.trim();
-  const rawNext = params.get('next') || '/';
+  const _q = new URL(request.url).searchParams;
+  const _form = request.method === 'POST' ? await request.formData() : null;
+  const _get = (k) => _form ? (_form.get(k) || '').toString() : (_q.get(k) || '');
+  const token   = _get('token').trim();
+  const rawNext = _get('next') || '/';
   const next    = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/';
   const secret  = process.env.ACCESS_SECRET;
 
