@@ -1655,7 +1655,7 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 </div>
 
 <!-- MODALE AIDE / RACCOURCIS (reconstruite — élément absent du HTML, openHelpModal plantait) -->
-<div id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title-h">
+<div id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title-h" onclick="if(event.target===this)closeHelpModal()">
   <div class="help-modal-box">
     <div class="help-modal-header">
       <span class="help-modal-title" id="help-modal-title-h">⌨ Raccourcis clavier</span>
@@ -1683,12 +1683,12 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 </div>
 
 <!-- MODALE RECHERCHE GLOBALE (reconstruite — élément absent du HTML, openGlobalSearch plantait) -->
-<div id="global-search-modal" role="dialog" aria-modal="true" aria-label="Recherche globale">
+<div id="global-search-modal" role="dialog" aria-modal="true" aria-label="Recherche globale" onclick="if(event.target===this)closeGlobalSearch()">
   <div class="global-search-box">
     <div class="global-search-input-wrap">
       <span class="global-search-icon">🔍</span>
       <input type="text" id="gs-input" placeholder="Rechercher dans tout le texte…" autocomplete="off" spellcheck="false" oninput="runGlobalSearch()" onkeydown="gsKeyNav(event)">
-      <button class="global-search-clear" onclick="clearGlobalSearch()" title="Effacer" aria-label="Effacer">✕</button>
+      <button class="global-search-clear" onclick="closeGlobalSearch()" title="Fermer" aria-label="Fermer">✕</button>
     </div>
     <div class="global-search-results" id="gs-results"></div>
     <div class="global-search-footer">
