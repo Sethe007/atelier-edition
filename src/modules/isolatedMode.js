@@ -363,10 +363,10 @@ function _updateIsolatedModeBtn(active) {
   if (!btn) return;
   if (active) {
     btn.classList.add('active');
-    btn.title = 'Désactiver le mode chapitres isolés — revenir au texte continu (Ctrl+Maj+I)';
+    btn.title = _t('iso_disable_t');
   } else {
     btn.classList.remove('active');
-    btn.title = 'Mode chapitres isolés — chaque chapitre dans son propre onglet (Ctrl+Maj+I)';
+    btn.title = _t('iso_enable_t');
   }
 }
 

@@ -49,20 +49,20 @@ function _fsUpdateButton() {
   const btn = document.getElementById('btn-fs-save');
   if (!btn) return;
   const span = btn.querySelector('span');
+  const _F = (typeof _t === 'function') ? _t('tb_file') : 'Fichier';
   const name = _fsHandle && _fsHandle.name;
   if (name) {
     btn.title = 'Enregistré dans : ' + name;
     btn.removeAttribute('data-fs-warn');
-    if (span) span.textContent = 'Fichier';
+    if (span) span.textContent = _F;
   } else if (fsSupported()) {
-    btn.title = "⚠ Aucun fichier disque ouvert — votre travail n'est conservé que "
-      + 'dans le stockage du navigateur (effaçable). Cliquez pour enregistrer dans un vrai fichier.';
+    btn.title = (typeof _t === 'function') ? _t('tb_file_warn') : '\u26A0 Aucun fichier disque ouvert.';
     btn.setAttribute('data-fs-warn', '1');
-    if (span) span.textContent = 'Fichier ⚠';
+    if (span) span.textContent = _F + ' \u26A0';
   } else {
     btn.title = 'Télécharger le projet dans un fichier';
     btn.removeAttribute('data-fs-warn');
-    if (span) span.textContent = 'Fichier';
+    if (span) span.textContent = _F;
   }
 }
 
