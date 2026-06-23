@@ -294,15 +294,15 @@
           <div class="param-row">
             <span class="param-label" data-i18n="param_format">Format</span>
             <select id="page-format" onchange="applySettings()">
-              <optgroup label="— Mise en page édition —">
-                <option value="A4">A4 · 210×297 mm (manuscrit)</option>
-                <option value="ROMAN">Roman · 135×215 mm (standard)</option>
-                <option value="A5">A5 · 148×210 mm (poche moyen)</option>
-                <option value="POCHE">Poche · 110×178 mm (grand poche)</option>
+              <optgroup data-i18n-label="pf_grp_edition" label="— Mise en page édition —">
+                <option value="A4" data-i18n="pf_a4">A4 · 210×297 mm (manuscrit)</option>
+                <option value="ROMAN" data-i18n="pf_roman">Roman · 135×215 mm (standard)</option>
+                <option value="A5" data-i18n="pf_a5">A5 · 148×210 mm (poche moyen)</option>
+                <option value="POCHE" data-i18n="pf_poche">Poche · 110×178 mm (grand poche)</option>
               </optgroup>
-              <optgroup label="— Soumission éditeur —">
-                <option value="SUBMIT_AMI">Soumission Pro (double interligne)</option>
-                <option value="SUBMIT_STD">Soumission standard FR</option>
+              <optgroup data-i18n-label="pf_grp_submit" label="— Soumission éditeur —">
+                <option value="SUBMIT_AMI" data-i18n="pf_submit_pro">Soumission Pro (double interligne)</option>
+                <option value="SUBMIT_STD" data-i18n="pf_submit_std">Soumission standard FR</option>
               </optgroup>
             </select>
           </div>
@@ -967,7 +967,7 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
               <option value="" data-i18n="opt_choose">— choisir —</option>
               <option value="Roman" data-i18n="opt_roman">Roman</option>
               <option value="Nouvelle" data-i18n="opt_nouvelle">Nouvelle</option>
-              <option value="Novella">Novella</option>
+              <option value="Novella" data-i18n="opt_novella">Novella</option>
               <option value="Recueil de nouvelles" data-i18n="opt_recueil">Recueil de nouvelles</option>
               <option value="Article" data-i18n="opt_article">Article</option>
               <option value="Essai" data-i18n="opt_essai">Essai</option>
@@ -981,18 +981,18 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
             <select id="sm-oeuvre-genre" onchange="syncSettingsField('oeuvre-genre','sm-oeuvre-genre')">
               <option value="" data-i18n="opt_choose">— choisir —</option>
               <optgroup data-i18n-label="optgroup_fantastique" label="— Fantastique & Imaginaire —">
-                <option value="Fantasy classique">Fantasy classique</option>
-                <option value="Héroïc Fantasy">Héroïc Fantasy</option>
-                <option value="Dark Fantasy">Dark Fantasy</option>
-                <option value="Fantasy épique">Fantasy épique</option>
-                <option value="Fantasy urbaine">Fantasy urbaine</option>
-                <option value="Science-Fiction">Science-Fiction</option>
-                <option value="Space Opera">Space Opera</option>
-                <option value="Cyberpunk">Cyberpunk</option>
-                <option value="Steampunk">Steampunk</option>
+                <option value="Fantasy classique" data-i18n="opt_fantasy_classique">Fantasy classique</option>
+                <option value="Héroïc Fantasy" data-i18n="opt_heroic_fantasy">Héroïc Fantasy</option>
+                <option value="Dark Fantasy" data-i18n="opt_dark_fantasy">Dark Fantasy</option>
+                <option value="Fantasy épique" data-i18n="opt_fantasy_epique">Fantasy épique</option>
+                <option value="Fantasy urbaine" data-i18n="opt_fantasy_urbaine">Fantasy urbaine</option>
+                <option value="Science-Fiction" data-i18n="opt_sf">Science-Fiction</option>
+                <option value="Space Opera" data-i18n="opt_space_opera">Space Opera</option>
+                <option value="Cyberpunk" data-i18n="opt_cyberpunk">Cyberpunk</option>
+                <option value="Steampunk" data-i18n="opt_steampunk">Steampunk</option>
                 <option value="Post-apocalyptique" data-i18n="opt_postapo">Post-apocalyptique</option>
                 <option value="Dystopie" data-i18n="opt_dystopie">Dystopie</option>
-                <option value="Uchronie">Uchronie</option>
+                <option value="Uchronie" data-i18n="opt_uchronie">Uchronie</option>
                 <option value="Fantastique" data-i18n="opt_fantastique">Fantastique</option>
                 <option value="Horreur" data-i18n="opt_horreur">Horreur</option>
                 <option value="Gothique" data-i18n="opt_gothique">Gothique</option>
@@ -1001,7 +1001,7 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
                 <option value="Littérature blanche" data-i18n="opt_litterature_blanche">Littérature blanche</option>
                 <option value="Roman historique" data-i18n="opt_roman_historique">Roman historique</option>
                 <option value="Roman policier" data-i18n="opt_roman_policier">Roman policier</option>
-                <option value="Thriller">Thriller</option>
+                <option value="Thriller" data-i18n="opt_thriller">Thriller</option>
                 <option value="Roman psychologique" data-i18n="opt_roman_psy">Roman psychologique</option>
                 <option value="Roman sentimental" data-i18n="opt_roman_sentimental">Roman sentimental</option>
                 <option value="Roman d'aventure" data-i18n="opt_roman_aventure">Roman d'aventure</option>
@@ -1011,8 +1011,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
               </optgroup>
               <optgroup data-i18n-label="optgroup_jeunesse" label="— Jeunesse —">
                 <option value="Jeunesse" data-i18n="opt_jeunesse">Jeunesse</option>
-                <option value="Young Adult">Young Adult</option>
-                <option value="New Adult">New Adult</option>
+                <option value="Young Adult" data-i18n="opt_young_adult">Young Adult</option>
+                <option value="New Adult" data-i18n="opt_new_adult">New Adult</option>
               </optgroup>
             </select>
           </div>
@@ -1023,9 +1023,9 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
               <option value="Antiquité" data-i18n="opt_antiquite">Antiquité</option>
               <option value="Moyen Âge" data-i18n="opt_moyen_age">Moyen Âge</option>
               <option value="Renaissance" data-i18n="opt_renaissance">Renaissance</option>
-              <option value="XVIIe siècle">XVIIe siècle</option>
-              <option value="XVIIIe siècle">XVIIIe siècle</option>
-              <option value="XIXe siècle">XIXe siècle</option>
+              <option value="XVIIe siècle" data-i18n="opt_xviie">XVIIe siècle</option>
+              <option value="XVIIIe siècle" data-i18n="opt_xviiie">XVIIIe siècle</option>
+              <option value="XIXe siècle" data-i18n="opt_xixe">XIXe siècle</option>
               <option value="Début XXe (1900–1939)" data-i18n="opt_debut_xxe">Début XXe (1900–1939)</option>
               <option value="Milieu XXe (1940–1980)" data-i18n="opt_milieu_xxe">Milieu XXe (1940–1980)</option>
               <option value="Contemporain (1980–2024)" data-i18n="opt_contemporain">Contemporain (1980–2024)</option>
@@ -1338,7 +1338,7 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
           <div class="pref-row">
             <div class="pref-row-left">
               <div class="pref-label" data-i18n="autocorr_enable">Activer la correction automatique</div>
-              <div class="pref-desc">Corrections mécaniques légères en temps réel — sans réécriture, sans IA.</div>
+              <div class="pref-desc" data-i18n="ac_enable_desc">Corrections mécaniques légères en temps réel — sans réécriture, sans IA.</div>
             </div>
             <div class="pref-row-right">
               <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1351,8 +1351,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
           <div id="ac-suboptions">
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Majuscules automatiques</div>
-                <div class="pref-desc">Majuscule après . ? ! et en début de paragraphe.</div>
+                <div class="pref-label" data-i18n="ac_caps">Majuscules automatiques</div>
+                <div class="pref-desc" data-i18n="ac_caps_d">Majuscule après . ? ! et en début de paragraphe.</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1364,8 +1364,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Supprimer les doubles espaces</div>
-                <div class="pref-desc">Bonjour&amp;nbsp;&amp;nbsp;monde &rarr; Bonjour monde</div>
+                <div class="pref-label" data-i18n="ac_dblspace">Supprimer les doubles espaces</div>
+                <div class="pref-desc" data-i18n="ac_dblspace_d">Bonjour&amp;nbsp;&amp;nbsp;monde &rarr; Bonjour monde</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1377,8 +1377,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Espaces de fin de ligne</div>
-                <div class="pref-desc">Supprime les espaces traînants à la fin de chaque ligne.</div>
+                <div class="pref-label" data-i18n="ac_eol">Espaces de fin de ligne</div>
+                <div class="pref-desc" data-i18n="ac_eol_d">Supprime les espaces traînants à la fin de chaque ligne.</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1390,8 +1390,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Apostrophes typographiques</div>
-                <div class="pref-desc">l'homme → l’homme</div>
+                <div class="pref-label" data-i18n="ac_apos">Apostrophes typographiques</div>
+                <div class="pref-desc" data-i18n="ac_apos_d">l'homme → l’homme</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1403,8 +1403,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Guillemets typographiques</div>
-                <div class="pref-desc">FR : « Bonjour » &mdash; EN : “Hello” &mdash; ES : «Hola»</div>
+                <div class="pref-label" data-i18n="ac_quotes">Guillemets typographiques</div>
+                <div class="pref-desc" data-i18n="ac_quotes_d">FR : « Bonjour » &mdash; EN : “Hello” &mdash; ES : «Hola»</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1416,8 +1416,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Ponctuation normalisée</div>
-                <div class="pref-desc">FR : Bonjour! → Bonjour ! &mdash; EN/ES : Hello ! → Hello!</div>
+                <div class="pref-label" data-i18n="ac_punct">Ponctuation normalisée</div>
+                <div class="pref-desc" data-i18n="ac_punct_d">FR : Bonjour! → Bonjour ! &mdash; EN/ES : Hello ! → Hello!</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1429,8 +1429,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Répétitions accidentelles</div>
-                <div class="pref-desc">the the → the &middot; de de → de (mots courts uniquement)</div>
+                <div class="pref-label" data-i18n="ac_rep">Répétitions accidentelles</div>
+                <div class="pref-desc" data-i18n="ac_rep_d">the the → the &middot; de de → de (mots courts uniquement)</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1442,8 +1442,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Ponctuation excessive</div>
-                <div class="pref-desc">Bonjour..... → Bonjour…</div>
+                <div class="pref-label" data-i18n="ac_punctx">Ponctuation excessive</div>
+                <div class="pref-desc" data-i18n="ac_punctx_d">Bonjour..... → Bonjour…</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1455,8 +1455,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Accord nominal (pluriel)</div>
-                <div class="pref-desc">FR : les fleur → les fleurs · des chat → des chats</div>
+                <div class="pref-label" data-i18n="ac_agree_noun">Accord nominal (pluriel)</div>
+                <div class="pref-desc" data-i18n="ac_agree_noun_d">FR : les fleur → les fleurs · des chat → des chats</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1468,8 +1468,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Accord sujet-verbe (pluriel)</div>
-                <div class="pref-desc">FR : les chats mange → les chats mangent &middot; EN : the cats runs → the cats run &middot; ES : los gatos corre → los gatos corren</div>
+                <div class="pref-label" data-i18n="ac_agree_sv">Accord sujet-verbe (pluriel)</div>
+                <div class="pref-desc" data-i18n="ac_agree_sv_d">FR : les chats mange → les chats mangent &middot; EN : the cats runs → the cats run &middot; ES : los gatos corre → los gatos corren</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1481,8 +1481,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Accord nom-adjectif (pluriel)</div>
-                <div class="pref-desc">FR : des résultats positif → des résultats positifs &middot; EN/ES : accord adjectif-nom au pluriel</div>
+                <div class="pref-label" data-i18n="ac_agree_adj">Accord nom-adjectif (pluriel)</div>
+                <div class="pref-desc" data-i18n="ac_agree_adj_d">FR : des résultats positif → des résultats positifs &middot; EN/ES : accord adjectif-nom au pluriel</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1494,8 +1494,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Orthographe lexicale</div>
-                <div class="pref-desc">Corrige les mots mal orthographiés selon un dictionnaire FR/EN/ES (sans réécriture).</div>
+                <div class="pref-label" data-i18n="ac_lex">Orthographe lexicale</div>
+                <div class="pref-desc" data-i18n="ac_lex_d">Corrige les mots mal orthographiés selon un dictionnaire FR/EN/ES (sans réécriture).</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1507,8 +1507,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
             <div class="pref-row">
               <div class="pref-row-left">
-                <div class="pref-label">Participes passés (avoir)</div>
-                <div class="pref-desc">FR : j'ai parle → j'ai parlé &middot; il a manger → il a mangé</div>
+                <div class="pref-label" data-i18n="ac_pp">Participes passés (avoir)</div>
+                <div class="pref-desc" data-i18n="ac_pp_d">FR : j'ai parle → j'ai parlé &middot; il a manger → il a mangé</div>
               </div>
               <div class="pref-row-right">
                 <label class="pref-toggle" style="position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle;">
@@ -1714,7 +1714,7 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 </div>
 
 <!-- COMPTEUR FLOTTANT MODE FOCUS -->
-<div class="focus-word-counter" id="focus-word-counter">0 mots</div>
+<div class="focus-word-counter" id="focus-word-counter" data-i18n="focus_init">0 mots</div>
   <!-- DOMPurify : sanitisation du HTML non fiable (sorties IA, imports). Chargé avant le bundle. -->
   <script src="/vendor/purify.min.js"></script>
   <script src="/legacy-bundle.js"></script>
