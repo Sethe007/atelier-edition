@@ -7,6 +7,9 @@
 _registerLang('fr', {
   // Header
   btn_save:            'Sauvegarder',
+    tb_projects_t: "Gérer les projets",
+    ed_format_t: "Formater (Ctrl+Maj+F)",
+    cork_tag_t: "Tags",
     exp_pdf: "PDF imprimable",
     exp_word: "Word (.docx)",
     exp_epub: "ePub",

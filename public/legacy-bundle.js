@@ -12261,6 +12261,9 @@ var _i18n = {
   fr: {
     // Header
     btn_save:            'Sauvegarder',
+    tb_projects_t: "Gérer les projets",
+    ed_format_t: "Formater (Ctrl+Maj+F)",
+    cork_tag_t: "Tags",
     exp_pdf: "PDF imprimable",
     exp_word: "Word (.docx)",
     exp_epub: "ePub",
@@ -13092,6 +13095,9 @@ var _i18n = {
   en: {
     // Header
     btn_save:            'Save',
+    tb_projects_t: "Manage projects",
+    ed_format_t: "Format (Ctrl+Maj+F)",
+    cork_tag_t: "Tags",
     exp_pdf: "Printable PDF",
     exp_word: "Word (.docx)",
     exp_epub: "ePub",
@@ -13956,6 +13962,9 @@ var _i18n = {
   es: {
     // Header
     btn_save:            'Guardar',
+    tb_projects_t: "Gestionar los proyectos",
+    ed_format_t: "Formatear (Ctrl+Maj+F)",
+    cork_tag_t: "Etiquetas",
     exp_pdf: "PDF imprimible",
     exp_word: "Word (.docx)",
     exp_epub: "ePub",
@@ -14821,6 +14830,9 @@ var _i18n = {
   // ── DEUTSCH ─────────────────────────────────────────────────────────────────
   de: {
     btn_save:  'Speichern',
+    tb_projects_t: "Projekte verwalten",
+    ed_format_t: "Formatieren (Ctrl+Maj+F)",
+    cork_tag_t: "Tags",
     exp_pdf: "Druckbares PDF",
     exp_word: "Word (.docx)",
     exp_epub: "ePub",
@@ -15620,6 +15632,9 @@ var _i18n = {
   // ── ITALIANO ────────────────────────────────────────────────────────────────
   it: {
     btn_save:  'Salva',
+    tb_projects_t: "Gestisci i progetti",
+    ed_format_t: "Formatta (Ctrl+Maj+F)",
+    cork_tag_t: "Tag",
     exp_pdf: "PDF stampabile",
     exp_word: "Word (.docx)",
     exp_epub: "ePub",
@@ -16415,6 +16430,9 @@ var _i18n = {
   // ── PORTUGUÊS ───────────────────────────────────────────────────────────────
   pt: {
     btn_save:  'Guardar',
+    tb_projects_t: "Gerir os projetos",
+    ed_format_t: "Formatar (Ctrl+Maj+F)",
+    cork_tag_t: "Etiquetas",
     exp_pdf: "PDF imprimível",
     exp_word: "Word (.docx)",
     exp_epub: "ePub",
@@ -20617,7 +20635,7 @@ function corkboardRender() {
         <div class="cork-actions">
           <button class="cork-action-btn" title="${_t('cork_summary_t')}"
             onclick="event.stopPropagation();openSummaryPopup(this, decodeURIComponent(this.closest('.cork-card').dataset.chTitle))">✦</button>
-          <button class="cork-action-btn" title="Tags"
+          <button class="cork-action-btn" title="${_t('cork_tag_t')}"
             onclick="event.stopPropagation();chEditTags(decodeURIComponent(this.closest('.cork-card').dataset.chTitle))">🏷</button>
           <button class="cork-action-btn cork-lock-btn${isLocked?' locked':''}" title="${isLocked?_t('cork_unlock_t'):_t('cork_lock_t')}"
             onclick="event.stopPropagation();_corkToggleLock('${cardId}')">${isLocked?'🔒':'🔓'}</button>

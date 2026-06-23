@@ -42,7 +42,7 @@ const KEYS = [
   'cork_delete_t',
   'cork_summary_t',
   'cork_unlock_t',
-  'cork_lock_t',
+  'cork_lock_t','tb_projects_t','ed_format_t','cork_tag_t',
 ];
 
 describe('i18n — complétude des clés barre d’outils + modales (6 langues)', () => {

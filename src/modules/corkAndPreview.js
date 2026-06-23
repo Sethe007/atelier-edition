@@ -2970,7 +2970,7 @@ function corkboardRender() {
         <div class="cork-actions">
           <button class="cork-action-btn" title="${_t('cork_summary_t')}"
             onclick="event.stopPropagation();openSummaryPopup(this, decodeURIComponent(this.closest('.cork-card').dataset.chTitle))">✦</button>
-          <button class="cork-action-btn" title="Tags"
+          <button class="cork-action-btn" title="${_t('cork_tag_t')}"
             onclick="event.stopPropagation();chEditTags(decodeURIComponent(this.closest('.cork-card').dataset.chTitle))">🏷</button>
           <button class="cork-action-btn cork-lock-btn${isLocked?' locked':''}" title="${isLocked?_t('cork_unlock_t'):_t('cork_lock_t')}"
             onclick="event.stopPropagation();_corkToggleLock('${cardId}')">${isLocked?'🔒':'🔓'}</button>

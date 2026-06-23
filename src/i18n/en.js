@@ -6,6 +6,9 @@
 _registerLang('en', {
   // Header
   btn_save:            'Save',
+    tb_projects_t: "Manage projects",
+    ed_format_t: "Format (Ctrl+Maj+F)",
+    cork_tag_t: "Tags",
     exp_pdf: "Printable PDF",
     exp_word: "Word (.docx)",
     exp_epub: "ePub",
