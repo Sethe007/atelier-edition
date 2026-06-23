@@ -471,7 +471,7 @@ function saveProject() {
   // Nom de fichier : projet_slug.json
   const slug = currentProject.nom.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'').slice(0, 40) || 'projet';
   a.href = url;
-  a.download = slug + '.json';
+  a.download = slug + '.scrivaelo';
   a.click();
   URL.revokeObjectURL(url);
   markSaved();
@@ -655,7 +655,7 @@ function applyProjectData(data, fileName) {
   // Restaurer les méta
   const meta = data.meta || {};
   currentProject = {
-    nom: meta.nom || (fileName ? fileName.replace(/\.json$/i,'') : 'Projet chargé'),
+    nom: meta.nom || (fileName ? fileName.replace(/\.(scrivaelo|json)$/i,'') : 'Projet chargé'),
     dateCreation: meta.dateCreation || '',
     derniereSauvegarde: meta.derniereSauvegarde || null,
   };
@@ -24170,7 +24170,7 @@ function _fsSlug() {
 }
 
 function _fsProjectFileName() {
-  return _fsSlug() + '.json';
+  return _fsSlug() + '.scrivaelo';
 }
 
 async function _fsWrite(handle, text) {
@@ -24220,7 +24220,7 @@ async function fsOpenProject() {
   }
   try {
     const [handle] = await window.showOpenFilePicker({
-      types: [{ description: 'Projet Atelier', accept: { 'application/json': ['.json'] } }],
+      types: [{ description: 'Projet Atelier', accept: { 'application/json': ['.scrivaelo', '.json'] } }],
       multiple: false,
     });
     const file = await handle.getFile();
@@ -24264,7 +24264,7 @@ async function fsSaveProjectAs() {
   try {
     const handle = await window.showSaveFilePicker({
       suggestedName: _fsProjectFileName(),
-      types: [{ description: 'Projet Atelier', accept: { 'application/json': ['.json'] } }],
+      types: [{ description: 'Projet Atelier', accept: { 'application/json': ['.scrivaelo', '.json'] } }],
     });
     const data = collectProjectData();
     await _fsWrite(handle, JSON.stringify(data, null, 2));
@@ -24321,7 +24321,7 @@ function _fsTimestamp(d) {
 // Pur : parmi `names`, renvoie les backups de ce projet à supprimer (au-delà de keep).
 function _fsSelectBackupsToDelete(names, slug, keep) {
   const esc = slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const re = new RegExp('^' + esc + '-\\d{8}-\\d{6}\\.json$'); // slug-AAAAMMJJ-HHmmss.json STRICT
+  const re = new RegExp('^' + esc + '-\\d{8}-\\d{6}\\.(scrivaelo|json)$'); // slug-AAAAMMJJ-HHmmss.json STRICT
   const mine = names.filter((n) => re.test(n));
   mine.sort(); // l'horodatage trie chronologiquement
   return mine.slice(0, Math.max(0, mine.length - keep));
@@ -24384,7 +24384,7 @@ async function fsWriteBackup() {
   try {
     if (!(await _fsHasPermission(_fsBackupDir, true))) return;
     const slug = _fsSlug();
-    const name = slug + '-' + _fsTimestamp() + '.json';
+    const name = slug + '-' + _fsTimestamp() + '.scrivaelo';
     const data = collectProjectData();
     const fh = await _fsBackupDir.getFileHandle(name, { create: true });
     await _fsWrite(fh, JSON.stringify(data, null, 2));

@@ -72,7 +72,7 @@ function saveProject() {
   // Nom de fichier : projet_slug.json
   const slug = currentProject.nom.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'').slice(0, 40) || 'projet';
   a.href = url;
-  a.download = slug + '.json';
+  a.download = slug + '.scrivaelo';
   a.click();
   URL.revokeObjectURL(url);
   markSaved();
@@ -256,7 +256,7 @@ function applyProjectData(data, fileName) {
   // Restaurer les méta
   const meta = data.meta || {};
   currentProject = {
-    nom: meta.nom || (fileName ? fileName.replace(/\.json$/i,'') : 'Projet chargé'),
+    nom: meta.nom || (fileName ? fileName.replace(/\.(scrivaelo|json)$/i,'') : 'Projet chargé'),
     dateCreation: meta.dateCreation || '',
     derniereSauvegarde: meta.derniereSauvegarde || null,
   };

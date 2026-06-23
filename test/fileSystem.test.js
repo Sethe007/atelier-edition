@@ -17,7 +17,7 @@ describe('fileSystem — détection & nom de fichier', () => {
   });
   it('_fsProjectFileName() slugifie le nom du projet', () => {
     const s = loadGlobals('src/modules/fileSystem.js', baseMocks({ window: {} }));
-    expect(s._fsProjectFileName()).toBe('mon-roman.json');
+    expect(s._fsProjectFileName()).toBe('mon-roman.scrivaelo');
   });
 });
 
@@ -46,6 +46,16 @@ describe('fileSystem — horodatage & élagage des backups', () => {
     ];
     const del = s._fsSelectBackupsToDelete(names, 'mon-roman', 2);
     expect(del).toEqual(['mon-roman-20260620-100000.json']);
+  });
+  it('élague les backups .scrivaelo (et reste compatible .json)', () => {
+    const s = loadGlobals('src/modules/fileSystem.js', baseMocks({ window: {} }));
+    const names = [
+      'mon-roman-20260620-100000.scrivaelo',
+      'mon-roman-20260621-100000.json',
+      'mon-roman-20260622-100000.scrivaelo',
+    ];
+    const del = s._fsSelectBackupsToDelete(names, 'mon-roman', 1);
+    expect(del).toEqual(['mon-roman-20260620-100000.scrivaelo','mon-roman-20260621-100000.json']);
   });
   it('ne touche pas un projet au préfixe voisin (roman vs roman-deux)', () => {
     const s = loadGlobals('src/modules/fileSystem.js', baseMocks({ window: {} }));
