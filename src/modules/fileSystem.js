@@ -42,10 +42,25 @@ function _fsToast(msg, dur, type) {
 function _fsUpdateButton() {
   const btn = document.getElementById('btn-fs-save');
   if (!btn) return;
+  const span = btn.querySelector('span');
   const name = _fsHandle && _fsHandle.name;
-  btn.title = name
-    ? ('Enregistrer dans : ' + name)
-    : 'Enregistrer le projet dans un fichier sur votre disque';
+  if (name) {
+    // Un vrai fichier disque est actif : pas d'avertissement.
+    btn.title = 'Enregistré dans : ' + name;
+    btn.removeAttribute('data-fs-warn');
+    if (span) span.textContent = 'Fichier';
+  } else if (fsSupported()) {
+    // FS dispo mais aucun fichier ouvert -> avertir : stockage navigateur seul.
+    btn.title = '⚠ Aucun fichier disque ouvert — votre travail n\'est conservé que '
+      + 'dans le stockage du navigateur (effaçable). Cliquez pour enregistrer dans un vrai fichier.';
+    btn.setAttribute('data-fs-warn', '1');
+    if (span) span.textContent = 'Fichier ⚠';
+  } else {
+    // Navigateur sans File System Access : le bouton agit comme un téléchargement.
+    btn.title = 'Télécharger le projet dans un fichier';
+    btn.removeAttribute('data-fs-warn');
+    if (span) span.textContent = 'Fichier';
+  }
 }
 
 // ── Ouvrir un projet depuis un VRAI fichier ────────────────
@@ -136,4 +151,14 @@ async function fsAutosaveToFile() {
 // ── L'utilisateur n'a PAS de fichier disque actif (stockage navigateur seul) ─
 function fsUsingBrowserStorageOnly() {
   return !_fsHandle;
+}
+
+
+// Init : refléter l'état « stockage navigateur seul » dès le chargement.
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { try { _fsUpdateButton(); } catch (e) {} });
+  } else {
+    try { _fsUpdateButton(); } catch (e) {}
+  }
 }
