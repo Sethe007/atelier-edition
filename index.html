@@ -1654,6 +1654,50 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
   </div>
 </div>
 
+<!-- MODALE AIDE / RACCOURCIS (reconstruite — élément absent du HTML, openHelpModal plantait) -->
+<div id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title-h" onclick="if(event.target===this)closeHelpModal()">
+  <div class="help-modal-box">
+    <div class="help-modal-header">
+      <span class="help-modal-title" id="help-modal-title-h">⌨ Raccourcis clavier</span>
+      <button class="help-modal-close" onclick="closeHelpModal()" aria-label="Fermer">✕</button>
+    </div>
+    <div class="help-modal-body">
+      <div class="help-section-title">Raccourcis clavier</div>
+      <div class="help-section">
+        <h4>Fichier</h4>
+        <div class="help-row"><span>Enregistrer</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>S</kbd></span></div>
+      </div>
+      <div class="help-section">
+        <h4>Affichage</h4>
+        <div class="help-row"><span>Mode chapitre isolé</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>Maj</kbd><kbd>I</kbd></span></div>
+        <div class="help-row"><span>Mode sombre</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>Maj</kbd><kbd>D</kbd></span></div>
+      </div>
+      <div class="help-section">
+        <h4>Recherche &amp; aide</h4>
+        <div class="help-row"><span>Recherche globale</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>Maj</kbd><kbd>G</kbd></span></div>
+        <div class="help-row"><span>Aide (cette fenêtre)</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>?</kbd></span></div>
+        <div class="help-row"><span>Fermer une fenêtre</span><span class="help-keys"><kbd>Échap</kbd></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE RECHERCHE GLOBALE (reconstruite — élément absent du HTML, openGlobalSearch plantait) -->
+<div id="global-search-modal" role="dialog" aria-modal="true" aria-label="Recherche globale" onclick="if(event.target===this)closeGlobalSearch()">
+  <div class="global-search-box">
+    <div class="global-search-input-wrap">
+      <span class="global-search-icon">🔍</span>
+      <input type="text" id="gs-input" placeholder="Rechercher dans tout le texte…" autocomplete="off" spellcheck="false" oninput="runGlobalSearch()" onkeydown="gsKeyNav(event)">
+      <button class="global-search-clear" onclick="closeGlobalSearch()" title="Fermer" aria-label="Fermer">✕</button>
+    </div>
+    <div class="global-search-results" id="gs-results"></div>
+    <div class="global-search-footer">
+      <span id="gs-footer-hint">↑↓ pour naviguer • Entrée pour ouvrir • Échap pour fermer</span>
+      <span class="global-search-count" id="gs-count"></span>
+    </div>
+  </div>
+</div>
+
 <!-- COMPTEUR FLOTTANT MODE FOCUS -->
 <div class="focus-word-counter" id="focus-word-counter">0 mots</div>
   <!-- DOMPurify : sanitisation du HTML non fiable (sorties IA, imports). Chargé avant le bundle. -->
