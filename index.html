@@ -1593,6 +1593,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
 <!-- COMPTEUR FLOTTANT MODE FOCUS -->
 <div class="focus-word-counter" id="focus-word-counter">0 mots</div>
+  <!-- DOMPurify : sanitisation du HTML non fiable (sorties IA, imports). Chargé avant le bundle. -->
+  <script src="/vendor/purify.min.js"></script>
   <script src="/legacy-bundle.js"></script>
 </body>
 </html>

@@ -20265,7 +20265,7 @@ function renderAiLines(lines) {
   return lines
     .filter(l => l.trim())
     .map(l => {
-      const clean = l.trim().replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      const clean = escHtml(l.trim()).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
       if (clean.startsWith('—') || clean.startsWith('-')) {
         return `<div style="margin-bottom:7px;padding-left:8px;border-left:2px solid var(--accent-light);">${clean.replace(/^[—\-]\s*/, '')}</div>`;
       }
@@ -21114,6 +21114,27 @@ function formatRoman() {
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
           .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/**
+ * sanitizeHTML — nettoie du HTML NON FIABLE (sortie IA brute, contenu importé)
+ * avant une injection via innerHTML. À réserver au contenu EXTERNE : ne pas
+ * l'appliquer aux templates de l'app (ils utilisent volontairement des
+ * onclick/style inline que DOMPurify retirerait). Repli sûr sur escHtml si
+ * DOMPurify n'est pas chargé.
+ */
+function sanitizeHTML(html, opts) {
+  if (html == null) return '';
+  if (typeof DOMPurify !== 'undefined' && DOMPurify && DOMPurify.sanitize) {
+    return DOMPurify.sanitize(String(html), opts || {});
+  }
+  return escHtml(String(html));
+}
+
+/** setHTML — équivalent sûr de `el.innerHTML = html` pour du contenu non fiable. */
+function setHTML(el, html, opts) {
+  if (!el) return;
+  el.innerHTML = sanitizeHTML(html, opts);
 }
 
 // Compteur global pour indexer les notes dans la preview

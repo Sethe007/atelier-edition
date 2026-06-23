@@ -144,7 +144,7 @@ function renderAiLines(lines) {
   return lines
     .filter(l => l.trim())
     .map(l => {
-      const clean = l.trim().replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      const clean = escHtml(l.trim()).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
       if (clean.startsWith('—') || clean.startsWith('-')) {
         return `<div style="margin-bottom:7px;padding-left:8px;border-left:2px solid var(--accent-light);">${clean.replace(/^[—\-]\s*/, '')}</div>`;
       }
