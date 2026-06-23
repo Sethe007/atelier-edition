@@ -43251,11 +43251,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // Couche ADDITIVE. Ne remplace NI saveProject() (download) NI l'autosave
 // localStorage : permet d'ouvrir/enregistrer le manuscrit comme un VRAI fichier
 // dans le dossier choisi par l'utilisateur, avec autosave silencieux sur ce
-// fichier. Repli automatique (download / input file classiques) si l'API n'est
-// pas supportée (Firefox, Safari). Réutilise collectProjectData()/applyProjectData().
+// fichier ET des backups versionnés horodatés. Repli automatique (download /
+// input file classiques) si l'API n'est pas supportée (Firefox, Safari).
+// Réutilise collectProjectData() / applyProjectData().
 
-let _fsHandle = null;         // FileSystemFileHandle du projet ouvert/enregistré
-let _fsAutosaveBusy = false;  // évite les écritures concurrentes
+let _fsHandle = null;          // FileSystemFileHandle du projet ouvert/enregistré
+let _fsAutosaveBusy = false;   // évite les écritures concurrentes
+let _fsBackupDir = null;       // FileSystemDirectoryHandle du dossier de backups
+const _FS_BACKUP_KEEP = 15;    // nombre de backups conservés par projet
 
 function fsSupported() {
   return typeof window !== 'undefined'
@@ -43263,10 +43266,13 @@ function fsSupported() {
     && 'showOpenFilePicker' in window;
 }
 
-function _fsProjectFileName() {
+function _fsSlug() {
   const nom = (typeof currentProject !== 'undefined' && currentProject && currentProject.nom) || 'projet';
-  const slug = nom.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '').slice(0, 40) || 'projet';
-  return slug + '.json';
+  return nom.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '').slice(0, 40) || 'projet';
+}
+
+function _fsProjectFileName() {
+  return _fsSlug() + '.json';
 }
 
 async function _fsWrite(handle, text) {
@@ -43292,18 +43298,15 @@ function _fsUpdateButton() {
   const span = btn.querySelector('span');
   const name = _fsHandle && _fsHandle.name;
   if (name) {
-    // Un vrai fichier disque est actif : pas d'avertissement.
     btn.title = 'Enregistré dans : ' + name;
     btn.removeAttribute('data-fs-warn');
     if (span) span.textContent = 'Fichier';
   } else if (fsSupported()) {
-    // FS dispo mais aucun fichier ouvert -> avertir : stockage navigateur seul.
-    btn.title = '⚠ Aucun fichier disque ouvert — votre travail n\'est conservé que '
+    btn.title = "⚠ Aucun fichier disque ouvert — votre travail n'est conservé que "
       + 'dans le stockage du navigateur (effaçable). Cliquez pour enregistrer dans un vrai fichier.';
     btn.setAttribute('data-fs-warn', '1');
     if (span) span.textContent = 'Fichier ⚠';
   } else {
-    // Navigateur sans File System Access : le bouton agit comme un téléchargement.
     btn.title = 'Télécharger le projet dans un fichier';
     btn.removeAttribute('data-fs-warn');
     if (span) span.textContent = 'Fichier';
@@ -43349,6 +43352,7 @@ async function fsSaveProject() {
     }
     if (typeof markSaved === 'function') markSaved();
     _fsToast('💾 Enregistré : ' + (_fsHandle.name || _fsProjectFileName()));
+    fsWriteBackup();
   } catch (e) {
     if (e && e.name === 'AbortError') return;
     console.warn('fsSaveProject échec :', e);
@@ -43373,6 +43377,7 @@ async function fsSaveProjectAs() {
     }
     if (typeof markSaved === 'function') markSaved();
     _fsToast('💾 Enregistré : ' + (handle.name || _fsProjectFileName()));
+    fsWriteBackup();
   } catch (e) {
     if (e && e.name === 'AbortError') return;
     console.warn('fsSaveProjectAs échec :', e);
@@ -43400,12 +43405,114 @@ function fsUsingBrowserStorageOnly() {
   return !_fsHandle;
 }
 
+// ══════════════════════════════════════════════════════════
+// ── BACKUPS VERSIONNÉS SUR DISQUE ──────────────────────────
+// ══════════════════════════════════════════════════════════
+// Un dossier choisi par l'utilisateur reçoit, à chaque enregistrement, une copie
+// horodatée « slug-AAAAMMJJ-HHmmss.json ». On conserve les _FS_BACKUP_KEEP plus
+// récents par projet. Restauration : il suffit d'ouvrir le backup via « Ouvrir »
+// (c'est un fichier projet standard). Le dossier est mémorisé via IndexedDB.
 
-// Init : refléter l'état « stockage navigateur seul » dès le chargement.
+function _fsTimestamp(d) {
+  d = d || new Date();
+  const p = (n) => String(n).padStart(2, '0');
+  return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate())
+    + '-' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds());
+}
+
+// Pur : parmi `names`, renvoie les backups de ce projet à supprimer (au-delà de keep).
+function _fsSelectBackupsToDelete(names, slug, keep) {
+  const esc = slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp('^' + esc + '-\\d{8}-\\d{6}\\.json$'); // slug-AAAAMMJJ-HHmmss.json STRICT
+  const mine = names.filter((n) => re.test(n));
+  mine.sort(); // l'horodatage trie chronologiquement
+  return mine.slice(0, Math.max(0, mine.length - keep));
+}
+
+function _fsIdb() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('atelier_fs', 1);
+    req.onupgradeneeded = () => req.result.createObjectStore('handles');
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+async function _fsIdbSet(key, val) {
+  const db = await _fsIdb();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('handles', 'readwrite');
+    tx.objectStore('handles').put(val, key);
+    tx.oncomplete = () => res();
+    tx.onerror = () => rej(tx.error);
+  });
+}
+async function _fsIdbGet(key) {
+  const db = await _fsIdb();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('handles', 'readonly');
+    const r = tx.objectStore('handles').get(key);
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+
+// Choisir (ou changer) le dossier de backups.
+async function fsChooseBackupFolder() {
+  if (!fsSupported() || !('showDirectoryPicker' in window)) {
+    _fsToast('Votre navigateur ne permet pas les backups sur disque.', 5000, 'error');
+    return;
+  }
+  try {
+    const dir = await window.showDirectoryPicker({ mode: 'readwrite' });
+    _fsBackupDir = dir;
+    try { await _fsIdbSet('backupDir', dir); } catch (e) {}
+    _fsToast('📦 Dossier de backups défini : ' + (dir.name || 'dossier'));
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;
+    console.warn('fsChooseBackupFolder échec :', e);
+  }
+}
+
+async function _fsRestoreBackupDir() {
+  try {
+    const dir = await _fsIdbGet('backupDir');
+    if (dir) _fsBackupDir = dir;
+  } catch (e) {}
+}
+
+// Écrit une copie horodatée dans le dossier de backups, puis élague.
+async function fsWriteBackup() {
+  if (!fsSupported() || !_fsBackupDir) return;
+  try {
+    if (!(await _fsHasPermission(_fsBackupDir, true))) return;
+    const slug = _fsSlug();
+    const name = slug + '-' + _fsTimestamp() + '.json';
+    const data = collectProjectData();
+    const fh = await _fsBackupDir.getFileHandle(name, { create: true });
+    await _fsWrite(fh, JSON.stringify(data, null, 2));
+    // Élagage : ne garder que les _FS_BACKUP_KEEP plus récents
+    const names = [];
+    for await (const [n, h] of _fsBackupDir.entries()) {
+      if (h.kind === 'file') names.push(n);
+    }
+    const toDelete = _fsSelectBackupsToDelete(names, slug, _FS_BACKUP_KEEP);
+    for (const n of toDelete) {
+      try { await _fsBackupDir.removeEntry(n); } catch (e) {}
+    }
+  } catch (e) {
+    console.warn('Backup disque échoué :', e);
+  }
+}
+
+// Init : état du bouton + restauration du dossier de backups au chargement.
 if (typeof document !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { try { _fsUpdateButton(); } catch (e) {} });
-  } else {
+  const _fsInit = function () {
     try { _fsUpdateButton(); } catch (e) {}
+    try { _fsRestoreBackupDir(); } catch (e) {}
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _fsInit);
+  } else {
+    _fsInit();
   }
 }
