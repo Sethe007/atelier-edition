@@ -541,9 +541,25 @@ async function printPDF() {
 }
 
 // ── EXPORT WORD (.docx réel via docx.js) ───────────────
+// Charge la lib docx (~500 Ko) à la demande, une seule fois (lazy-load).
+let _docxLoadPromise = null;
+function _ensureDocx() {
+  if (typeof window !== 'undefined' && window.docx) return Promise.resolve();
+  if (_docxLoadPromise) return _docxLoadPromise;
+  _docxLoadPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = '/docx-bundle.js';
+    s.onload = () => (window.docx ? resolve() : reject(new Error('docx introuvable après chargement')));
+    s.onerror = () => { _docxLoadPromise = null; reject(new Error('échec du chargement de docx-bundle.js')); };
+    document.head.appendChild(s);
+  });
+  return _docxLoadPromise;
+}
+
 async function exportWord() {
   setExportBusy(true);
   try {
+    try { await _ensureDocx(); } catch (e) { showToast(_t('toast_docx_lib_missing')); return; }
     await _exportWordCore();
   } finally {
     setExportBusy(false);

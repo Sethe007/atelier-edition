@@ -615,7 +615,17 @@ function esReplaceAll() {
 
 // Raccourci clavier Ctrl+S / Cmd+S pour sauvegarder
 document.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveProject(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    // Local-first : si un vrai fichier disque est ouvert, Ctrl+S y enregistre ;
+    // sinon comportement inchangé (téléchargement).
+    if (typeof fsSupported === 'function' && fsSupported()
+        && typeof fsUsingBrowserStorageOnly === 'function' && !fsUsingBrowserStorageOnly()) {
+      fsSaveProject();
+    } else {
+      saveProject();
+    }
+  }
   if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
     if (document.activeElement === document.getElementById('raw-input')) {
       e.preventDefault(); edWrap('**', '**');
