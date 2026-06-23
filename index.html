@@ -70,17 +70,17 @@
     </button>
 
     <!-- Local-first : ouvrir / enregistrer un VRAI fichier disque (File System Access) -->
-    <button class="btn btn-ghost" onclick="fsOpenProject()" id="btn-fs-open" title="Ouvrir un projet depuis un fichier sur votre disque">
+    <button class="btn btn-ghost" onclick="fsOpenProject()" id="btn-fs-open" title="Ouvrir un projet depuis un fichier sur votre disque" data-i18n-title="tb_open_t">
       <i class="ti ti-folder-open" style="font-size:13px;"></i>
-      <span>Ouvrir</span>
+      <span data-i18n="tb_open">Ouvrir</span>
     </button>
     <button class="btn btn-ghost" onclick="fsSaveProject()" id="btn-fs-save" title="Enregistrer le projet dans un fichier sur votre disque">
       <i class="ti ti-file-export" style="font-size:13px;"></i>
       <span>Fichier</span>
     </button>
-    <button class="btn btn-ghost" onclick="fsChooseBackupFolder()" id="btn-fs-backup" title="Choisir un dossier de sauvegardes automatiques versionnées (horodatées)">
+    <button class="btn btn-ghost" onclick="fsChooseBackupFolder()" id="btn-fs-backup" title="Choisir un dossier de sauvegardes automatiques versionnées (horodatées)" data-i18n-title="tb_backups_t">
       <i class="ti ti-history" style="font-size:13px;"></i>
-      <span>Backups</span>
+      <span data-i18n="tb_backups">Backups</span>
     </button>
 
     <!-- Séparateur -->
@@ -90,7 +90,7 @@
     <div style="position:relative;" id="export-dropdown-wrap">
       <button class="btn btn-ghost" onclick="toggleExportMenu()" id="btn-export-toggle" title="Exporter" style="display:flex;align-items:center;gap:5px;">
         <i class="ti ti-download" style="font-size:13px;"></i>
-        <span style="font-size:11.5px;">Exporter</span>
+        <span style="font-size:11.5px;" data-i18n="tb_export">Exporter</span>
         <i class="ti ti-chevron-down" style="font-size:10px;opacity:0.5;"></i>
       </button>
       <!-- Menu export -->
@@ -638,7 +638,7 @@
       <div id="chapter-list" style="display:none;"></div>
       <div style="padding:0.75rem 1rem 1rem;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;">
-          <span class="sidebar-title" style="margin-bottom:0;">Vue carte</span>
+          <span class="sidebar-title" style="margin-bottom:0;" data-i18n="tb_cardview">Vue carte</span>
           <div style="display:flex;align-items:center;gap:5px;">
             <input type="text" id="cork-tag-filter" aria-label="Filtrer par tag" placeholder="Filtrer par tag…" style="width:95px;font-size:11px;font-family:'DM Sans',sans-serif;border:1px solid var(--cream);border-radius:4px;background:var(--paper);color:var(--ink);padding:3px 7px;" oninput="corkboardRender()">
             <button id="cork-add-chapter-btn" title="Nouveau chapitre (mode isolé)"
@@ -708,7 +708,7 @@
           <span class="bc-sep" style="font-size:9px;flex-shrink:0;">›</span>
           <span class="bc-item current" id="bc-chapter" data-i18n="bc_no_chapter" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span>
           <span class="bc-chapter-pages" id="bc-pages" style="flex-shrink:0;"></span>
-          <span id="bc-isolated-badge" style="flex-shrink:0;">ISOLÉ</span>
+          <span id="bc-isolated-badge" style="flex-shrink:0;" data-i18n="tb_isolated">ISOLÉ</span>
         </div>
       </div>
 
@@ -1624,31 +1624,31 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 <div class="modal-overlay" id="ia-prop-overlay" role="dialog" aria-modal="true" aria-labelledby="ia-prop-title">
   <div class="modal-box">
     <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-      <h3 id="ia-prop-title">✦ Propositions</h3>
+      <h3 id="ia-prop-title" data-i18n="iap_title">✦ Propositions</h3>
       <button class="btn btn-ghost" style="padding:2px 9px;" onclick="iaPropClose()" title="Fermer" aria-label="Fermer">✕</button>
     </div>
     <div id="ia-prop-original">""</div>
 
     <div id="ia-prop-error" style="display:none;"></div>
-    <div id="ia-prop-loading" style="display:none;">✦ Génération en cours…</div>
+    <div id="ia-prop-loading" style="display:none;" data-i18n="iap_generating">✦ Génération en cours…</div>
     <div id="ia-prop-list"></div>
 
     <div id="ia-prop-generate-zone" style="display:block;">
-      <button class="btn btn-accent" id="ia-prop-btn-generate" onclick="iaPropGenerate()" style="width:100%;">✦ Générer les propositions</button>
+      <button class="btn btn-accent" id="ia-prop-btn-generate" onclick="iaPropGenerate()" style="width:100%;" data-i18n="iap_generate">✦ Générer les propositions</button>
     </div>
 
-    <div id="ia-prop-hint">Sélectionnez une proposition pour activer le remplacement.</div>
+    <div id="ia-prop-hint" data-i18n="iap_hint">Sélectionnez une proposition pour activer le remplacement.</div>
 
     <div class="modal-actions">
-      <button class="btn btn-ghost" style="color:var(--ink-soft);border-color:var(--cream);" onclick="iaPropClose()">Fermer</button>
-      <button class="btn btn-accent" id="ia-prop-btn-replace" onclick="iaPropAskConfirm()" disabled>Remplacer</button>
+      <button class="btn btn-ghost" style="color:var(--ink-soft);border-color:var(--cream);" onclick="iaPropClose()" data-i18n="iap_close">Fermer</button>
+      <button class="btn btn-accent" id="ia-prop-btn-replace" onclick="iaPropAskConfirm()" disabled data-i18n="iap_replace">Remplacer</button>
     </div>
 
     <div id="ia-prop-confirm">
-      <div style="font-size:12.5px; margin-bottom:8px;">Remplacer ce passage dans votre texte ?</div>
+      <div style="font-size:12.5px; margin-bottom:8px;" data-i18n="iap_confirmq">Remplacer ce passage dans votre texte ?</div>
       <div class="modal-actions" style="margin-top:0;">
-        <button class="btn btn-ghost" style="color:var(--ink-soft);border-color:var(--cream);" onclick="iaPropConfirmClose()">Annuler</button>
-        <button class="btn btn-accent" onclick="iaPropDoReplace()">Confirmer le remplacement</button>
+        <button class="btn btn-ghost" style="color:var(--ink-soft);border-color:var(--cream);" onclick="iaPropConfirmClose()" data-i18n="iap_cancel">Annuler</button>
+        <button class="btn btn-accent" onclick="iaPropDoReplace()" data-i18n="iap_confirmbtn">Confirmer le remplacement</button>
       </div>
     </div>
   </div>
@@ -1658,25 +1658,25 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 <div id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title-h" onclick="if(event.target===this)closeHelpModal()">
   <div class="help-modal-box">
     <div class="help-modal-header">
-      <span class="help-modal-title" id="help-modal-title-h">⌨ Raccourcis clavier</span>
+      <span class="help-modal-title" id="help-modal-title-h" data-i18n="help_title">⌨ Raccourcis clavier</span>
       <button class="help-modal-close" onclick="closeHelpModal()" aria-label="Fermer">✕</button>
     </div>
     <div class="help-modal-body">
-      <div class="help-section-title">Raccourcis clavier</div>
+      <div class="help-section-title" data-i18n="help_sec">Raccourcis clavier</div>
       <div class="help-section">
-        <h4>Fichier</h4>
-        <div class="help-row"><span>Enregistrer</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>S</kbd></span></div>
+        <h4 data-i18n="help_h_file">Fichier</h4>
+        <div class="help-row"><span data-i18n="btn_save">Enregistrer</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>S</kbd></span></div>
       </div>
       <div class="help-section">
-        <h4>Affichage</h4>
-        <div class="help-row"><span>Mode chapitre isolé</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>Maj</kbd><kbd>I</kbd></span></div>
-        <div class="help-row"><span>Mode sombre</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>Maj</kbd><kbd>D</kbd></span></div>
+        <h4 data-i18n="help_h_disp">Affichage</h4>
+        <div class="help-row"><span data-i18n="help_isolated">Mode chapitre isolé</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>Maj</kbd><kbd>I</kbd></span></div>
+        <div class="help-row"><span data-i18n="help_dark">Mode sombre</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>Maj</kbd><kbd>D</kbd></span></div>
       </div>
       <div class="help-section">
-        <h4>Recherche &amp; aide</h4>
-        <div class="help-row"><span>Recherche globale</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>Maj</kbd><kbd>G</kbd></span></div>
-        <div class="help-row"><span>Aide (cette fenêtre)</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>?</kbd></span></div>
-        <div class="help-row"><span>Fermer une fenêtre</span><span class="help-keys"><kbd>Échap</kbd></span></div>
+        <h4 data-i18n="help_h_search">Recherche &amp; aide</h4>
+        <div class="help-row"><span data-i18n="help_gsearch">Recherche globale</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>Maj</kbd><kbd>G</kbd></span></div>
+        <div class="help-row"><span data-i18n="help_help">Aide (cette fenêtre)</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>?</kbd></span></div>
+        <div class="help-row"><span data-i18n="help_closewin">Fermer une fenêtre</span><span class="help-keys"><kbd>Échap</kbd></span></div>
       </div>
     </div>
   </div>
@@ -1687,12 +1687,12 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
   <div class="global-search-box">
     <div class="global-search-input-wrap">
       <span class="global-search-icon">🔍</span>
-      <input type="text" id="gs-input" placeholder="Rechercher dans tout le texte…" autocomplete="off" spellcheck="false" oninput="runGlobalSearch()" onkeydown="gsKeyNav(event)">
+      <input type="text" id="gs-input" placeholder="Rechercher dans tout le texte…" data-i18n-placeholder="gs_placeholder" autocomplete="off" spellcheck="false" oninput="runGlobalSearch()" onkeydown="gsKeyNav(event)">
       <button class="global-search-clear" onclick="closeGlobalSearch()" title="Fermer" aria-label="Fermer">✕</button>
     </div>
     <div class="global-search-results" id="gs-results"></div>
     <div class="global-search-footer">
-      <span id="gs-footer-hint">↑↓ pour naviguer • Entrée pour ouvrir • Échap pour fermer</span>
+      <span id="gs-footer-hint" data-i18n="gs_footer">↑↓ pour naviguer • Entrée pour ouvrir • Échap pour fermer</span>
       <span class="global-search-count" id="gs-count"></span>
     </div>
   </div>
