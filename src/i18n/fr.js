@@ -5,6 +5,20 @@
 // ─────────────────────────────────────────────────────────────────────────────
 /* global _registerLang */
 _registerLang('fr', {
+  // ── Lot 4 (libellés courts) ──
+  a11y_skip: "Aller au contenu",
+  ai_active: "IA active",
+  mise_panel_title: "Mise en page",
+  pg_accordion_title: "Page de garde",
+  pg_genre_label: "Genre",
+  actx_spell_label: "✦ Orthographe",
+  actx_checking: "Vérification…",
+  autocorr_title: "Correction automatique",
+  autocorr_enable: "Activer la correction automatique",
+  autocorr_immediate: "Les modifications sont appliquées immédiatement.",
+  welcome_title: "Bienvenue dans votre atelier",
+  ls_autosaves: "Sauvegardes automatiques",
+
   // Header
   btn_save:            'Sauvegarder',
     tb_projects_t: "Gérer les projets",

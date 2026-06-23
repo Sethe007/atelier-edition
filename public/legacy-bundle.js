@@ -12259,6 +12259,19 @@ var _i18n = {
 
   // ── FRANÇAIS ──────────────────────────────────────────────────────────────
   fr: {
+    // ── Lot 4 (libellés courts) ──
+    a11y_skip: "Aller au contenu",
+    ai_active: "IA active",
+    mise_panel_title: "Mise en page",
+    pg_accordion_title: "Page de garde",
+    pg_genre_label: "Genre",
+    actx_spell_label: "✦ Orthographe",
+    actx_checking: "Vérification…",
+    autocorr_title: "Correction automatique",
+    autocorr_enable: "Activer la correction automatique",
+    autocorr_immediate: "Les modifications sont appliquées immédiatement.",
+    welcome_title: "Bienvenue dans votre atelier",
+    ls_autosaves: "Sauvegardes automatiques",
     // Header
     btn_save:            'Sauvegarder',
     tb_projects_t: "Gérer les projets",
@@ -13093,6 +13106,19 @@ var _i18n = {
 
   // ── ENGLISH ────────────────────────────────────────────────────────────────
   en: {
+    // ── Lot 4 (libellés courts) ──
+    a11y_skip: "Skip to content",
+    ai_active: "Active AI",
+    mise_panel_title: "Layout",
+    pg_accordion_title: "Title page",
+    pg_genre_label: "Genre",
+    actx_spell_label: "✦ Spelling",
+    actx_checking: "Checking…",
+    autocorr_title: "Automatic correction",
+    autocorr_enable: "Enable automatic correction",
+    autocorr_immediate: "Changes are applied immediately.",
+    welcome_title: "Welcome to your workshop",
+    ls_autosaves: "Automatic backups",
     // Header
     btn_save:            'Save',
     tb_projects_t: "Manage projects",
@@ -13960,6 +13986,19 @@ var _i18n = {
     search_all_title:          'Search the entire project (Ctrl+Shift+G)',
   // ── ESPAÑOL ────────────────────────────────────────────────────────────────
   es: {
+    // ── Lot 4 (libellés courts) ──
+    a11y_skip: "Ir al contenido",
+    ai_active: "IA activa",
+    mise_panel_title: "Diseño de página",
+    pg_accordion_title: "Portada",
+    pg_genre_label: "Género",
+    actx_spell_label: "✦ Ortografía",
+    actx_checking: "Comprobando…",
+    autocorr_title: "Corrección automática",
+    autocorr_enable: "Activar la corrección automática",
+    autocorr_immediate: "Los cambios se aplican inmediatamente.",
+    welcome_title: "Bienvenido a tu taller",
+    ls_autosaves: "Copias de seguridad automáticas",
     // Header
     btn_save:            'Guardar',
     tb_projects_t: "Gestionar los proyectos",
@@ -14829,6 +14868,19 @@ var _i18n = {
 
   // ── DEUTSCH ─────────────────────────────────────────────────────────────────
   de: {
+    // ── Lot 4 (libellés courts) ──
+    a11y_skip: "Zum Inhalt springen",
+    ai_active: "Aktive KI",
+    mise_panel_title: "Seitenlayout",
+    pg_accordion_title: "Titelseite",
+    pg_genre_label: "Genre",
+    actx_spell_label: "✦ Rechtschreibung",
+    actx_checking: "Prüfung…",
+    autocorr_title: "Automatische Korrektur",
+    autocorr_enable: "Automatische Korrektur aktivieren",
+    autocorr_immediate: "Die Änderungen werden sofort übernommen.",
+    welcome_title: "Willkommen in Ihrer Werkstatt",
+    ls_autosaves: "Automatische Sicherungen",
     btn_save:  'Speichern',
     tb_projects_t: "Projekte verwalten",
     ed_format_t: "Formatieren (Ctrl+Maj+F)",
@@ -15631,6 +15683,19 @@ var _i18n = {
 
   // ── ITALIANO ────────────────────────────────────────────────────────────────
   it: {
+    // ── Lot 4 (libellés courts) ──
+    a11y_skip: "Vai al contenuto",
+    ai_active: "IA attiva",
+    mise_panel_title: "Impaginazione",
+    pg_accordion_title: "Frontespizio",
+    pg_genre_label: "Genere",
+    actx_spell_label: "✦ Ortografia",
+    actx_checking: "Verifica…",
+    autocorr_title: "Correzione automatica",
+    autocorr_enable: "Attiva la correzione automatica",
+    autocorr_immediate: "Le modifiche vengono applicate immediatamente.",
+    welcome_title: "Benvenuto nel tuo atelier",
+    ls_autosaves: "Backup automatici",
     btn_save:  'Salva',
     tb_projects_t: "Gestisci i progetti",
     ed_format_t: "Formatta (Ctrl+Maj+F)",
@@ -16429,6 +16494,19 @@ var _i18n = {
 
   // ── PORTUGUÊS ───────────────────────────────────────────────────────────────
   pt: {
+    // ── Lot 4 (libellés courts) ──
+    a11y_skip: "Ir para o conteúdo",
+    ai_active: "IA ativa",
+    mise_panel_title: "Layout da página",
+    pg_accordion_title: "Página de rosto",
+    pg_genre_label: "Género",
+    actx_spell_label: "✦ Ortografia",
+    actx_checking: "A verificar…",
+    autocorr_title: "Correção automática",
+    autocorr_enable: "Ativar a correção automática",
+    autocorr_immediate: "As alterações são aplicadas imediatamente.",
+    welcome_title: "Bem-vindo ao seu atelier",
+    ls_autosaves: "Cópias de segurança automáticas",
     btn_save:  'Guardar',
     tb_projects_t: "Gerir os projetos",
     ed_format_t: "Formatar (Ctrl+Maj+F)",

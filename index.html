@@ -12,7 +12,7 @@
   <script type="module" src="/src/main.js"></script>
 </head>
 <body>
-<a href="#editor-main" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;padding:6px 14px;background:var(--accent,#8b4513);color:#fff;border-radius:4px;font-family:sans-serif;font-size:13px;text-decoration:none;" onfocus="this.style.left='8px'" onblur="this.style.left='-9999px'">Aller au contenu</a>
+<a href="#editor-main" class="skip-link" data-i18n="a11y_skip" style="position:absolute;left:-9999px;top:4px;z-index:9999;padding:6px 14px;background:var(--accent,#8b4513);color:#fff;border-radius:4px;font-family:sans-serif;font-size:13px;text-decoration:none;" onfocus="this.style.left='8px'" onblur="this.style.left='-9999px'">Aller au contenu</a>
 
 <!-- ── HEADER v3 — Barre de commande épurée ── -->
 <header role="banner">
@@ -119,7 +119,7 @@
         <i class="ti ti-chevron-down" style="font-size:9px;opacity:0.55;"></i>
       </button>
       <div id="ai-switcher-menu">
-        <div class="ai-sw-header">IA active</div>
+        <div class="ai-sw-header" data-i18n="ai_active">IA active</div>
         <div id="ai-sw-list"><!-- rempli par JS --></div>
         <div class="ai-sw-sep"></div>
         <button class="ai-sw-item" onclick="openSettingsModal();closeAiSwitcher();document.getElementById('settings-tab-ia')?.click();" style="color:rgba(255,255,255,0.4);font-size:11.5px;">
@@ -239,7 +239,7 @@
 
       <!-- Bandeau d'alignement — même hauteur que la toolbar de l'éditeur -->
       <div style="height:var(--toolbar-h);background:var(--theme-panel-bar-bg);border-bottom:1px solid var(--theme-panel-bar-border);flex-shrink:0;display:flex;align-items:center;padding:0 14px;">
-        <span id="sidebar-panel-title" style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--theme-panel-bar-text);font-family:'DM Sans',sans-serif;">Mise en page</span>
+        <span id="sidebar-panel-title" data-i18n="mise_panel_title" style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--theme-panel-bar-text);font-family:'DM Sans',sans-serif;">Mise en page</span>
       </div>
 
       <!-- Ancien sélecteur d'onglets (masqué, gardé pour compatibilité JS) -->
@@ -323,7 +323,7 @@
       <!-- ── Page de garde → dans modal Paramètres ── -->
       <div class="sb-accordion" id="acc-garde" style="display:none;">
         <button class="sb-accordion-header" onclick="toggleAccordion('acc-garde')" aria-expanded="false" aria-controls="acc-garde-body">
-          <span class="sb-accordion-title">Page de garde</span>
+          <span class="sb-accordion-title" data-i18n="pg_accordion_title">Page de garde</span>
           <span class="sb-accordion-arrow" aria-hidden="true">▼</span>
         </button>
         <div class="sb-accordion-body">
@@ -340,7 +340,7 @@
             <input type="text" id="pg-soustitre" aria-label="Sous-titre" placeholder="Sous-titre" style="width:120px;font-size:12px;" oninput="markUnsaved();formatRoman()">
           </div>
           <div class="param-row">
-            <span class="param-label">Genre</span>
+            <span class="param-label" data-i18n="pg_genre_label">Genre</span>
             <input type="text" id="pg-genre" aria-label="Genre littéraire" placeholder="Roman, Nouvelles…" style="width:120px;font-size:12px;" oninput="markUnsaved();formatRoman()">
           </div>
         </div>
@@ -776,8 +776,8 @@
 
             <!-- ── Orthographe (LanguageTool) ── -->
             <div id="actx-spell-section" style="display:none;">
-              <div class="actx-section-label">✦ Orthographe</div>
-              <div id="actx-spell-loading" style="padding:5px 12px 4px;font-size:11px;font-family:'DM Sans',sans-serif;color:var(--ink-muted);font-style:italic;display:none;">Vérification…</div>
+              <div class="actx-section-label" data-i18n="actx_spell_label">✦ Orthographe</div>
+              <div id="actx-spell-loading" data-i18n="actx_checking" style="padding:5px 12px 4px;font-size:11px;font-family:'DM Sans',sans-serif;color:var(--ink-muted);font-style:italic;display:none;">Vérification…</div>
               <div id="actx-spell-suggestions"></div>
               <div class="actx-sep"></div>
             </div>
@@ -1333,11 +1333,11 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
         <!-- ── SECTION : CORRECTION AUTOMATIQUE ─────────────── -->
         <div class="pref-section" id="pref-section-autocorrect">
-          <div class="pref-section-title">&#10000; Correction automatique</div>
+          <div class="pref-section-title">&#10000; <span data-i18n="autocorr_title">Correction automatique</span></div>
 
           <div class="pref-row">
             <div class="pref-row-left">
-              <div class="pref-label">Activer la correction automatique</div>
+              <div class="pref-label" data-i18n="autocorr_enable">Activer la correction automatique</div>
               <div class="pref-desc">Corrections mécaniques légères en temps réel — sans réécriture, sans IA.</div>
             </div>
             <div class="pref-row-right">
@@ -1530,7 +1530,7 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
     <!-- Footer -->
     <div class="settings-modal-footer">
-      <span style="font-size:11px;color:var(--ink-muted);font-style:italic;">Les modifications sont appliquées immédiatement.</span>
+      <span style="font-size:11px;color:var(--ink-muted);font-style:italic;" data-i18n="autocorr_immediate">Les modifications sont appliquées immédiatement.</span>
       <button class="btn btn-accent" onclick="closeSettingsModal()" data-i18n="settings_corrections_close">Fermer</button>
     </div>
 
@@ -1543,7 +1543,7 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
       <div class="logo-mark">Æ</div>
       <span data-i18n="modal_welcome_title">Atelier Édition</span>
     </div>
-    <div class="project-modal-title" id="project-modal-title-h">Bienvenue dans votre atelier</div>
+    <div class="project-modal-title" id="project-modal-title-h" data-i18n="welcome_title">Bienvenue dans votre atelier</div>
     <p class="project-modal-sub">Créez un nouveau projet ou chargez un projet existant depuis un fichier <strong>.json</strong>.</p>
     <div class="project-options">
       <button class="project-option-btn" onclick="chooseNew()">
@@ -1559,7 +1559,7 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
     </div>
     <!-- Section restauration autosave (injectée dynamiquement si des saves existent) -->
     <div id="ls-restore-section" class="ls-restore-section" style="display:none;">
-      <div class="ls-restore-label">💾 Sauvegardes automatiques</div>
+      <div class="ls-restore-label">💾 <span data-i18n="ls_autosaves">Sauvegardes automatiques</span></div>
       <div class="ls-restore-list" id="ls-restore-list"></div>
     </div>
     <div class="project-name-area" id="project-name-area">

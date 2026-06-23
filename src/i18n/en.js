@@ -4,6 +4,20 @@
 // ─────────────────────────────────────────────────────────────────────────────
 /* global _registerLang */
 _registerLang('en', {
+  // ── Lot 4 (libellés courts) ──
+  a11y_skip: "Skip to content",
+  ai_active: "Active AI",
+  mise_panel_title: "Layout",
+  pg_accordion_title: "Title page",
+  pg_genre_label: "Genre",
+  actx_spell_label: "✦ Spelling",
+  actx_checking: "Checking…",
+  autocorr_title: "Automatic correction",
+  autocorr_enable: "Enable automatic correction",
+  autocorr_immediate: "Changes are applied immediately.",
+  welcome_title: "Welcome to your workshop",
+  ls_autosaves: "Automatic backups",
+
   // Header
   btn_save:            'Save',
     tb_projects_t: "Manage projects",

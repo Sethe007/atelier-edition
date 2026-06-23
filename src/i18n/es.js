@@ -4,6 +4,20 @@
 // ─────────────────────────────────────────────────────────────────────────────
 /* global _registerLang */
 _registerLang('es', {
+  // ── Lot 4 (libellés courts) ──
+  a11y_skip: "Ir al contenido",
+  ai_active: "IA activa",
+  mise_panel_title: "Diseño de página",
+  pg_accordion_title: "Portada",
+  pg_genre_label: "Género",
+  actx_spell_label: "✦ Ortografía",
+  actx_checking: "Comprobando…",
+  autocorr_title: "Corrección automática",
+  autocorr_enable: "Activar la corrección automática",
+  autocorr_immediate: "Los cambios se aplican inmediatamente.",
+  welcome_title: "Bienvenido a tu taller",
+  ls_autosaves: "Copias de seguridad automáticas",
+
   // Header
   btn_save:            'Guardar',
     tb_projects_t: "Gestionar los proyectos",
