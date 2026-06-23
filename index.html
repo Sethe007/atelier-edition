@@ -96,26 +96,26 @@
       <!-- Menu export -->
       <div id="export-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:180px;background:#1a1714;border:1px solid rgba(255,255,255,0.08);border-radius:10px;box-shadow:6px 6px 20px rgba(0,0,0,0.6),-2px -2px 8px rgba(255,255,255,0.03);padding:5px;z-index:999;">
         <button onclick="printPDF();toggleExportMenu()" class="hdr-export-item">
-          <i class="ti ti-file-type-pdf" style="font-size:14px;color:#e05050;"></i> PDF imprimable
+          <i class="ti ti-file-type-pdf" style="font-size:14px;color:#e05050;"></i> <span data-i18n="exp_pdf">PDF imprimable</span>
         </button>
         <button onclick="exportWord();toggleExportMenu()" class="hdr-export-item">
-          <i class="ti ti-file-type-doc" style="font-size:14px;color:#4a90d9;"></i> Word (.docx)
+          <i class="ti ti-file-type-doc" style="font-size:14px;color:#4a90d9;"></i> <span data-i18n="exp_word">Word (.docx)</span>
         </button>
         <button onclick="exportEpub();toggleExportMenu()" class="hdr-export-item">
-          <i class="ti ti-book" style="font-size:14px;color:#c8a030;"></i> ePub
+          <i class="ti ti-book" style="font-size:14px;color:#c8a030;"></i> <span data-i18n="exp_epub">ePub</span>
         </button>
         <div style="height:1px;background:rgba(255,255,255,0.06);margin:3px 0;"></div>
         <button onclick="exportMarkdown();toggleExportMenu()" class="hdr-export-item">
-          <i class="ti ti-markdown" style="font-size:14px;color:rgba(255,255,255,0.4);"></i> Markdown
+          <i class="ti ti-markdown" style="font-size:14px;color:rgba(255,255,255,0.4);"></i> <span data-i18n="exp_md">Markdown</span>
         </button>
       </div>
     </div>
 
     <!-- ── AI Switcher ── -->
     <div id="ai-switcher-wrap">
-      <button id="ai-switcher-btn" onclick="toggleAiSwitcher(event)" title="Changer d'IA active">
+      <button id="ai-switcher-btn" onclick="toggleAiSwitcher(event)" title="Changer d'IA active" data-i18n-title="tb_ai_t">
         <span class="ai-sw-dot" id="ai-sw-dot"></span>
-        <span id="ai-sw-label">✦ IA</span>
+        <span id="ai-sw-label" data-i18n="tb_ai_label">✦ IA</span>
         <i class="ti ti-chevron-down" style="font-size:9px;opacity:0.55;"></i>
       </button>
       <div id="ai-switcher-menu">
@@ -124,7 +124,7 @@
         <div class="ai-sw-sep"></div>
         <button class="ai-sw-item" onclick="openSettingsModal();closeAiSwitcher();document.getElementById('settings-tab-ia')?.click();" style="color:rgba(255,255,255,0.4);font-size:11.5px;">
           <span class="ai-sw-icon">⚙</span>
-          <span>Configurer les IA…</span>
+          <span data-i18n="cfg_ai">Configurer les IA…</span>
         </button>
       </div>
     </div>
@@ -137,7 +137,7 @@
     <button class="btn-dark-toggle"    onclick="toggleDarkMode()"    id="btn-dark"     title="Mode sombre"               aria-label="Mode sombre"   data-i18n-title="title_dark_mode"><i class="ti ti-moon"      aria-hidden="true"></i></button>
     <button class="btn-settings-toggle" onclick="openSettingsModal()" id="btn-settings" title="Paramètres du projet"     aria-label="Paramètres"    data-i18n-title="title_settings"><i class="ti ti-settings"   aria-hidden="true"></i></button>
     <button class="btn-help-toggle"    onclick="openHelpModal()"     id="btn-help"     title="Raccourcis clavier"        aria-label="Aide"          data-i18n-title="title_help"><i class="ti ti-keyboard"       aria-hidden="true"></i></button>
-    <button class="btn-help-toggle" onclick="if(confirm('Se déconnecter ?')) window.location.href='/api/auth/logout'" id="btn-logout" title="Déconnexion" aria-label="Déconnexion"><i class="ti ti-logout" aria-hidden="true"></i></button>
+    <button class="btn-help-toggle" onclick="if(confirm('Se déconnecter ?')) window.location.href='/api/auth/logout'" id="btn-logout" title="Déconnexion" data-i18n-title="tb_logout_t" aria-label="Déconnexion"><i class="ti ti-logout" aria-hidden="true"></i></button>
 
   </div>
 </header>
@@ -569,7 +569,7 @@
             Sélectionnez un mot dans l'éditeur <em>ou</em> tapez-le ci-dessus.
           </div>
           <!-- Bouton -->
-          <button class="wt-run-btn" id="wt-btn-syn" onclick="runSynonyms()">🔍 Chercher les synonymes</button>
+          <button class="wt-run-btn" id="wt-btn-syn" onclick="runSynonyms()" data-i18n="btn_syn_search">🔍 Chercher les synonymes</button>
           <!-- Résultats -->
           <div id="wt-syn-results"></div>
         </div>
@@ -641,7 +641,7 @@
           <span class="sidebar-title" style="margin-bottom:0;" data-i18n="tb_cardview">Vue carte</span>
           <div style="display:flex;align-items:center;gap:5px;">
             <input type="text" id="cork-tag-filter" aria-label="Filtrer par tag" placeholder="Filtrer par tag…" style="width:95px;font-size:11px;font-family:'DM Sans',sans-serif;border:1px solid var(--cream);border-radius:4px;background:var(--paper);color:var(--ink);padding:3px 7px;" oninput="corkboardRender()">
-            <button id="cork-add-chapter-btn" title="Nouveau chapitre (mode isolé)"
+            <button id="cork-add-chapter-btn" title="Nouveau chapitre (mode isolé)" data-i18n-title="ch_add_isolated_t"
               style="width:24px;height:24px;border-radius:5px;border:1px solid var(--cream);background:var(--paper);color:var(--ink-muted);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;font-family:'DM Sans',sans-serif;transition:background 0.12s,color 0.12s;"
               onmouseenter="this.style.background='var(--cream)';this.style.color='var(--accent)';"
               onmouseleave="this.style.background='var(--paper)';this.style.color='var(--ink-muted)';"
@@ -672,31 +672,31 @@
         <span class="pane-label-text" data-i18n="pane_raw_text">Texte brut</span>
         <div class="ptb-vsep"></div>
         <div class="fmt-btns">
-          <button class="fmt-btn" onclick="edWrap('**','**')" title="Gras (Ctrl+B)" aria-label="Gras"><b>B</b></button>
-          <button class="fmt-btn" onclick="edWrap('*','*')"   title="Italique (Ctrl+I)" aria-label="Italique"><i>I</i></button>
-          <button class="fmt-btn" onclick="edWrap('__','__')" title="Souligné (Ctrl+U)" aria-label="Souligné"><u>S</u></button>
-          <button class="fmt-btn" onclick="edWrap('~~','~~')" title="Barré (Ctrl+Alt+X)" aria-label="Barré"><s>B̶</s></button>
+          <button class="fmt-btn" onclick="edWrap('**','**')" title="Gras (Ctrl+B)" data-i18n-title="ed_bold_t" aria-label="Gras"><b>B</b></button>
+          <button class="fmt-btn" onclick="edWrap('*','*')"   title="Italique (Ctrl+I)" data-i18n-title="ed_italic_t" aria-label="Italique"><i>I</i></button>
+          <button class="fmt-btn" onclick="edWrap('__','__')" title="Souligné (Ctrl+U)" data-i18n-title="ed_underline_t" aria-label="Souligné"><u>S</u></button>
+          <button class="fmt-btn" onclick="edWrap('~~','~~')" title="Barré (Ctrl+Alt+X)" data-i18n-title="ed_strike_t" aria-label="Barré"><s>B̶</s></button>
           <div class="fmt-sep"></div>
-          <button class="fmt-btn fmt-btn-tw" id="btn-typewriter" onclick="toggleTypewriter()" title="Mode machine à écrire (Ctrl+Maj+T)" aria-label="Mode machine à écrire" aria-pressed="false">⌨</button>
-          <button class="fmt-btn fmt-btn-tw" onclick="insertComment()" title="Note d'auteur (Ctrl+Maj+N)" aria-label="Insérer une note d'auteur">💬</button>
+          <button class="fmt-btn fmt-btn-tw" id="btn-typewriter" onclick="toggleTypewriter()" title="Mode machine à écrire (Ctrl+Maj+T)" data-i18n-title="ed_typewriter_t" aria-label="Mode machine à écrire" aria-pressed="false">⌨</button>
+          <button class="fmt-btn fmt-btn-tw" onclick="insertComment()" title="Note d'auteur (Ctrl+Maj+N)" data-i18n-title="ed_note_t" aria-label="Insérer une note d'auteur">💬</button>
           <div class="fmt-sep"></div>
           <span id="smartquotes-indicator" onclick="toggleSmartQuotes()" title="">« »</span>
-          <button class="fmt-btn fmt-btn-tw" onclick="toggleRepPanel()" title="Répétitions proches — détecte les mots répétés dans un rayon de 200 mots" id="btn-rep-detect">↩↩</button>
+          <button class="fmt-btn fmt-btn-tw" onclick="toggleRepPanel()" title="Répétitions proches — détecte les mots répétés dans un rayon de 200 mots" data-i18n-title="ed_rep_t" id="btn-rep-detect">↩↩</button>
           <div class="fmt-sep"></div>
-          <button class="fmt-btn fmt-btn-tw" onclick="aiContinueText()" id="btn-ai-continue" title="Continuation IA — génère une suite de texte à partir du contexte autour du curseur (nécessite une clé API)" style="color:var(--gold);font-weight:600;">✦→</button>
+          <button class="fmt-btn fmt-btn-tw" onclick="aiContinueText()" id="btn-ai-continue" title="Continuation IA — génère une suite de texte à partir du contexte autour du curseur (nécessite une clé API)" data-i18n-title="ed_aicontinue_t" style="color:var(--gold);font-weight:600;">✦→</button>
         </div>
         <div class="ptb-vsep"></div>
         <div class="editor-search" id="editor-search">
           <input type="text" id="es-input" aria-label="Rechercher dans le document" placeholder="Rechercher…" data-i18n-placeholder="placeholder_search" oninput="esSearch()" onkeydown="esKeyNav(event)" onfocus="_esActive=true" onblur="setTimeout(()=>{if(document.activeElement!==document.getElementById('raw-input'))_esActive=false;},100)" autocomplete="off" spellcheck="false">
           <span class="es-count" id="es-count"></span>
-          <button class="es-nav" id="es-prev" onclick="esNav(-1)" title="Précédent" disabled>▲</button>
-          <button class="es-nav" id="es-next" onclick="esNav(1)"  title="Suivant"   disabled>▼</button>
-          <button class="es-nav" onclick="esToggleReplace()" title="Remplacer" id="es-repl-toggle" style="font-size:11px;padding:2px 5px;">±</button>
+          <button class="es-nav" id="es-prev" onclick="esNav(-1)" title="Précédent" data-i18n-title="nav_prev_t" disabled>▲</button>
+          <button class="es-nav" id="es-next" onclick="esNav(1)"  title="Suivant" data-i18n-title="nav_next_t"   disabled>▼</button>
+          <button class="es-nav" onclick="esToggleReplace()" title="Remplacer" data-i18n-title="nav_replace_t" id="es-repl-toggle" style="font-size:11px;padding:2px 5px;">±</button>
           <select id="es-scope" title="Portée" style="display:none;font-size:10px;font-family:'DM Sans',sans-serif;border:none;background:transparent;color:var(--ink-muted);cursor:pointer;outline:none;padding:2px;max-width:80px;" onchange="esSearch()">
             <option value="all">Tout</option>
             <option value="chapter">Chapitre</option>
           </select>
-          <button class="es-close" onclick="esClear()" title="Fermer">✕</button>
+          <button class="es-close" onclick="esClear()" title="Fermer" data-i18n-title="nav_close_t">✕</button>
         </div>
       </div>
 
@@ -720,12 +720,12 @@
         </button>
         <div class="ptb-vsep"></div>
         <div style="display:flex;align-items:center;gap:2px;">
-          <button class="tool-btn tool-btn-sm active" id="btn-split"   onclick="setView('split')"   title="Côte à côte"><i class="ti ti-layout-columns" style="font-size:13px;pointer-events:none;"></i></button>
-          <button class="tool-btn tool-btn-sm"        id="btn-edit"    onclick="setView('edit')"    title="Édition"><i class="ti ti-pencil" style="font-size:13px;pointer-events:none;"></i></button>
-          <button class="tool-btn tool-btn-sm"        id="btn-preview" onclick="setView('preview')" title="Prévisualisation"><i class="ti ti-file-text" style="font-size:13px;pointer-events:none;"></i></button>
+          <button class="tool-btn tool-btn-sm active" id="btn-split"   onclick="setView('split')"   title="Côte à côte" data-i18n-title="view_split_t"><i class="ti ti-layout-columns" style="font-size:13px;pointer-events:none;"></i></button>
+          <button class="tool-btn tool-btn-sm"        id="btn-edit"    onclick="setView('edit')"    title="Édition" data-i18n-title="view_edit_t"><i class="ti ti-pencil" style="font-size:13px;pointer-events:none;"></i></button>
+          <button class="tool-btn tool-btn-sm"        id="btn-preview" onclick="setView('preview')" title="Prévisualisation" data-i18n-title="view_preview_t"><i class="ti ti-file-text" style="font-size:13px;pointer-events:none;"></i></button>
         </div>
         <div class="ptb-vsep"></div>
-        <button class="tool-btn tool-btn-sm" id="btn-isolated-mode" onclick="toggleIsolatedMode()" title="Mode chapitres isolés (Ctrl+Maj+I)">
+        <button class="tool-btn tool-btn-sm" id="btn-isolated-mode" onclick="toggleIsolatedMode()" title="Mode chapitres isolés (Ctrl+Maj+I)" data-i18n-title="iso_enable_t">
           <i class="ti ti-layout-navbar" style="font-size:13px;pointer-events:none;"></i>
         </button>
         <div class="ptb-vsep"></div>
@@ -749,7 +749,7 @@
     <!-- ── BARRE D'ONGLETS CHAPITRES (mode isolé) ── -->
     <div id="chapter-tabs-bar" style="display:none;">
       <div id="chapter-tabs-list"></div>
-      <button id="chapter-tabs-add" onclick="isolatedAddChapter()" title="Nouveau chapitre">
+      <button id="chapter-tabs-add" onclick="isolatedAddChapter()" title="Nouveau chapitre" data-i18n-title="ch_add_t">
         <i class="ti ti-plus"></i>
       </button>
     </div>

@@ -2952,7 +2952,7 @@ function corkboardRender() {
         onclick="scrollToChapter('${escHtml(ch.id)}', decodeURIComponent(this.dataset.chTitle))">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;">
         <div class="cork-card-title" style="margin-bottom:0;flex:1;min-width:0;">${escHtml(ch.text)}</div>
-        <button class="cork-action-btn" title="Supprimer ce chapitre"
+        <button class="cork-action-btn" title="${_t('cork_delete_t')}"
           style="flex-shrink:0;color:#dc2626;font-size:16px;font-weight:700;opacity:${isIsolated?'1':'0.25'};cursor:${isIsolated?'pointer':'default'};"
           onclick="event.stopPropagation();corkDeleteChapter(decodeURIComponent(this.closest('.cork-card').dataset.chTitle))">−</button>
       </div>
@@ -2968,11 +2968,11 @@ function corkboardRender() {
         </div>
         <span class="cork-words">${words.toLocaleString('fr')} mots</span>
         <div class="cork-actions">
-          <button class="cork-action-btn" title="Résumé IA"
+          <button class="cork-action-btn" title="${_t('cork_summary_t')}"
             onclick="event.stopPropagation();openSummaryPopup(this, decodeURIComponent(this.closest('.cork-card').dataset.chTitle))">✦</button>
           <button class="cork-action-btn" title="Tags"
             onclick="event.stopPropagation();chEditTags(decodeURIComponent(this.closest('.cork-card').dataset.chTitle))">🏷</button>
-          <button class="cork-action-btn cork-lock-btn${isLocked?' locked':''}" title="${isLocked?'Déverrouiller':'Verrouiller'}"
+          <button class="cork-action-btn cork-lock-btn${isLocked?' locked':''}" title="${isLocked?_t('cork_unlock_t'):_t('cork_lock_t')}"
             onclick="event.stopPropagation();_corkToggleLock('${cardId}')">${isLocked?'🔒':'🔓'}</button>
         </div>
       </div>

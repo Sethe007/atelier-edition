@@ -1910,7 +1910,7 @@ function _updateEditorLockState() {
 function updateChapterList(chapters) {
   const list = document.getElementById('chapter-list');
   if (!chapters.length) {
-    list.innerHTML = '<div class="no-chapters">Aucun chapitre détecté.</div>';
+    list.innerHTML = '<div class="no-chapters">' + _t('ch_none_detected') + '</div>';
     return;
   }
   list.innerHTML = chapters.map((ch) => {
@@ -12261,6 +12261,38 @@ var _i18n = {
   fr: {
     // Header
     btn_save:            'Sauvegarder',
+    exp_pdf: "PDF imprimable",
+    exp_word: "Word (.docx)",
+    exp_epub: "ePub",
+    exp_md: "Markdown",
+    tb_ai_label: "✦ IA",
+    tb_ai_t: "Changer d'IA active",
+    cfg_ai: "Configurer les IA…",
+    tb_logout_t: "Déconnexion",
+    ed_bold_t: "Gras (Ctrl+B)",
+    ed_italic_t: "Italique (Ctrl+I)",
+    ed_underline_t: "Souligné (Ctrl+U)",
+    ed_strike_t: "Barré (Ctrl+Alt+X)",
+    ed_typewriter_t: "Mode machine à écrire (Ctrl+Maj+T)",
+    ed_note_t: "Note d'auteur (Ctrl+Maj+N)",
+    ed_rep_t: "Répétitions proches — détecte les mots répétés dans un rayon de 200 mots",
+    ed_aicontinue_t: "Continuation IA — génère une suite de texte à partir du contexte autour du curseur (nécessite une clé API)",
+    view_split_t: "Côte à côte",
+    view_edit_t: "Édition",
+    view_preview_t: "Prévisualisation",
+    nav_prev_t: "Précédent",
+    nav_next_t: "Suivant",
+    nav_replace_t: "Remplacer",
+    nav_close_t: "Fermer",
+    ch_add_isolated_t: "Nouveau chapitre (mode isolé)",
+    ch_add_t: "Nouveau chapitre",
+    iso_enable_t: "Mode chapitres isolés (Ctrl+Maj+I)",
+    iso_disable_t: "Désactiver le mode chapitres isolés (Ctrl+Maj+I)",
+    ch_none_detected: "Aucun chapitre détecté.",
+    cork_delete_t: "Supprimer ce chapitre",
+    cork_summary_t: "Résumé IA",
+    cork_unlock_t: "Déverrouiller",
+    cork_lock_t: "Verrouiller",
     tb_open: "Ouvrir",
     tb_open_t: "Ouvrir un projet depuis un fichier sur votre disque",
     tb_file: "Fichier",
@@ -13060,6 +13092,38 @@ var _i18n = {
   en: {
     // Header
     btn_save:            'Save',
+    exp_pdf: "Printable PDF",
+    exp_word: "Word (.docx)",
+    exp_epub: "ePub",
+    exp_md: "Markdown",
+    tb_ai_label: "✦ AI",
+    tb_ai_t: "Switch active AI",
+    cfg_ai: "Configure AIs…",
+    tb_logout_t: "Log out",
+    ed_bold_t: "Bold (Ctrl+B)",
+    ed_italic_t: "Italic (Ctrl+I)",
+    ed_underline_t: "Underline (Ctrl+U)",
+    ed_strike_t: "Strikethrough (Ctrl+Alt+X)",
+    ed_typewriter_t: "Typewriter mode (Ctrl+Maj+T)",
+    ed_note_t: "Author note (Ctrl+Maj+N)",
+    ed_rep_t: "Nearby repetitions — detects words repeated within 200 words",
+    ed_aicontinue_t: "AI continuation — generates text following the context around the cursor (API key required)",
+    view_split_t: "Side by side",
+    view_edit_t: "Edit",
+    view_preview_t: "Preview",
+    nav_prev_t: "Previous",
+    nav_next_t: "Next",
+    nav_replace_t: "Replace",
+    nav_close_t: "Close",
+    ch_add_isolated_t: "New chapter (isolated mode)",
+    ch_add_t: "New chapter",
+    iso_enable_t: "Isolated chapters mode (Ctrl+Maj+I)",
+    iso_disable_t: "Disable isolated chapters mode (Ctrl+Maj+I)",
+    ch_none_detected: "No chapter detected.",
+    cork_delete_t: "Delete this chapter",
+    cork_summary_t: "AI summary",
+    cork_unlock_t: "Unlock",
+    cork_lock_t: "Lock",
     tb_open: "Open",
     tb_open_t: "Open a project from a file on your disk",
     tb_file: "File",
@@ -13892,6 +13956,38 @@ var _i18n = {
   es: {
     // Header
     btn_save:            'Guardar',
+    exp_pdf: "PDF imprimible",
+    exp_word: "Word (.docx)",
+    exp_epub: "ePub",
+    exp_md: "Markdown",
+    tb_ai_label: "✦ IA",
+    tb_ai_t: "Cambiar la IA activa",
+    cfg_ai: "Configurar las IA…",
+    tb_logout_t: "Cerrar sesión",
+    ed_bold_t: "Negrita (Ctrl+B)",
+    ed_italic_t: "Cursiva (Ctrl+I)",
+    ed_underline_t: "Subrayado (Ctrl+U)",
+    ed_strike_t: "Tachado (Ctrl+Alt+X)",
+    ed_typewriter_t: "Modo máquina de escribir (Ctrl+Maj+T)",
+    ed_note_t: "Nota del autor (Ctrl+Maj+N)",
+    ed_rep_t: "Repeticiones cercanas — detecta palabras repetidas en un radio de 200 palabras",
+    ed_aicontinue_t: "Continuación IA — genera texto a partir del contexto alrededor del cursor (se requiere clave API)",
+    view_split_t: "Lado a lado",
+    view_edit_t: "Edición",
+    view_preview_t: "Vista previa",
+    nav_prev_t: "Anterior",
+    nav_next_t: "Siguiente",
+    nav_replace_t: "Reemplazar",
+    nav_close_t: "Cerrar",
+    ch_add_isolated_t: "Nuevo capítulo (modo aislado)",
+    ch_add_t: "Nuevo capítulo",
+    iso_enable_t: "Modo capítulos aislados (Ctrl+Maj+I)",
+    iso_disable_t: "Desactivar el modo capítulos aislados (Ctrl+Maj+I)",
+    ch_none_detected: "Ningún capítulo detectado.",
+    cork_delete_t: "Eliminar este capítulo",
+    cork_summary_t: "Resumen IA",
+    cork_unlock_t: "Desbloquear",
+    cork_lock_t: "Bloquear",
     tb_open: "Abrir",
     tb_open_t: "Abrir un proyecto desde un archivo en su disco",
     tb_file: "Archivo",
@@ -14725,6 +14821,38 @@ var _i18n = {
   // ── DEUTSCH ─────────────────────────────────────────────────────────────────
   de: {
     btn_save:  'Speichern',
+    exp_pdf: "Druckbares PDF",
+    exp_word: "Word (.docx)",
+    exp_epub: "ePub",
+    exp_md: "Markdown",
+    tb_ai_label: "✦ KI",
+    tb_ai_t: "Aktive KI wechseln",
+    cfg_ai: "KIs konfigurieren…",
+    tb_logout_t: "Abmelden",
+    ed_bold_t: "Fett (Ctrl+B)",
+    ed_italic_t: "Kursiv (Ctrl+I)",
+    ed_underline_t: "Unterstrichen (Ctrl+U)",
+    ed_strike_t: "Durchgestrichen (Ctrl+Alt+X)",
+    ed_typewriter_t: "Schreibmaschinenmodus (Ctrl+Maj+T)",
+    ed_note_t: "Autorennotiz (Ctrl+Maj+N)",
+    ed_rep_t: "Nahe Wiederholungen — erkennt im Umkreis von 200 Wörtern wiederholte Wörter",
+    ed_aicontinue_t: "KI-Fortsetzung — erzeugt Text aus dem Kontext um den Cursor (API-Schlüssel erforderlich)",
+    view_split_t: "Nebeneinander",
+    view_edit_t: "Bearbeiten",
+    view_preview_t: "Vorschau",
+    nav_prev_t: "Zurück",
+    nav_next_t: "Weiter",
+    nav_replace_t: "Ersetzen",
+    nav_close_t: "Schließen",
+    ch_add_isolated_t: "Neues Kapitel (isolierter Modus)",
+    ch_add_t: "Neues Kapitel",
+    iso_enable_t: "Isolierter Kapitelmodus (Ctrl+Maj+I)",
+    iso_disable_t: "Isolierten Kapitelmodus deaktivieren (Ctrl+Maj+I)",
+    ch_none_detected: "Kein Kapitel erkannt.",
+    cork_delete_t: "Dieses Kapitel löschen",
+    cork_summary_t: "KI-Zusammenfassung",
+    cork_unlock_t: "Entsperren",
+    cork_lock_t: "Sperren",
     tb_open: "Öffnen",
     tb_open_t: "Projekt aus einer Datei auf Ihrer Festplatte öffnen",
     tb_file: "Datei",
@@ -15492,6 +15620,38 @@ var _i18n = {
   // ── ITALIANO ────────────────────────────────────────────────────────────────
   it: {
     btn_save:  'Salva',
+    exp_pdf: "PDF stampabile",
+    exp_word: "Word (.docx)",
+    exp_epub: "ePub",
+    exp_md: "Markdown",
+    tb_ai_label: "✦ IA",
+    tb_ai_t: "Cambia IA attiva",
+    cfg_ai: "Configura le IA…",
+    tb_logout_t: "Disconnetti",
+    ed_bold_t: "Grassetto (Ctrl+B)",
+    ed_italic_t: "Corsivo (Ctrl+I)",
+    ed_underline_t: "Sottolineato (Ctrl+U)",
+    ed_strike_t: "Barrato (Ctrl+Alt+X)",
+    ed_typewriter_t: "Modalità macchina da scrivere (Ctrl+Maj+T)",
+    ed_note_t: "Nota dell'autore (Ctrl+Maj+N)",
+    ed_rep_t: "Ripetizioni vicine — rileva parole ripetute entro 200 parole",
+    ed_aicontinue_t: "Continuazione IA — genera testo dal contesto attorno al cursore (richiede una chiave API)",
+    view_split_t: "Affiancato",
+    view_edit_t: "Modifica",
+    view_preview_t: "Anteprima",
+    nav_prev_t: "Precedente",
+    nav_next_t: "Successivo",
+    nav_replace_t: "Sostituisci",
+    nav_close_t: "Chiudi",
+    ch_add_isolated_t: "Nuovo capitolo (modalità isolata)",
+    ch_add_t: "Nuovo capitolo",
+    iso_enable_t: "Modalità capitoli isolati (Ctrl+Maj+I)",
+    iso_disable_t: "Disattiva la modalità capitoli isolati (Ctrl+Maj+I)",
+    ch_none_detected: "Nessun capitolo rilevato.",
+    cork_delete_t: "Elimina questo capitolo",
+    cork_summary_t: "Riassunto IA",
+    cork_unlock_t: "Sblocca",
+    cork_lock_t: "Blocca",
     tb_open: "Apri",
     tb_open_t: "Apri un progetto da un file sul disco",
     tb_file: "File",
@@ -16255,6 +16415,38 @@ var _i18n = {
   // ── PORTUGUÊS ───────────────────────────────────────────────────────────────
   pt: {
     btn_save:  'Guardar',
+    exp_pdf: "PDF imprimível",
+    exp_word: "Word (.docx)",
+    exp_epub: "ePub",
+    exp_md: "Markdown",
+    tb_ai_label: "✦ IA",
+    tb_ai_t: "Mudar a IA ativa",
+    cfg_ai: "Configurar as IA…",
+    tb_logout_t: "Terminar sessão",
+    ed_bold_t: "Negrito (Ctrl+B)",
+    ed_italic_t: "Itálico (Ctrl+I)",
+    ed_underline_t: "Sublinhado (Ctrl+U)",
+    ed_strike_t: "Rasurado (Ctrl+Alt+X)",
+    ed_typewriter_t: "Modo máquina de escrever (Ctrl+Maj+T)",
+    ed_note_t: "Nota do autor (Ctrl+Maj+N)",
+    ed_rep_t: "Repetições próximas — deteta palavras repetidas num raio de 200 palavras",
+    ed_aicontinue_t: "Continuação IA — gera texto a partir do contexto à volta do cursor (requer chave API)",
+    view_split_t: "Lado a lado",
+    view_edit_t: "Edição",
+    view_preview_t: "Pré-visualização",
+    nav_prev_t: "Anterior",
+    nav_next_t: "Próximo",
+    nav_replace_t: "Substituir",
+    nav_close_t: "Fechar",
+    ch_add_isolated_t: "Novo capítulo (modo isolado)",
+    ch_add_t: "Novo capítulo",
+    iso_enable_t: "Modo capítulos isolados (Ctrl+Maj+I)",
+    iso_disable_t: "Desativar o modo capítulos isolados (Ctrl+Maj+I)",
+    ch_none_detected: "Nenhum capítulo detetado.",
+    cork_delete_t: "Eliminar este capítulo",
+    cork_summary_t: "Resumo IA",
+    cork_unlock_t: "Desbloquear",
+    cork_lock_t: "Bloquear",
     tb_open: "Abrir",
     tb_open_t: "Abrir um projeto a partir de um ficheiro no disco",
     tb_file: "Ficheiro",
@@ -20407,7 +20599,7 @@ function corkboardRender() {
         onclick="scrollToChapter('${escHtml(ch.id)}', decodeURIComponent(this.dataset.chTitle))">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;">
         <div class="cork-card-title" style="margin-bottom:0;flex:1;min-width:0;">${escHtml(ch.text)}</div>
-        <button class="cork-action-btn" title="Supprimer ce chapitre"
+        <button class="cork-action-btn" title="${_t('cork_delete_t')}"
           style="flex-shrink:0;color:#dc2626;font-size:16px;font-weight:700;opacity:${isIsolated?'1':'0.25'};cursor:${isIsolated?'pointer':'default'};"
           onclick="event.stopPropagation();corkDeleteChapter(decodeURIComponent(this.closest('.cork-card').dataset.chTitle))">−</button>
       </div>
@@ -20423,11 +20615,11 @@ function corkboardRender() {
         </div>
         <span class="cork-words">${words.toLocaleString('fr')} mots</span>
         <div class="cork-actions">
-          <button class="cork-action-btn" title="Résumé IA"
+          <button class="cork-action-btn" title="${_t('cork_summary_t')}"
             onclick="event.stopPropagation();openSummaryPopup(this, decodeURIComponent(this.closest('.cork-card').dataset.chTitle))">✦</button>
           <button class="cork-action-btn" title="Tags"
             onclick="event.stopPropagation();chEditTags(decodeURIComponent(this.closest('.cork-card').dataset.chTitle))">🏷</button>
-          <button class="cork-action-btn cork-lock-btn${isLocked?' locked':''}" title="${isLocked?'Déverrouiller':'Verrouiller'}"
+          <button class="cork-action-btn cork-lock-btn${isLocked?' locked':''}" title="${isLocked?_t('cork_unlock_t'):_t('cork_lock_t')}"
             onclick="event.stopPropagation();_corkToggleLock('${cardId}')">${isLocked?'🔒':'🔓'}</button>
         </div>
       </div>
@@ -23016,10 +23208,10 @@ function _updateIsolatedModeBtn(active) {
   if (!btn) return;
   if (active) {
     btn.classList.add('active');
-    btn.title = 'Désactiver le mode chapitres isolés — revenir au texte continu (Ctrl+Maj+I)';
+    btn.title = _t('iso_disable_t');
   } else {
     btn.classList.remove('active');
-    btn.title = 'Mode chapitres isolés — chaque chapitre dans son propre onglet (Ctrl+Maj+I)';
+    btn.title = _t('iso_enable_t');
   }
 }
 
