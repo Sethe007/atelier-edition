@@ -1698,6 +1698,21 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
   </div>
 </div>
 
+<!-- Champs cachés miroirs « Fiche Œuvre » : couche de données lue par la sauvegarde
+     (collectProjectData) et l'IA (buildOeuvreContext), alimentée par les selects
+     sm-oeuvre-* du panneau Paramètres via syncSettingsField(). Ils étaient absents
+     du HTML -> la Fiche Œuvre ne se sauvegardait pas (même pattern que pg-*). -->
+<div style="display:none;" aria-hidden="true">
+  <input type="hidden" id="oeuvre-type">
+  <input type="hidden" id="oeuvre-genre">
+  <input type="hidden" id="oeuvre-epoque">
+  <input type="hidden" id="oeuvre-monde">
+  <input type="hidden" id="oeuvre-narration">
+  <input type="hidden" id="oeuvre-temps">
+  <input type="hidden" id="oeuvre-registre">
+  <input type="hidden" id="oeuvre-notes">
+</div>
+
 <!-- COMPTEUR FLOTTANT MODE FOCUS -->
 <div class="focus-word-counter" id="focus-word-counter">0 mots</div>
   <!-- DOMPurify : sanitisation du HTML non fiable (sorties IA, imports). Chargé avant le bundle. -->
