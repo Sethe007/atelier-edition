@@ -176,6 +176,7 @@ const KEYS = [
   'ac_lex_d',
   'ac_pp',
   'ac_pp_d',
+  'settings_general_hint',
 ];
 
 describe('i18n — complétude des clés barre d’outils + modales (6 langues)', () => {

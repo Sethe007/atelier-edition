@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 /* global _registerLang */
 _registerLang('es', {
+  settings_general_hint: "Ajustes generales de la aplicación. Se aplican a todas las sesiones.",
   // ── Lot 2 (descriptions Correction auto) ──
   ac_enable_desc: "Correcciones mecánicas ligeras en tiempo real — sin reescritura, sin IA.",
   ac_caps: "Mayúsculas automáticas",
@@ -341,11 +342,11 @@ _registerLang('es', {
   settings_footer_note:      'Los cambios se aplican de inmediato.',
   // Project modal
   project_modal_title:       'Bienvenido a su taller',
-  project_modal_sub:         'Cree un nuevo proyecto o cargue uno existente desde un archivo .json.',
+  project_modal_sub:         'Cree un nuevo proyecto o cargue uno existente desde un archivo .scrivaelo / .json.',
   project_new_label:         'Nuevo proyecto',
   project_new_desc:          'Iniciar una novela o documento en blanco',
   project_load_label:        'Cargar proyecto',
-  project_load_desc:         'Abrir un archivo .json guardado',
+  project_load_desc:         'Abrir un archivo .scrivaelo / .json guardado',
   project_autosave_label:    '💾 Copias automáticas',
   project_name_label:        'Nombre del proyecto',
   project_name_placeholder:  'ej: Mi Novela, Colección de cuentos…',
@@ -450,7 +451,7 @@ _registerLang('es', {
   module_rapport_title:      'Informe editorial — diagnóstico global del capítulo',
   module_stats_title:        'Análisis estadístico IA — análisis en cadena de toda la novela (N llamadas API)',
   api_modules_save_hint:     'Haga clic en 💾 Guardar para confirmar — los módulos se recuerdan por proveedor.',
-  api_info_key:              '💾 La clave API se guarda con el proyecto (.json). Proteja su archivo de proyecto.',
+  api_info_key:              '💾 La clave API se guarda con el proyecto (.scrivaelo). Proteja su archivo de proyecto.',
   api_info_groq:             'es gratuito sin tarjeta — obtenga una clave en',
   api_info_openrouter:       'es gratuito sin tarjeta — obtenga una clave en',
   api_info_lt:               'El corrector LanguageTool siempre funciona sin clave API.',

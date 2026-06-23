@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 /* global _registerLang */
 _registerLang('en', {
+  settings_general_hint: "General application settings. These apply to all sessions.",
   // ── Lot 2 (descriptions Correction auto) ──
   ac_enable_desc: "Light mechanical corrections in real time — no rewriting, no AI.",
   ac_caps: "Automatic capitals",
@@ -341,11 +342,11 @@ _registerLang('en', {
   settings_footer_note:      'Changes are applied immediately.',
   // Project modal
   project_modal_title:       'Welcome to your workshop',
-  project_modal_sub:         'Create a new project or load an existing one from a .json file.',
+  project_modal_sub:         'Create a new project or load an existing one from a .scrivaelo / .json file.',
   project_new_label:         'New project',
   project_new_desc:          'Start a new novel or blank document',
   project_load_label:        'Load a project',
-  project_load_desc:         'Open a saved .json file',
+  project_load_desc:         'Open a saved .scrivaelo / .json file',
   project_autosave_label:    '💾 Auto-saves',
   project_name_label:        'Project name',
   project_name_placeholder:  'e.g. My Novel, Short story collection…',
@@ -450,7 +451,7 @@ _registerLang('en', {
   module_rapport_title:      'Editorial report — global chapter diagnosis',
   module_stats_title:        'AI statistical analysis — chained analysis across the whole novel (N API calls)',
   api_modules_save_hint:     'Click 💾 Save to confirm — modules are remembered per provider.',
-  api_info_key:              '💾 The API key is saved with the project (.json). Protect your project file.',
+  api_info_key:              '💾 The API key is saved with the project (.scrivaelo). Protect your project file.',
   api_info_groq:             'is free, no credit card — get a key at',
   api_info_openrouter:       'is free, no credit card — get a key at',
   api_info_lt:               'The LanguageTool corrector always works without an API key.',

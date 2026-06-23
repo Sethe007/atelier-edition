@@ -5,6 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 /* global _registerLang */
 _registerLang('fr', {
+  settings_general_hint: "Paramètres généraux de l'application. Ces réglages s'appliquent à toutes les sessions.",
   // ── Lot 2 (descriptions Correction auto) ──
   ac_enable_desc: "Corrections mécaniques légères en temps réel — sans réécriture, sans IA.",
   ac_caps: "Majuscules automatiques",
@@ -342,11 +343,11 @@ _registerLang('fr', {
   settings_footer_note:      'Les modifications sont appliquées immédiatement.',
   // Project modal
   project_modal_title:       'Bienvenue dans votre atelier',
-  project_modal_sub:         'Créez un nouveau projet ou chargez un projet existant depuis un fichier .json.',
+  project_modal_sub:         'Créez un nouveau projet ou chargez un projet existant depuis un fichier .scrivaelo / .json.',
   project_new_label:         'Nouveau projet',
   project_new_desc:          'Démarrer un roman ou un document vierge',
   project_load_label:        'Charger un projet',
-  project_load_desc:         'Ouvrir un fichier .json sauvegardé',
+  project_load_desc:         'Ouvrir un fichier .scrivaelo / .json sauvegardé',
   project_autosave_label:    '💾 Sauvegardes automatiques',
   project_name_label:        'Nom du projet',
   project_name_placeholder:  'ex : Mon Roman, Recueil de nouvelles…',
@@ -451,7 +452,7 @@ _registerLang('fr', {
   module_rapport_title:      'Rapport éditorial — diagnostic global du chapitre',
   module_stats_title:        'Analyse statistique IA — analyse en chaîne sur tout le roman (N appels API)',
   api_modules_save_hint:     'Cliquez 💾 Enregistrer pour valider — les modules sont mémorisés par fournisseur.',
-  api_info_key:              '💾 La clé API est sauvegardée avec le projet (.json). Protégez votre fichier projet.',
+  api_info_key:              '💾 La clé API est sauvegardée avec le projet (.scrivaelo). Protégez votre fichier projet.',
   api_info_groq:             'est gratuit sans CB — obtenez une clé sur',
   api_info_openrouter:       'est gratuit sans CB — obtenez une clé sur',
   api_info_lt:               'Le correcteur LanguageTool fonctionne toujours sans clé API.',
