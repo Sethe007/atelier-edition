@@ -443,7 +443,10 @@ function collectProjectData() {
       });
       return { provider: cfg.provider, configs: cleanConfigs };
     })(),
-    texte: getDomVal('raw-input'),
+    texte: (function () {
+      var _f = (typeof window !== 'undefined' && window._isolatedGetFullText) ? window._isolatedGetFullText() : null;
+      return _f != null ? _f : getDomVal('raw-input');
+    })(),
     images: Object.fromEntries(Object.entries(images).map(([k, v]) => [k, { ...v }])),
     chapterMeta: { ..._chapterMeta },
     prompts_ia: collectPrompts(),
@@ -22495,6 +22498,14 @@ var IM = {
 // Exposer IM globalement pour que les autres blocs <script> puissent y accéder
 window.IM = IM;
 
+// Source unique pour la sauvegarde : reconstitue l'œuvre COMPLÈTE depuis
+// les chapitres (sync du chapitre courant inclus). Utilisé par collectProjectData.
+window._isolatedGetFullText = function () {
+  if (!IM.active) return null;
+  _saveCurrentChapterFromEditor();
+  return _joinChapters(IM.chapters);
+};
+
 // STATUS_COLORS par index statut (0-3)
 const _IM_STATUS_COLORS = [
   'var(--status-draft)',
@@ -23068,15 +23079,9 @@ function _chapterStartOffset(idx) {
   const _origSaveProject = window.saveProject;
   if (typeof _origSaveProject === 'function') {
     window.saveProject = function() {
-      if (IM.active) _saveCurrentChapterFromEditor();
-      if (IM.active) {
-        const ta = document.getElementById('raw-input');
-        const currentVal = ta?.value;
-        if (ta) ta.value = _joinChapters(IM.chapters);
-        _origSaveProject.apply(this, arguments);
-        if (ta && currentVal !== undefined) ta.value = currentVal;
-        return;
-      }
+      // Reconstitution de l'œuvre complète gérée par collectProjectData()
+      // (via window._isolatedGetFullText) — plus d'échange du textarea ici,
+      // qui entrait en conflit avec le nouveau correctif racine.
       _origSaveProject.apply(this, arguments);
     };
   }
