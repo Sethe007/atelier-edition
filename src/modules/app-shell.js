@@ -19,6 +19,8 @@ function autosaveToLS() {
       badge.classList.add('flash');
       setTimeout(() => badge.classList.remove('flash'), 1800);
     }
+    // Local-first : si un fichier disque est ouvert, l'autosave y écrit aussi
+    if (typeof fsAutosaveToFile === 'function') fsAutosaveToFile();
   } catch(e) { console.warn('Autosave localStorage échoué :', e); }
 }
 
