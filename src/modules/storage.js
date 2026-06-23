@@ -44,7 +44,10 @@ function collectProjectData() {
       });
       return { provider: cfg.provider, configs: cleanConfigs };
     })(),
-    texte: getDomVal('raw-input'),
+    texte: (function () {
+      var _f = (typeof window !== 'undefined' && window._isolatedGetFullText) ? window._isolatedGetFullText() : null;
+      return _f != null ? _f : getDomVal('raw-input');
+    })(),
     images: Object.fromEntries(Object.entries(images).map(([k, v]) => [k, { ...v }])),
     chapterMeta: { ..._chapterMeta },
     prompts_ia: collectPrompts(),

@@ -306,6 +306,27 @@ function escHtml(s) {
           .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+/**
+ * sanitizeHTML — nettoie du HTML NON FIABLE (sortie IA brute, contenu importé)
+ * avant une injection via innerHTML. À réserver au contenu EXTERNE : ne pas
+ * l'appliquer aux templates de l'app (ils utilisent volontairement des
+ * onclick/style inline que DOMPurify retirerait). Repli sûr sur escHtml si
+ * DOMPurify n'est pas chargé.
+ */
+function sanitizeHTML(html, opts) {
+  if (html == null) return '';
+  if (typeof DOMPurify !== 'undefined' && DOMPurify && DOMPurify.sanitize) {
+    return DOMPurify.sanitize(String(html), opts || {});
+  }
+  return escHtml(String(html));
+}
+
+/** setHTML — équivalent sûr de `el.innerHTML = html` pour du contenu non fiable. */
+function setHTML(el, html, opts) {
+  if (!el) return;
+  el.innerHTML = sanitizeHTML(html, opts);
+}
+
 // Compteur global pour indexer les notes dans la preview
 let _renderNoteIdx = 0;
 function _resetRenderNoteIdx() { _renderNoteIdx = 0; }
