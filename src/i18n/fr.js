@@ -5,6 +5,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 /* global _registerLang */
 _registerLang('fr', {
+  // ── fragments restants ──
+  wt_syn_hint: "Sélectionnez un mot dans l'éditeur ou tapez-le ci-dessus.",
+  ctx_info_1: "ℹ️ Le contexte de l'œuvre (fiche Œuvre, personnages, lieux) est injecté automatiquement — inutile de le réécrire dans les prompts.",
+  ctx_info_2a: "✦ Utilisez",
+  ctx_info_2b: "pour indiquer où il sera inséré si vous voulez le repositionner.",
+  sb_ln: "Lig",
+  sb_col: "Col",
   settings_general_hint: "Paramètres généraux de l'application. Ces réglages s'appliquent à toutes les sessions.",
   // ── Lot 2 (descriptions Correction auto) ──
   ac_enable_desc: "Corrections mécaniques légères en temps réel — sans réécriture, sans IA.",

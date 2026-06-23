@@ -12259,6 +12259,13 @@ var _i18n = {
 
   // ── FRANÇAIS ──────────────────────────────────────────────────────────────
   fr: {
+    // ── fragments restants ──
+    wt_syn_hint: "Sélectionnez un mot dans l'éditeur ou tapez-le ci-dessus.",
+    ctx_info_1: "ℹ️ Le contexte de l'œuvre (fiche Œuvre, personnages, lieux) est injecté automatiquement — inutile de le réécrire dans les prompts.",
+    ctx_info_2a: "✦ Utilisez",
+    ctx_info_2b: "pour indiquer où il sera inséré si vous voulez le repositionner.",
+    sb_ln: "Lig",
+    sb_col: "Col",
     settings_general_hint: "Paramètres généraux de l'application. Ces réglages s'appliquent à toutes les sessions.",
     // ── Lot 2 (descriptions Correction auto) ──
     ac_enable_desc: "Corrections mécaniques légères en temps réel — sans réécriture, sans IA.",
@@ -13195,6 +13202,13 @@ var _i18n = {
 
   // ── ENGLISH ────────────────────────────────────────────────────────────────
   en: {
+    // ── fragments restants ──
+    wt_syn_hint: "Select a word in the editor or type it above.",
+    ctx_info_1: "ℹ️ The work's context (Work sheet, characters, locations) is injected automatically — no need to rewrite it in the prompts.",
+    ctx_info_2a: "✦ Use",
+    ctx_info_2b: "to indicate where it will be inserted if you want to reposition it.",
+    sb_ln: "Ln",
+    sb_col: "Col",
     settings_general_hint: "General application settings. These apply to all sessions.",
     // ── Lot 2 (descriptions Correction auto) ──
     ac_enable_desc: "Light mechanical corrections in real time — no rewriting, no AI.",
@@ -14164,6 +14178,13 @@ var _i18n = {
     search_all_title:          'Search the entire project (Ctrl+Shift+G)',
   // ── ESPAÑOL ────────────────────────────────────────────────────────────────
   es: {
+    // ── fragments restants ──
+    wt_syn_hint: "Seleccione una palabra en el editor o escríbala arriba.",
+    ctx_info_1: "ℹ️ El contexto de la obra (ficha de Obra, personajes, lugares) se inyecta automáticamente — no hace falta reescribirlo en los prompts.",
+    ctx_info_2a: "✦ Use",
+    ctx_info_2b: "para indicar dónde se insertará si desea reposicionarlo.",
+    sb_ln: "Lín",
+    sb_col: "Col",
     settings_general_hint: "Ajustes generales de la aplicación. Se aplican a todas las sesiones.",
     // ── Lot 2 (descriptions Correction auto) ──
     ac_enable_desc: "Correcciones mecánicas ligeras en tiempo real — sin reescritura, sin IA.",
@@ -15135,6 +15156,13 @@ var _i18n = {
 
   // ── DEUTSCH ─────────────────────────────────────────────────────────────────
   de: {
+    // ── fragments restants ──
+    wt_syn_hint: "Wählen Sie ein Wort im Editor oder tippen Sie es oben ein.",
+    ctx_info_1: "ℹ️ Der Werkkontext (Werk-Datenblatt, Figuren, Orte) wird automatisch eingefügt — kein erneutes Schreiben in den Prompts nötig.",
+    ctx_info_2a: "✦ Verwenden Sie",
+    ctx_info_2b: "um anzugeben, wo er eingefügt wird, falls Sie ihn neu positionieren möchten.",
+    sb_ln: "Zl",
+    sb_col: "Sp",
     settings_general_hint: "Allgemeine App-Einstellungen. Sie gelten für alle Sitzungen.",
     // ── Lot 2 (descriptions Correction auto) ──
     ac_enable_desc: "Leichte mechanische Korrekturen in Echtzeit — ohne Umschreiben, ohne KI.",
@@ -16039,6 +16067,13 @@ var _i18n = {
 
   // ── ITALIANO ────────────────────────────────────────────────────────────────
   it: {
+    // ── fragments restants ──
+    wt_syn_hint: "Seleziona una parola nell'editor o digitala sopra.",
+    ctx_info_1: "ℹ️ Il contesto dell'opera (scheda Opera, personaggi, luoghi) viene inserito automaticamente — non serve riscriverlo nei prompt.",
+    ctx_info_2a: "✦ Usa",
+    ctx_info_2b: "per indicare dove verrà inserito se vuoi riposizionarlo.",
+    sb_ln: "Rg",
+    sb_col: "Col",
     settings_general_hint: "Impostazioni generali dell'applicazione. Si applicano a tutte le sessioni.",
     // ── Lot 2 (descriptions Correction auto) ──
     ac_enable_desc: "Correzioni meccaniche leggere in tempo reale — senza riscrittura, senza IA.",
@@ -16939,6 +16974,13 @@ var _i18n = {
 
   // ── PORTUGUÊS ───────────────────────────────────────────────────────────────
   pt: {
+    // ── fragments restants ──
+    wt_syn_hint: "Selecione uma palavra no editor ou digite-a acima.",
+    ctx_info_1: "ℹ️ O contexto da obra (ficha da Obra, personagens, locais) é injetado automaticamente — não é preciso reescrevê-lo nos prompts.",
+    ctx_info_2a: "✦ Use",
+    ctx_info_2b: "para indicar onde será inserido se quiser reposicioná-lo.",
+    sb_ln: "Lin",
+    sb_col: "Col",
     settings_general_hint: "Definições gerais da aplicação. Aplicam-se a todas as sessões.",
     // ── Lot 2 (descriptions Correction auto) ──
     ac_enable_desc: "Correções mecânicas ligeiras em tempo real — sem reescrita, sem IA.",
@@ -18022,6 +18064,8 @@ function applyI18n() {
   if (versSel && versSel.options[0] && versSel.options[0].value === '') {
     versSel.options[0].textContent = t['versions_select_chapter'] || '— Choisir un chapitre —';
   }
+
+  try { if (typeof _fsUpdateButton === 'function') _fsUpdateButton(); } catch (e) {}
 }
 
 function _applyI18nSettingsModal(t) {

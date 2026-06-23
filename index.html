@@ -565,7 +565,7 @@
               onkeydown="if(event.key==='Enter')runSynonyms()">
           </div>
           <!-- Hint sélection -->
-          <div class="wt-selection-hint" id="wt-syn-hint" style="margin-bottom:6px;">
+          <div class="wt-selection-hint" id="wt-syn-hint" style="margin-bottom:6px;" data-i18n="wt_syn_hint">
             Sélectionnez un mot dans l'éditeur <em>ou</em> tapez-le ci-dessus.
           </div>
           <!-- Bouton -->
@@ -895,9 +895,9 @@ Elle applique ensuite les standards de l'édition :
 Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRawInput()"></textarea>
         </div><!-- /.editor-input-wrap -->
         <div class="editor-statusbar" id="editor-statusbar">
-          <div class="statusbar-item">Ln <span id="sb-line">1</span></div>
+          <div class="statusbar-item"><span data-i18n="sb_ln">Ln</span> <span id="sb-line">1</span></div>
           <div class="statusbar-sep"></div>
-          <div class="statusbar-item">Col <span id="sb-col">1</span></div>
+          <div class="statusbar-item"><span data-i18n="sb_col">Col</span> <span id="sb-col">1</span></div>
           <div class="statusbar-sep"></div>
           <div class="statusbar-item" id="sb-sel-wrap" style="display:none"><span class="statusbar-sel" id="sb-sel"></span> <span id="sb-sel-label" data-i18n="sb_selected">sélectionnés</span></div>
           <div class="statusbar-sep" id="sb-sel-sep" style="display:none"></div>
@@ -1247,8 +1247,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
         <div id="prompts-accordion" style="display:flex;flex-direction:column;gap:8px;"></div>
 
         <div style="margin-top:10px;padding:9px 11px;background:var(--paper);border:1px solid var(--cream);border-radius:6px;font-size:10px;color:var(--ink-muted);line-height:1.6;">
-          ℹ️ Le contexte de l'œuvre (<em>fiche Œuvre, personnages, lieux</em>) est injecté automatiquement — inutile de le réécrire dans les prompts.<br>
-          ✦ Utilisez <code style="font-size:9.5px;background:var(--cream);padding:1px 4px;border-radius:2px;">{contexte_oeuvre}</code> pour indiquer où il sera inséré si vous voulez le repositionner.
+          <span data-i18n="ctx_info_1">ℹ️ Le contexte de l'œuvre (fiche Œuvre, personnages, lieux) est injecté automatiquement — inutile de le réécrire dans les prompts.</span><br>
+          <span data-i18n="ctx_info_2a">✦ Utilisez</span> <code style="font-size:9.5px;background:var(--cream);padding:1px 4px;border-radius:2px;">{contexte_oeuvre}</code> <span data-i18n="ctx_info_2b">pour indiquer où il sera inséré si vous voulez le repositionner.</span>
         </div>
       </div>
 

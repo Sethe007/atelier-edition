@@ -237,6 +237,8 @@ function applyI18n() {
   if (versSel && versSel.options[0] && versSel.options[0].value === '') {
     versSel.options[0].textContent = t['versions_select_chapter'] || '— Choisir un chapitre —';
   }
+
+  try { if (typeof _fsUpdateButton === 'function') _fsUpdateButton(); } catch (e) {}
 }
 
 function _applyI18nSettingsModal(t) {

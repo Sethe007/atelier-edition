@@ -177,6 +177,13 @@ const KEYS = [
   'ac_pp',
   'ac_pp_d',
   'settings_general_hint',
+  // ── fragments restants ──
+  'wt_syn_hint',
+  'ctx_info_1',
+  'ctx_info_2a',
+  'ctx_info_2b',
+  'sb_ln',
+  'sb_col',
 ];
 
 describe('i18n — complétude des clés barre d’outils + modales (6 langues)', () => {

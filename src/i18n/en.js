@@ -4,6 +4,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 /* global _registerLang */
 _registerLang('en', {
+  // ── fragments restants ──
+  wt_syn_hint: "Select a word in the editor or type it above.",
+  ctx_info_1: "ℹ️ The work's context (Work sheet, characters, locations) is injected automatically — no need to rewrite it in the prompts.",
+  ctx_info_2a: "✦ Use",
+  ctx_info_2b: "to indicate where it will be inserted if you want to reposition it.",
+  sb_ln: "Ln",
+  sb_col: "Col",
   settings_general_hint: "General application settings. These apply to all sessions.",
   // ── Lot 2 (descriptions Correction auto) ──
   ac_enable_desc: "Light mechanical corrections in real time — no rewriting, no AI.",

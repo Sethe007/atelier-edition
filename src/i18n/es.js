@@ -4,6 +4,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 /* global _registerLang */
 _registerLang('es', {
+  // ── fragments restants ──
+  wt_syn_hint: "Seleccione una palabra en el editor o escríbala arriba.",
+  ctx_info_1: "ℹ️ El contexto de la obra (ficha de Obra, personajes, lugares) se inyecta automáticamente — no hace falta reescribirlo en los prompts.",
+  ctx_info_2a: "✦ Use",
+  ctx_info_2b: "para indicar dónde se insertará si desea reposicionarlo.",
+  sb_ln: "Lín",
+  sb_col: "Col",
   settings_general_hint: "Ajustes generales de la aplicación. Se aplican a todas las sesiones.",
   // ── Lot 2 (descriptions Correction auto) ──
   ac_enable_desc: "Correcciones mecánicas ligeras en tiempo real — sin reescritura, sin IA.",
