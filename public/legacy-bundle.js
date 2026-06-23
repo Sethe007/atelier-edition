@@ -17230,13 +17230,16 @@ var _i18n = {
 // Usage : _t('key') → string dans la langue courante de l'interface
 function _t(key) {
   const lang = (typeof getPref === 'function') ? (getPref('ui_lang') || 'fr') : 'fr';
-  return (_i18n[lang] && _i18n[lang][key] !== undefined) ? _i18n[lang][key] : (_i18n['fr'][key] || key);
+  const _EN = _i18n['en'], _FR = _i18n['fr'];
+  if (_i18n[lang] && _i18n[lang][key] !== undefined) return _i18n[lang][key];
+  if (_EN && _EN[key] !== undefined) return _EN[key];
+  return (_FR && _FR[key] !== undefined) ? _FR[key] : key;
 }
 
 // ── Fonction principale d'application des traductions ─────────────────────────
 function applyI18n() {
   const lang = getPref('ui_lang') || 'fr';
-  const t = _i18n[lang] || _i18n['fr'];
+  const t = Object.assign({}, _i18n['fr'] || {}, _i18n['en'] || {}, _i18n[lang] || {}); // repli : langue > anglais > français
 
   // 1. data-i18n → textContent
   document.querySelectorAll('[data-i18n]').forEach(el => {
