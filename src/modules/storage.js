@@ -1,5 +1,13 @@
 // ── SAUVEGARDE JSON ────────────────────────────────────
 function collectProjectData() {
+  const _ft = (function () {
+    var _f = (typeof window !== 'undefined' && window._isolatedGetFullText) ? window._isolatedGetFullText() : null;
+    return _f != null ? _f : getDomVal('raw-input');
+  })();
+  const _mots = (typeof countWords === 'function') ? countWords(_ft) : 0;
+  let _chap = 0;
+  if (typeof detectHeadingLevel === 'function') { for (const _l of String(_ft).split('\n')) if (detectHeadingLevel(_l) === 1) _chap++; }
+  const _ses = (typeof _wgStartWords === 'number' && _wgStartWords !== null) ? Math.max(0, _mots - _wgStartWords) : null;
   return {
     version: 3,
     meta: {
@@ -7,6 +15,7 @@ function collectProjectData() {
       dateCreation: currentProject.dateCreation || new Date().toISOString(),
       derniereSauvegarde: new Date().toISOString(),
       application: APP_VERSION,
+      stats: { mots: _mots, chapitres: _chap, personnages: getPersos().length, lieux: getLieux().length, motsSession: _ses },
     },
     mise_en_page: {
       fontSize:      getDomVal('font-size'),
@@ -44,10 +53,7 @@ function collectProjectData() {
       });
       return { provider: cfg.provider, configs: cleanConfigs };
     })(),
-    texte: (function () {
-      var _f = (typeof window !== 'undefined' && window._isolatedGetFullText) ? window._isolatedGetFullText() : null;
-      return _f != null ? _f : getDomVal('raw-input');
-    })(),
+    texte: _ft,
     images: Object.fromEntries(Object.entries(images).map(([k, v]) => [k, { ...v }])),
     chapterMeta: { ..._chapterMeta },
     prompts_ia: collectPrompts(),
