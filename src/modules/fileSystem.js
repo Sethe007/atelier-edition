@@ -96,7 +96,18 @@ async function fsOpenProject() {
 async function fsSaveProject() {
   if (!fsSupported()) { saveProject(); return; } // repli : download
   try {
-    if (!_fsHandle) return fsSaveProjectAs();
+    if (!_fsHandle) {
+      // Dossier de projets partagé (configuré sur le dashboard) : enregistrer
+      // directement <slug>.scrivaelo dedans, sans sélecteur (cohérence app/dashboard).
+      try {
+        const _pdir = await _fsIdbGet('projectsDir');
+        if (_pdir && await _fsHasPermission(_pdir, true)) {
+          _fsHandle = await _pdir.getFileHandle(_fsProjectFileName(), { create: true });
+          _fsUpdateButton();
+        }
+      } catch (e) { /* repli ci-dessous */ }
+      if (!_fsHandle) return fsSaveProjectAs();
+    }
     if (!(await _fsHasPermission(_fsHandle, true))) return fsSaveProjectAs();
     const data = collectProjectData();
     await _fsWrite(_fsHandle, JSON.stringify(data, null, 2));
