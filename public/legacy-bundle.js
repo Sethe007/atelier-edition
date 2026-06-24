@@ -2948,7 +2948,9 @@ function _ensureDocx() {
   if (_docxLoadPromise) return _docxLoadPromise;
   _docxLoadPromise = new Promise((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = '/docx-bundle.js';
+    const _bp = (document.querySelector('script[src$="legacy-bundle.js"]')
+      ?.getAttribute('src') || 'legacy-bundle.js').replace(/legacy-bundle\.js.*$/, '');
+    s.src = _bp + 'docx-bundle.js';
     s.onload = () => (window.docx ? resolve() : reject(new Error('docx introuvable après chargement')));
     s.onerror = () => { _docxLoadPromise = null; reject(new Error('échec du chargement de docx-bundle.js')); };
     document.head.appendChild(s);
