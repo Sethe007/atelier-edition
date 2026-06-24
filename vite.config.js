@@ -50,8 +50,11 @@ function buildLegacyBundle() {
   };
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   root: '.',
+  // base relative au BUILD -> le même build fonctionne à '/' (app.scrivaelo.com)
+  // ET sous '/app/' (embarqué dans le site). En dev on garde '/'.
+  base: command === 'build' ? './' : '/',
   plugins: [buildLegacyBundle()],
   build: {
     outDir: 'dist',
@@ -60,4 +63,4 @@ export default defineConfig({
     rollupOptions: { input: 'index.html' },
   },
   server: { port: 5173, open: false },
-});
+}));
