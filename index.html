@@ -264,6 +264,17 @@
         </div>
       </div>
 
+      <!-- ── Structure (chapitres) — liste de navigation ── -->
+      <div class="sb-accordion open" id="acc-structure">
+        <button class="sb-accordion-header" onclick="toggleAccordion('acc-structure')" aria-expanded="true" aria-controls="acc-structure-body">
+          <span class="sb-accordion-title" data-i18n="acc_structure">Structure</span>
+          <span class="sb-accordion-arrow" aria-hidden="true">▼</span>
+        </button>
+        <div class="sb-accordion-body" id="acc-structure-body">
+          <div id="chapter-list"></div>
+        </div>
+      </div>
+
       <!-- ── Accordéon : Paramètres typographiques ── -->
       <div class="sb-accordion open" id="acc-params">
         <button class="sb-accordion-header" onclick="toggleAccordion('acc-params')" aria-expanded="true" aria-controls="acc-params-body">
@@ -634,8 +645,6 @@
 
     <!-- PANNEAU : VUE CARTE (structure + corkboard fusionnés) -->
     <div class="sidebar-tabpane sidebar-main-scroll" id="sb-pane-corkboard" style="display:none;">
-      <!-- chapter-list caché — nécessaire pour compatibilité JS updateChapterList -->
-      <div id="chapter-list" style="display:none;"></div>
       <div style="padding:0.75rem 1rem 1rem;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;">
           <span class="sidebar-title" style="margin-bottom:0;" data-i18n="tb_cardview">Vue carte</span>
