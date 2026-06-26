@@ -536,3 +536,164 @@ html body .preview-pane.pane-hidden {
   width: 0 !important;
   overflow: hidden !important;
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   PORTAGE DU MODÈLE « claude design » — Header + barre d'outils + barre de
+   statut : passage à un style PLAT / fantôme (theme-aware, tous thèmes).
+   Réf. : Atelier Édition - Refonte.dc.html (chrome plat, boutons sans relief).
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── HEADER : à plat, sans ombre portée ── */
+html body header { box-shadow: none !important; }
+
+/* Logo : carré arrondi dégradé (modèle) au lieu du cercle bordé */
+html body .logo-mark {
+  border-radius: 8px !important;
+  border: none !important;
+  background: linear-gradient(150deg, var(--theme-active-color), color-mix(in srgb, var(--theme-active-color) 62%, #000)) !important;
+  color: #fff !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.22) !important;
+}
+
+/* Boutons texte du header : ghost plat (ni bordure ni relief) */
+html body header .btn,
+html body header .btn-ghost,
+html body header #btn-save,
+html body header #btn-export-toggle,
+html body header #pomodoro-btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+  height: 30px !important;
+  padding: 0 11px !important;
+  color: color-mix(in srgb, var(--theme-header-text) 62%, transparent) !important;
+  transition: background .15s, color .15s !important;
+}
+html body header .btn:hover,
+html body header .btn-ghost:hover,
+html body header #btn-save:hover,
+html body header #btn-export-toggle:hover,
+html body header #pomodoro-btn:hover {
+  background: color-mix(in srgb, var(--theme-header-text) 8%, transparent) !important;
+  border: none !important;
+  color: var(--theme-header-text) !important;
+}
+html body header #btn-save i,
+html body header #btn-export-toggle i { color: inherit !important; }
+/* Disquette « Sauvegarder » en accent (modèle) */
+html body header #btn-save i.ti-device-floppy { color: var(--theme-active-color) !important; }
+html body header #btn-save span,
+html body header #btn-export-toggle span { color: inherit !important; }
+
+/* Boutons-icônes utilitaires : carré ghost plat 32×30 */
+html body header .btn-focus-toggle,
+html body header .btn-dark-toggle,
+html body header .btn-settings-toggle,
+html body header .btn-help-toggle,
+html body header .nav-hist-btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 32px !important; height: 30px !important;
+  border-radius: 8px !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  color: color-mix(in srgb, var(--theme-header-text) 55%, transparent) !important;
+  transition: background .15s, color .15s !important;
+}
+html body header .btn-focus-toggle:hover,
+html body header .btn-dark-toggle:hover,
+html body header .btn-settings-toggle:hover,
+html body header .btn-help-toggle:hover,
+html body header .nav-hist-btn:not([disabled]):hover {
+  background: color-mix(in srgb, var(--theme-header-text) 8%, transparent) !important;
+  color: var(--theme-header-text) !important;
+}
+
+/* Indicateur de sauvegarde : pastille d'état (modèle) */
+html body #save-indicator {
+  display: flex !important; align-items: center !important; gap: 7px !important;
+  height: 30px !important; padding: 0 11px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  background: color-mix(in srgb, var(--theme-header-text) 5%, transparent) !important;
+}
+html body #save-indicator:has(.dot.saved)   { background: rgba(62,154,99,0.12) !important; }
+html body #save-indicator:has(.dot.unsaved) { background: rgba(200,136,31,0.14) !important; }
+html body #save-indicator .dot { width: 7px !important; height: 7px !important; border-radius: 50% !important; }
+html body #save-indicator #save-label {
+  color: color-mix(in srgb, var(--theme-header-text) 60%, transparent) !important;
+}
+
+/* ── BARRE D'OUTILS ÉDITEUR : label lisible + boutons plats ── */
+/* Label « Texte brut » : muté lisible (bug : était blanc 0.2 sur fond clair) */
+html body .pane-label-topbar .pane-label-text { color: var(--ink-muted) !important; }
+
+/* Boutons de formatage : plats, sans relief */
+html body .pane-label-topbar .fmt-btn,
+html body .pane-label-topbar .fmt-btn-tw {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 7px !important;
+  color: var(--ink-soft) !important;
+  min-width: 28px !important; height: 28px !important;
+  padding: 0 6px !important;
+  transition: background .12s, color .12s !important;
+}
+html body .pane-label-topbar .fmt-btn:hover,
+html body .pane-label-topbar .fmt-btn-tw:hover {
+  background: color-mix(in srgb, var(--ink) 6%, transparent) !important;
+  color: var(--ink) !important;
+}
+html body .pane-label-topbar .fmt-btn b,
+html body .pane-label-topbar .fmt-btn i,
+html body .pane-label-topbar .fmt-btn u,
+html body .pane-label-topbar .fmt-btn s { color: inherit !important; }
+/* ✦→ Continuation IA garde l'accent */
+html body #btn-ai-continue { color: var(--theme-active-color) !important; }
+html body #btn-ai-continue:hover { color: var(--theme-active-color) !important; }
+
+/* Bouton « Formater » : plat encadré discret (modèle) */
+html body .fmt-btn-format {
+  background: var(--parchment) !important;
+  border: 1px solid var(--theme-toolbar-border) !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+  height: 28px !important;
+  color: var(--ink-soft) !important;
+}
+html body .fmt-btn-format:hover {
+  background: color-mix(in srgb, var(--ink) 5%, transparent) !important;
+}
+
+/* Bascule de vues (côte à côte / édition / aperçu) : plat, actif accent-soft */
+html body .ptb-right .tool-btn-sm {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 6px !important;
+  color: var(--ink-muted) !important;
+  transition: background .12s, color .12s !important;
+}
+html body .ptb-right .tool-btn-sm:hover {
+  background: color-mix(in srgb, var(--ink) 6%, transparent) !important;
+  transform: none !important;
+}
+html body .ptb-right .tool-btn-sm.active {
+  background: color-mix(in srgb, var(--theme-active-color) 14%, transparent) !important;
+  color: var(--theme-active-color) !important;
+  box-shadow: none !important;
+}
+html body .ptb-right .tool-btn-sm.active * { color: var(--theme-active-color) !important; }
+
+/* ── BARRE DE STATUT : plate, cohérente avec la barre d'outils (modèle) ── */
+html body .editor-statusbar {
+  background: var(--theme-toolbar-bg) !important;
+  border-top: 1px solid var(--theme-toolbar-border) !important;
+  box-shadow: none !important;
+  color: var(--ink-muted) !important;
+}
+html body .editor-statusbar .statusbar-item,
+html body .editor-statusbar .statusbar-item span { color: var(--ink-muted) !important; }
+html body .editor-statusbar .statusbar-sep { background: var(--theme-toolbar-border) !important; }

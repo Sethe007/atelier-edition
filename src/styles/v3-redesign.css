@@ -1863,9 +1863,9 @@ html body.theme-light #wt-tab-tooltip {
 html body.theme-light header .btn-ghost,
 html body.theme-light #btn-save,
 html body.theme-light #btn-export-toggle {
-  background: color-mix(in srgb, var(--theme-active-color) 8%, transparent) !important;
-  border-color: color-mix(in srgb, var(--theme-active-color) 25%, transparent) !important;
-  color: var(--theme-active-color) !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  color: color-mix(in srgb, var(--theme-header-text) 62%, transparent) !important;
 }
 html body.theme-light .nav-hist-btn,
 html body.theme-light #pomodoro-btn,
@@ -2151,7 +2151,7 @@ html body.theme-light .btn-settings-toggle,
 html body.theme-light .btn-help-toggle,
 html body.theme-light #btn-save,
 html body.theme-light .nav-hist-btn {
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.09), -1px -1px 4px rgba(255,255,255,0.65) !important;
+  box-shadow: none !important;
 }
 html body.theme-light .btn-ghost:hover,
 html body.theme-light .btn-primary:hover,
@@ -2161,7 +2161,8 @@ html body.theme-light .btn-settings-toggle:hover,
 html body.theme-light .btn-help-toggle:hover,
 html body.theme-light #btn-save:hover,
 html body.theme-light .nav-hist-btn:not(:disabled):hover {
-  box-shadow: inset 1px 1px 4px rgba(0,0,0,0.09), inset -1px -1px 3px rgba(255,255,255,0.65) !important;
+  box-shadow: none !important;
+  background: color-mix(in srgb, var(--theme-header-text) 8%, transparent) !important;
 }
 
 </style>
