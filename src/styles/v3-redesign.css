@@ -2228,3 +2228,17 @@ html body.theme-light .nav-hist-btn:not(:disabled):hover {
 .cork-status-opt:hover, .cork-status-opt.active { background: var(--c-parch-dd) !important; color: var(--c-ink) !important; }
 .cork-opt-dot { width: 8px !important; height: 8px !important; border-radius: 50% !important; flex-shrink: 0 !important; }
 .cork-empty { font-size: 12px !important; color: var(--c-ink-m) !important; font-style: italic !important; text-align: center !important; padding: 24px 12px !important; line-height: 1.6 !important; }
+
+/* ═══ AFFINAGE LOOK — ÉTAPE 1 : outils sidebar neumorphique → plat ═══ */
+/* Rail d'icônes : plus d'ombre creusée/relief ni de glow, juste une teinte de fond */
+.nav-rail-btn { transition: background 0.15s, color 0.15s !important; }
+.nav-rail-btn:hover { box-shadow: none !important; }
+.nav-rail-btn.active { box-shadow: none !important; }
+.nav-rail-btn.active::before { box-shadow: none !important; }
+/* Boutons des panneaux outils : plat (pas d'ombre neumorphique) */
+aside button:hover, aside button:active,
+.sidebar-panel button:hover, .sidebar-panel button:active,
+.actx-item:hover, .wt-tab:hover, .wt-run-btn:hover {
+  box-shadow: none !important;
+  transition: background 0.15s, color 0.15s !important;
+}
