@@ -592,17 +592,9 @@
 
         <!-- TAB: COHÉRENCE NARRATIVE IA -->
         <div id="wt-pane-coherence" style="display:none;">
-          <div style="margin-bottom:10px;">
-            <button class="wt-run-btn" id="wt-btn-coherence" onclick="runCoherenceCheck()" data-i18n="btn_coherence" style="width:100%;margin:0;background:var(--gold-dark);color:var(--ink);border-color:var(--gold);font-weight:500;">
-              🧩 Vérifier la cohérence narrative
-            </button>
-            <div style="font-size:9.5px;color:var(--ink-muted);font-style:italic;margin-top:5px;line-height:1.5;text-align:center;" data-i18n="coherence_sub_hint">
-              Personnages · Lieux · Continuité — IA requise
-            </div>
-          </div>
           <div id="wt-coherence-results">
             <div class="wt-empty wt-intro">
-              <div class="wt-empty-ic"><i class="ti ti-puzzle" aria-hidden="true"></i></div>
+              <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runCoherenceCheck()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runCoherenceCheck();}" title="Vérifier la cohérence narrative" data-i18n-title="btn_coherence"><i class="ti ti-puzzle" aria-hidden="true"></i></div>
               <div class="wt-empty-title">Cohérence narrative</div>
               <div class="wt-empty-sub" data-i18n="wt_empty_coherence">Cliquez pour analyser la cohérence de votre roman (personnages, lieux, continuité).</div>
             </div>

@@ -2286,3 +2286,9 @@ aside select:focus, aside input:focus, aside textarea:focus,
   color: var(--c-ink) !important; margin-bottom: 8px !important;
 }
 .wt-empty-sub { max-width: 240px !important; margin: 0 auto !important; color: var(--c-ink-m) !important; }
+
+/* ═══ Cohérence : icône-déclencheur (remplace le bouton) ═══ */
+.wt-ic-action { cursor: pointer !important; transition: box-shadow 0.15s, transform 0.15s, color 0.15s !important; }
+.wt-ic-action:hover { color: var(--c-sienna) !important; box-shadow: 0 3px 10px rgba(154,79,30,0.28) !important; transform: translateY(-2px) !important; }
+.wt-ic-action:active { transform: translateY(0) !important; }
+.wt-ic-action:focus-visible { outline: 2px solid var(--c-sienna) !important; outline-offset: 3px !important; }
