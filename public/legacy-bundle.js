@@ -18232,13 +18232,13 @@ function _applyI18nWritingTools(t) {
   if (rapportFooter) rapportFooter.textContent = t['btn_rapport_footer'];
 
   // Empty states
-  const emptyCorrect = document.querySelector('#wt-correct-results .wt-empty');
+  const emptyCorrect = document.querySelector('#wt-correct-results .wt-empty-sub');
   if (emptyCorrect) emptyCorrect.innerHTML = t['wt_empty_correct'];
-  const emptyStyle = document.querySelector('#wt-style-results .wt-empty');
+  const emptyStyle = document.querySelector('#wt-style-results .wt-empty-sub');
   if (emptyStyle) emptyStyle.innerHTML = t['wt_empty_style'];
-  const emptyStats = document.querySelector('#wt-stats-results .wt-empty');
+  const emptyStats = document.querySelector('#wt-stats-results .wt-empty-sub');
   if (emptyStats) emptyStats.innerHTML = t['wt_empty_stats'];
-  const emptyRapport = document.querySelector('#wt-rapport-results .wt-empty');
+  const emptyRapport = document.querySelector('#wt-rapport-results .wt-empty-sub');
   if (emptyRapport) emptyRapport.innerHTML = t['wt_empty_rapport'];
 }
 
