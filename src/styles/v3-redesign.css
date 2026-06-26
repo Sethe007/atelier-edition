@@ -2256,3 +2256,6 @@ aside select:focus, aside input:focus, aside textarea:focus,
   box-shadow: none !important;
   border-color: var(--c-sienna) !important;
 }
+
+/* ═══ ÉTAPE 3 : rail — Versions épinglé en bas (comme le prototype) ═══ */
+.nav-rail-buttons .nav-rail-sep:last-of-type { margin-top: auto !important; }
