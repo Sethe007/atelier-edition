@@ -727,119 +727,45 @@ html body .editor-statusbar .sb-sync-dot {
 html body .editor-statusbar .statusbar-spacer { flex: 1 1 auto !important; }
 
 /* ════════════════════════════════════════════════════════════════════════
-   PANNEAU « NOTES D'AUTEUR » — refonte élégante (façon modèle)
+   PANNEAU « NOTES D'AUTEUR » — calqué sur le modèle (épuré, élégant)
+   Haut : pills de filtre. Centre : cartes (libellé coloré + heure + serif).
+   Bas : palette d'insertion discrète. (theme-aware)
    ════════════════════════════════════════════════════════════════════════ */
 
-/* En-tête : compteur discret + progression fine (masquée si vide) */
-html body #sb-pane-notes .notes-manager-header {
-  padding: 12px 14px 10px !important;
-  border-bottom: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
-}
-html body #sb-pane-notes .notes-head-count {
-  font-family: var(--f-display, 'Playfair Display', serif) !important;
-  font-size: 13px !important;
-  font-style: italic !important;
-  color: var(--ink-soft) !important;
-  letter-spacing: 0.01em !important;
-}
-html body #sb-pane-notes .notes-progress-wrap { margin-top: 9px !important; }
-html body #sb-pane-notes .notes-progress-bar {
-  height: 3px !important;
-  background: color-mix(in srgb, var(--ink) 8%, transparent) !important;
-  border-radius: 3px !important;
-}
-html body #sb-pane-notes .notes-progress-fill {
-  background: var(--theme-active-color) !important;
-  border-radius: 3px !important;
-}
-html body #sb-pane-notes .notes-progress-label {
-  font-size: 9.5px !important;
-  color: var(--ink-muted) !important;
-  margin-top: 4px !important;
-  letter-spacing: 0.02em !important;
-}
-
-/* Barre d'insertion : swatches ronds élégants, une seule rangée centrée */
-html body #sb-pane-notes .note-inline-toolbar {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 8px !important;
-  justify-content: center !important;
-  padding: 11px 14px !important;
-  border-bottom: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
-  background: transparent !important;
-}
-html body #sb-pane-notes .note-inline-toolbar .nit-btn {
-  width: 20px !important; height: 20px !important;
-  padding: 0 !important; margin: 0 !important;
-  border: none !important; background: transparent !important;
-  border-radius: 50% !important;
-  display: flex !important; align-items: center !important; justify-content: center !important;
-  cursor: pointer !important;
-  transition: transform .12s, box-shadow .12s !important;
-  box-shadow: none !important;
-}
-html body #sb-pane-notes .note-inline-toolbar .nit-btn .nit-dot {
-  width: 14px !important; height: 14px !important;
-  border-radius: 50% !important;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.6) inset !important;
-}
-html body #sb-pane-notes .note-inline-toolbar .nit-btn:hover {
-  transform: translateY(-1px) scale(1.12) !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.18) !important;
-}
-
-/* Filtres : pills sobres + pastilles de filtre compactes */
+/* ── Filtres en pills (façon modèle) ── */
 html body #sb-pane-notes .notes-filters {
-  gap: 5px !important;
-  padding: 10px 14px 6px !important;
-  border-bottom: none !important;
-}
-html body #sb-pane-notes .notes-color-filters {
-  padding: 0 14px 10px !important;
-  gap: 7px !important;
-  justify-content: flex-start !important;
-  border-bottom: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
+  display: flex !important; gap: 6px !important;
+  padding: 14px 14px 10px !important;
+  border-bottom: none !important; flex-wrap: wrap !important;
 }
 html body #sb-pane-notes .note-filter-btn {
   font-family: var(--f-body, 'DM Sans', sans-serif) !important;
-  font-size: 10.5px !important;
-  padding: 4px 11px !important;
-  border-radius: 8px !important;
+  font-size: 11px !important; font-weight: 500 !important;
+  padding: 6px 11px !important; border-radius: 8px !important;
   border: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
-  background: transparent !important;
-  color: var(--ink-muted) !important;
-  box-shadow: none !important;
-  transition: background .12s, color .12s !important;
+  background: transparent !important; color: var(--ink-soft) !important;
+  box-shadow: none !important; cursor: pointer !important;
+  transition: background .12s, color .12s, border-color .12s !important;
 }
 html body #sb-pane-notes .note-filter-btn:hover {
   background: color-mix(in srgb, var(--ink) 5%, transparent) !important;
-  color: var(--ink) !important;
 }
 html body #sb-pane-notes .note-filter-btn.active {
-  background: var(--theme-active-color) !important;
-  color: #fff !important;
-  border-color: var(--theme-active-color) !important;
+  background: var(--theme-active-color) !important; color: #fff !important;
+  border-color: var(--theme-active-color) !important; font-weight: 600 !important;
 }
-html body #sb-pane-notes .note-filter-btn.nf-color {
-  width: 16px !important; height: 16px !important;
-  padding: 0 !important; border-radius: 50% !important;
-  border: 1px solid transparent !important;
-  opacity: 0.55 !important;
-  transition: opacity .12s, transform .12s, box-shadow .12s !important;
-}
-html body #sb-pane-notes .note-filter-btn.nf-color:hover { opacity: 1 !important; transform: scale(1.15) !important; }
-html body #sb-pane-notes .note-filter-btn.nf-color.active {
-  opacity: 1 !important;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--nf-c) 45%, transparent) !important;
-}
-html body #sb-pane-notes .nf-dot { width: 12px !important; height: 12px !important; }
+html body #sb-pane-notes .nf-count { opacity: 0.85 !important; font-variant-numeric: tabular-nums !important; }
 
-/* Liste */
-html body #sb-pane-notes .notes-list-scroll { padding: 12px 14px !important; gap: 10px !important; display: flex !important; flex-direction: column !important; }
+/* ── Liste ── */
+html body #sb-pane-notes .notes-list-scroll {
+  flex: 1 !important; overflow-y: auto !important; min-height: 0 !important;
+  display: flex !important; flex-direction: column !important; gap: 10px !important;
+  padding: 4px 14px 14px !important;
+}
 
-/* Cartes : surface sobre, coin droit arrondi, corps en serif (façon modèle) */
+/* ── Cartes (modèle : surface sobre, coin droit arrondi, bordure gauche colorée) ── */
 html body #sb-pane-notes .note-card {
+  background: var(--parchment, #f7f5f0) !important;
   border: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
   border-radius: 0 11px 11px 0 !important;
   padding: 11px 13px !important;
@@ -847,65 +773,96 @@ html body #sb-pane-notes .note-card {
   transition: box-shadow .15s, transform .15s !important;
 }
 html body #sb-pane-notes .note-card:hover {
-  box-shadow: 0 3px 12px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.07) !important;
   transform: translateX(1px) !important;
-  border-color: var(--theme-toolbar-border, var(--cream)) !important;
 }
-html body #sb-pane-notes .note-card .note-text {
+html body #sb-pane-notes .note-card.done { opacity: 0.62 !important; }
+
+html body #sb-pane-notes .note-card-head {
+  display: flex !important; align-items: baseline !important;
+  justify-content: space-between !important; gap: 8px !important; margin-bottom: 6px !important;
+}
+html body #sb-pane-notes .note-card-cat {
+  font-family: var(--f-body, 'DM Sans', sans-serif) !important;
+  font-size: 9.5px !important; font-weight: 700 !important;
+  letter-spacing: 0.06em !important; text-transform: uppercase !important;
+  white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
+}
+html body #sb-pane-notes .note-card-time {
+  font-size: 10px !important; color: var(--ink-muted) !important;
+  flex-shrink: 0 !important; white-space: nowrap !important;
+}
+html body #sb-pane-notes .note-card-body {
   font-family: var(--f-display, 'Spectral', Georgia, serif) !important;
-  font-size: 13px !important;
-  line-height: 1.5 !important;
-  color: var(--ink-soft) !important;
+  font-size: 13px !important; line-height: 1.5 !important; color: var(--ink-soft) !important;
+  word-break: break-word !important;
 }
-/* Boutons d'action : discrets, révélés au survol */
-html body #sb-pane-notes .note-card .note-card-meta { margin-top: 9px !important; opacity: 0.5 !important; transition: opacity .15s !important; }
-html body #sb-pane-notes .note-card:hover .note-card-meta { opacity: 1 !important; }
-html body #sb-pane-notes .note-card .notes-action-btn {
-  border: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
-  background: transparent !important;
-  border-radius: 7px !important;
-  color: var(--ink-muted) !important;
-  box-shadow: none !important;
+html body #sb-pane-notes .note-card.done .note-card-body { text-decoration: line-through !important; color: var(--ink-muted) !important; }
+html body #sb-pane-notes .note-nocomment { opacity: 0.5 !important; }
+
+/* Actions : icônes discrètes, révélées au survol */
+html body #sb-pane-notes .note-card-actions {
+  display: flex !important; gap: 2px !important; justify-content: flex-end !important;
+  margin-top: 8px !important; opacity: 0 !important;
+  transition: opacity .15s !important;
+}
+html body #sb-pane-notes .note-card:hover .note-card-actions { opacity: 1 !important; }
+html body #sb-pane-notes .nca-btn {
+  width: 26px !important; height: 26px !important; padding: 0 !important;
+  border: none !important; background: transparent !important; box-shadow: none !important;
+  border-radius: 7px !important; cursor: pointer !important;
+  color: var(--ink-muted) !important; font-size: 14px !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
   transition: background .12s, color .12s !important;
 }
-html body #sb-pane-notes .note-card .notes-action-btn:hover {
-  background: color-mix(in srgb, var(--ink) 6%, transparent) !important;
-  color: var(--ink) !important;
-}
+html body #sb-pane-notes .nca-btn:hover { background: color-mix(in srgb, var(--ink) 7%, transparent) !important; color: var(--ink) !important; }
+html body #sb-pane-notes .nca-btn.nca-del:hover { background: rgba(220,38,38,0.10) !important; color: #dc2626 !important; }
 
-/* État vide : pastille-icône + titre serif + sous-titre muté (cohérent app) */
+/* ── État vide (pastille-icône + message) ── */
 html body #sb-pane-notes .note-empty-state {
-  text-align: center !important;
-  padding: 40px 22px !important;
-  color: var(--ink-muted) !important;
-  font-size: 12px !important;
-  line-height: 1.6 !important;
+  text-align: center !important; padding: 46px 24px !important;
+  color: var(--ink-muted) !important; font-size: 12px !important; line-height: 1.6 !important;
+  display: flex !important; flex-direction: column !important; align-items: center !important; gap: 4px !important;
 }
 html body #sb-pane-notes .note-empty-state .icon {
-  width: 52px !important; height: 52px !important;
-  margin: 0 auto 14px !important;
+  width: 52px !important; height: 52px !important; margin: 0 0 12px !important;
   border-radius: 15px !important;
   background: color-mix(in srgb, var(--theme-active-color) 9%, transparent) !important;
   display: flex !important; align-items: center !important; justify-content: center !important;
   font-size: 24px !important; opacity: 1 !important;
 }
-html body #sb-pane-notes .note-empty-state strong { color: var(--ink-soft) !important; }
+html body #sb-pane-notes .note-empty-msg { max-width: 220px !important; }
 
-/* Barre d'actions bas */
-html body #sb-pane-notes .notes-actions-bar {
-  padding: 10px 14px !important;
+/* ── Pied : palette d'insertion discrète + rafraîchir ── */
+html body #sb-pane-notes .notes-footer {
+  display: flex !important; align-items: center !important; gap: 8px !important;
+  padding: 9px 14px !important;
   border-top: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
+  flex-shrink: 0 !important;
 }
-html body #sb-pane-notes .notes-action-btn {
+html body #sb-pane-notes .notes-footer .note-inline-toolbar {
+  display: flex !important; align-items: center !important; gap: 7px !important;
+  flex: 1 !important; flex-wrap: wrap !important;
+  padding: 0 !important; border: none !important; background: transparent !important;
+}
+html body #sb-pane-notes .notes-footer .nit-btn {
+  width: 16px !important; height: 16px !important; padding: 0 !important; margin: 0 !important;
+  border: none !important; background: transparent !important; box-shadow: none !important;
+  border-radius: 50% !important; cursor: pointer !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  transition: transform .12s, box-shadow .12s !important;
+}
+html body #sb-pane-notes .notes-footer .nit-btn .nit-dot {
+  width: 12px !important; height: 12px !important; border-radius: 50% !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.55) inset !important;
+}
+html body #sb-pane-notes .notes-footer .nit-btn:hover { transform: scale(1.18) !important; box-shadow: 0 1px 5px rgba(0,0,0,0.2) !important; }
+html body #sb-pane-notes .notes-refresh-btn {
+  flex-shrink: 0 !important; width: 28px !important; height: 28px !important; padding: 0 !important;
   border: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
-  background: transparent !important;
-  border-radius: 8px !important;
-  color: var(--ink-muted) !important;
-  box-shadow: none !important;
-  font-family: var(--f-body, 'DM Sans', sans-serif) !important;
-  transition: background .12s, color .12s !important;
+  background: transparent !important; box-shadow: none !important; border-radius: 8px !important;
+  color: var(--ink-muted) !important; cursor: pointer !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  font-size: 14px !important; transition: background .12s, color .12s !important;
 }
-html body #sb-pane-notes .notes-actions-bar .notes-action-btn:hover {
-  background: color-mix(in srgb, var(--ink) 5%, transparent) !important;
-  color: var(--ink) !important;
-}
+html body #sb-pane-notes .notes-refresh-btn:hover { background: color-mix(in srgb, var(--ink) 6%, transparent) !important; color: var(--ink) !important; }

@@ -9167,6 +9167,36 @@ function _noteKey(text) {
   return text.trim().slice(0, 120);
 }
 
+// ── Helpers cartes de note (présentation façon modèle) ──────────────────
+function _noteRelTime(iso, lang) {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso); if (isNaN(d)) return '';
+    const min = Math.round((Date.now() - d.getTime()) / 60000);
+    if (min < 1) return (lang==='en'?'just now':lang==='es'?'ahora':lang==='de'?'gerade eben':lang==='it'?'adesso':lang==='pt'?'agora':'à l’instant');
+    const rtf = new Intl.RelativeTimeFormat(lang || 'fr', { numeric: 'auto' });
+    if (min < 60) return rtf.format(-min, 'minute');
+    const h = Math.round(min / 60);
+    if (h < 24) return rtf.format(-h, 'hour');
+    const days = Math.round(h / 24);
+    if (days < 30) return rtf.format(-days, 'day');
+    return rtf.format(-Math.round(days / 30), 'month');
+  } catch (e) { return ''; }
+}
+function _noteContextLabel(annot, lang) {
+  try {
+    const raw = (typeof getDomVal === 'function') ? (getDomVal('raw-input') || '') : '';
+    let off = (typeof annot.offset === 'number') ? annot.offset
+            : (annot.anchor ? raw.indexOf(annot.anchor) : -1);
+    if (off >= 0 && raw) {
+      const before = raw.slice(0, off);
+      const ms = before.match(/^(?:CHAPITRE|Chapitre|Chapter|PARTIE|Partie|Part|Acte|Prologue|Épilogue|Epilogue|Incipit|[IVXLC]+\.?|\d+[.\-—)])[^\n]*/gm);
+      if (ms && ms.length) return ms[ms.length - 1].trim().slice(0, 30);
+    }
+  } catch (e) {}
+  return (lang==='es'?'Nota':lang==='de'?'Notiz':lang==='it'?'Nota':lang==='pt'?'Nota':'Note');
+}
+
 function notesRefresh() {
   const lang = (typeof getPref === 'function') ? (getPref('ui_lang') || 'fr') : 'fr';
   const allAnnotations = (typeof _ANNOT !== 'undefined') ? _ANNOT.getAll() : [];
@@ -9196,6 +9226,8 @@ function notesRefresh() {
   if (ct) ct.textContent = allAnnotations.length + ' ' + totalLabel;
   if (dc) dc.textContent = doneCount + ' ' + doneLabel;
   if (rc) rc.textContent = (allAnnotations.length - doneCount) + ' ' + remLabel;
+  { const _c=(id,n)=>{const e=document.getElementById(id); if(e) e.textContent = n ? (' · '+n) : '';};
+    _c('nf-all-count', allAnnotations.length); _c('nf-todo-count', allAnnotations.length-doneCount); _c('nf-done-count', doneCount); }
   { const _pw=document.getElementById('notes-progress-wrap'); if(_pw) _pw.style.display = allAnnotations.length ? '' : 'none'; }
 
   // ── Filtrer ───────────────────────────────────────────────────────────
@@ -9222,7 +9254,7 @@ function notesRefresh() {
     const emptyMsg = allAnnotations.length === 0
       ? _t('review_mode_no_annot')
       : _t('review_mode_no_filter');
-    list.innerHTML = `<div class="note-empty-state"><span class="icon">💬</span>${emptyMsg}</div>`;
+    list.innerHTML = `<div class="note-empty-state"><span class="icon">💬</span><span class="note-empty-msg">${emptyMsg}</span></div>`;
     return;
   }
 
@@ -9246,27 +9278,29 @@ function notesRefresh() {
 
     const card = document.createElement('div');
     card.className = 'note-card' + (done ? ' done' : '');
-    card.style.cssText = `border-left:3px solid ${col};background:${colBg};${doneOpacity}`;
+    card.style.cssText = `border-left:2px solid ${col};`;
     card.dataset.annotId = annot.id;
-    // Clic sur la vignette → localiser dans l'éditeur
     card.style.cursor = 'pointer';
     card.addEventListener('click', (e) => {
-      if (e.target.closest('button') || e.target.closest('[onclick]')) return;
+      if (e.target.closest('button')) return;
       _ANNOT.navigateTo(annot.id);
     });
+    const ctxLabel  = _noteContextLabel(annot, lang);
+    const timeLabel = _noteRelTime(annot.createdAt, lang);
+    const placeholder = lang==='en'?'(no comment)':lang==='es'?'(sin comentario)':lang==='de'?'(kein Kommentar)':lang==='it'?'(nessun commento)':lang==='pt'?'(sem comentário)':'(sans commentaire)';
+    const safeNote = noteText ? (escHtml ? escHtml(noteText) : noteText)
+                   : (excerpt ? (escHtml ? escHtml(excerpt) : excerpt) : `<em class="note-nocomment">${placeholder}</em>`);
     card.innerHTML = `
-      <div class="note-card-top">
-        <span style="font-size:12px;flex-shrink:0;cursor:pointer;" title="${_t('prio_change')}" onclick="annotCyclePrio('${annot.id}',event)">${prio}</span>
-        <div style="flex:1;min-width:0;">
-          ${excerpt ? `<div style="font-size:10px;color:var(--ink-muted);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;">"${escHtml ? escHtml(excerpt) : excerpt}"</div>` : ''}
-          <div class="note-text" style="${done?'text-decoration:line-through;':''}">${noteText ? (escHtml ? escHtml(noteText) : noteText) : `<em style="opacity:0.4">${lang==='en'?'(no comment)':lang==='es'?'(sin comentario)':'(sans commentaire)'}</em>`}</div>
-        </div>
+      <div class="note-card-head">
+        <span class="note-card-cat" style="color:${col}">${escHtml ? escHtml(ctxLabel) : ctxLabel}</span>
+        ${timeLabel ? `<span class="note-card-time">${timeLabel}</span>` : ''}
       </div>
-      <div class="note-card-meta" style="margin-top:5px;display:flex;gap:4px;flex-wrap:wrap;">
-        <button class="notes-action-btn" style="padding:1px 8px;font-size:10px;" onclick="_annotEdit('${annot.id}')">${editLbl}</button>
-        <button class="notes-action-btn" style="padding:1px 8px;font-size:10px;" onclick="_ANNOT.toggleDone('${annot.id}')">${done ? reopenLbl : doneLbl}</button>
-        <button class="notes-action-btn" style="padding:1px 8px;font-size:10px;" onclick="_ANNOT.navigateTo('${annot.id}')">↕ ${_t('annot_goto_btn')}</button>
-        <button class="notes-action-btn" style="padding:1px 8px;font-size:10px;color:var(--status-high);border-color:var(--status-high);" onclick="_ANNOT.remove('${annot.id}')">${delLbl}</button>
+      <div class="note-card-body">${safeNote}</div>
+      <div class="note-card-actions">
+        <button class="nca-btn" title="${editLbl}" onclick="_annotEdit('${annot.id}')"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+        <button class="nca-btn" title="${done ? reopenLbl : doneLbl}" onclick="_ANNOT.toggleDone('${annot.id}')"><i class="ti ${done ? 'ti-arrow-back-up' : 'ti-check'}" aria-hidden="true"></i></button>
+        <button class="nca-btn" title="${_t('annot_goto_btn')}" onclick="_ANNOT.navigateTo('${annot.id}')"><i class="ti ti-arrows-vertical" aria-hidden="true"></i></button>
+        <button class="nca-btn nca-del" title="${reopenLbl ? (_t('annot_del_btn')||'Supprimer') : 'Supprimer'}" onclick="_ANNOT.remove('${annot.id}')"><i class="ti ti-trash" aria-hidden="true"></i></button>
       </div>`;
     list.appendChild(card);
   });

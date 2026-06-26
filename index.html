@@ -367,62 +367,32 @@
     <!-- PANNEAU : NOTES -->
     <div class="sidebar-tabpane" id="sb-pane-notes" style="display:none;flex-direction:column;overflow:hidden;">
 
-      <!-- En-tête avec barre de progression -->
-      <div class="notes-manager-header">
-        <span id="notes-counter-text" class="notes-head-count">0 notes</span>
-        <div class="notes-progress-wrap" id="notes-progress-wrap" style="display:none;">
-          <div class="notes-progress-bar">
-            <div class="notes-progress-fill" id="notes-progress-fill" style="width:0%"></div>
-          </div>
-          <div class="notes-progress-label">
-            <span id="notes-done-count">0 traitées</span>
-            <span id="notes-remain-count">0 restantes</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Barre d'insertion rapide — couleurs uniquement -->
-      <div class="note-inline-toolbar">
-        <button class="nit-btn nit-color" id="nit-jaune"  onclick="insertNoteHL('jaune')"  title="Annoter en jaune"  data-i18n-title="title_nit_jaune"  style="--nit-c:#ca8a04;--nit-bg:rgba(253,224,71,0.35)"><span class="nit-dot" style="background:#ca8a04"></span></button>
-        <button class="nit-btn nit-color" id="nit-rose"   onclick="insertNoteHL('rose')"   title="Annoter en rose"   data-i18n-title="title_nit_rose"   style="--nit-c:#be185d;--nit-bg:rgba(249,168,212,0.35)"><span class="nit-dot" style="background:#be185d"></span></button>
-        <button class="nit-btn nit-color" id="nit-vert"   onclick="insertNoteHL('vert')"   title="Annoter en vert"   data-i18n-title="title_nit_vert"   style="--nit-c:#15803d;--nit-bg:rgba(134,239,172,0.35)"><span class="nit-dot" style="background:#15803d"></span></button>
-        <button class="nit-btn nit-color" id="nit-bleu"   onclick="insertNoteHL('bleu')"   title="Annoter en bleu"   data-i18n-title="title_nit_bleu"   style="--nit-c:#1d4ed8;--nit-bg:rgba(147,197,253,0.35)"><span class="nit-dot" style="background:#1d4ed8"></span></button>
-        <button class="nit-btn nit-color" id="nit-violet" onclick="insertNoteHL('violet')" title="Annoter en violet" data-i18n-title="title_nit_violet" style="--nit-c:#7c3aed;--nit-bg:rgba(196,181,253,0.35)"><span class="nit-dot" style="background:#7c3aed"></span></button>
-        <button class="nit-btn nit-color" id="nit-orange" onclick="insertNoteHL('orange')" title="Annoter en orange" data-i18n-title="title_nit_orange" style="--nit-c:#c2410c;--nit-bg:rgba(253,186,116,0.35)"><span class="nit-dot" style="background:#c2410c"></span></button>
-        <button class="nit-btn nit-color" id="nit-rouge"  onclick="insertNoteHL('rouge')"  title="Annoter en rouge"  data-i18n-title="title_nit_rouge"  style="--nit-c:#dc2626;--nit-bg:rgba(252,165,165,0.35)"><span class="nit-dot" style="background:#dc2626"></span></button>
-        <button class="nit-btn nit-color" id="nit-cyan"   onclick="insertNoteHL('cyan')"   title="Annoter en cyan"   data-i18n-title="title_nit_cyan"   style="--nit-c:#0e7490;--nit-bg:rgba(103,232,249,0.35)"><span class="nit-dot" style="background:#0e7490"></span></button>
-      </div>
-
-      <!-- Filtres : statut + couleurs uniquement -->
+      <!-- Filtres (façon modèle) avec compteurs -->
       <div class="notes-filters">
-        <button class="note-filter-btn active" id="nf-all"    onclick="noteFilter('all')"    data-i18n="nf_all">Toutes</button>
-        <button class="note-filter-btn"        id="nf-todo"   onclick="noteFilter('todo')"   data-i18n="nf_todo">À faire</button>
-        <button class="note-filter-btn"        id="nf-done"   onclick="noteFilter('done')"   data-i18n="nf_done">Traitées</button>
-      </div>
-      <div class="notes-filters notes-color-filters">
-        <button class="note-filter-btn nf-color" id="nf-jaune"  onclick="noteFilter('color:jaune')"  style="--nf-c:#ca8a04" title="Jaune"  data-i18n-title="color_jaune" ><span class="nf-dot" style="background:#ca8a04"></span></button>
-        <button class="note-filter-btn nf-color" id="nf-rose"   onclick="noteFilter('color:rose')"   style="--nf-c:#be185d" title="Rose"   data-i18n-title="color_rose"  ><span class="nf-dot" style="background:#be185d"></span></button>
-        <button class="note-filter-btn nf-color" id="nf-vert"   onclick="noteFilter('color:vert')"   style="--nf-c:#15803d" title="Vert"   data-i18n-title="color_vert"  ><span class="nf-dot" style="background:#15803d"></span></button>
-        <button class="note-filter-btn nf-color" id="nf-bleu"   onclick="noteFilter('color:bleu')"   style="--nf-c:#1d4ed8" title="Bleu"   data-i18n-title="color_bleu"  ><span class="nf-dot" style="background:#1d4ed8"></span></button>
-        <button class="note-filter-btn nf-color" id="nf-violet" onclick="noteFilter('color:violet')" style="--nf-c:#7c3aed" title="Violet" data-i18n-title="color_violet"><span class="nf-dot" style="background:#7c3aed"></span></button>
-        <button class="note-filter-btn nf-color" id="nf-orange" onclick="noteFilter('color:orange')" style="--nf-c:#c2410c" title="Orange" data-i18n-title="color_orange"><span class="nf-dot" style="background:#c2410c"></span></button>
-        <button class="note-filter-btn nf-color" id="nf-rouge"  onclick="noteFilter('color:rouge')"  style="--nf-c:#dc2626" title="Rouge"  data-i18n-title="color_rouge" ><span class="nf-dot" style="background:#dc2626"></span></button>
-        <button class="note-filter-btn nf-color" id="nf-cyan"   onclick="noteFilter('color:cyan')"   style="--nf-c:#0e7490" title="Cyan"   data-i18n-title="color_cyan"  ><span class="nf-dot" style="background:#0e7490"></span></button>
+        <button class="note-filter-btn active" id="nf-all"  onclick="noteFilter('all')"><span data-i18n="nf_all">Toutes</span><span class="nf-count" id="nf-all-count"></span></button>
+        <button class="note-filter-btn"        id="nf-todo" onclick="noteFilter('todo')"><span data-i18n="nf_todo">À faire</span><span class="nf-count" id="nf-todo-count"></span></button>
+        <button class="note-filter-btn"        id="nf-done" onclick="noteFilter('done')"><span data-i18n="nf_done">Traitées</span><span class="nf-count" id="nf-done-count"></span></button>
       </div>
 
       <!-- Liste des notes -->
       <div class="notes-list-scroll" id="notes-list">
         <div class="note-empty-state">
           <span class="icon">💬</span>
-          Aucune note dans le texte.<br>
-          Utilisez <strong>[NOTE: texte]</strong><br>
-          ou les boutons d'insertion ci-dessus.
+          <span class="note-empty-msg">Aucune note pour l'instant.</span>
         </div>
       </div>
 
-      <!-- Actions bas -->
-      <div class="notes-actions-bar">
-        <button class="notes-action-btn" onclick="notesRefresh()" data-i18n-title="notes_refresh_btn" title="Relire les notes depuis le texte">⟳ Rafraîchir</button>
+      <!-- Pied : palette d'insertion discrète + rafraîchir -->
+      <div class="notes-footer">
+        <div class="note-inline-toolbar" title="Surligner la sélection"><button class="nit-btn nit-color" id="nit-jaune" onclick="insertNoteHL('jaune')" title="Surligner en jaune" data-i18n-title="title_nit_jaune" style="--nit-c:#ca8a04"><span class="nit-dot" style="background:#ca8a04"></span></button><button class="nit-btn nit-color" id="nit-rose" onclick="insertNoteHL('rose')" title="Surligner en rose" data-i18n-title="title_nit_rose" style="--nit-c:#be185d"><span class="nit-dot" style="background:#be185d"></span></button><button class="nit-btn nit-color" id="nit-vert" onclick="insertNoteHL('vert')" title="Surligner en vert" data-i18n-title="title_nit_vert" style="--nit-c:#15803d"><span class="nit-dot" style="background:#15803d"></span></button><button class="nit-btn nit-color" id="nit-bleu" onclick="insertNoteHL('bleu')" title="Surligner en bleu" data-i18n-title="title_nit_bleu" style="--nit-c:#1d4ed8"><span class="nit-dot" style="background:#1d4ed8"></span></button><button class="nit-btn nit-color" id="nit-violet" onclick="insertNoteHL('violet')" title="Surligner en violet" data-i18n-title="title_nit_violet" style="--nit-c:#7c3aed"><span class="nit-dot" style="background:#7c3aed"></span></button><button class="nit-btn nit-color" id="nit-orange" onclick="insertNoteHL('orange')" title="Surligner en orange" data-i18n-title="title_nit_orange" style="--nit-c:#c2410c"><span class="nit-dot" style="background:#c2410c"></span></button><button class="nit-btn nit-color" id="nit-rouge" onclick="insertNoteHL('rouge')" title="Surligner en rouge" data-i18n-title="title_nit_rouge" style="--nit-c:#dc2626"><span class="nit-dot" style="background:#dc2626"></span></button><button class="nit-btn nit-color" id="nit-cyan" onclick="insertNoteHL('cyan')" title="Surligner en cyan" data-i18n-title="title_nit_cyan" style="--nit-c:#0e7490"><span class="nit-dot" style="background:#0e7490"></span></button></div>
+        <button class="notes-action-btn notes-refresh-btn" onclick="notesRefresh()" data-i18n-title="notes_refresh_btn" title="Relire les notes depuis le texte"><i class="ti ti-refresh" aria-hidden="true"></i></button>
+      </div>
+
+      <!-- Compat JS : compteurs/progression conservés (masqués) -->
+      <div style="display:none" aria-hidden="true">
+        <span id="notes-counter-text"></span>
+        <div class="notes-progress-wrap" id="notes-progress-wrap"><div class="notes-progress-fill" id="notes-progress-fill"></div></div>
+        <span id="notes-done-count"></span><span id="notes-remain-count"></span>
       </div>
 
     </div><!-- /sb-pane-notes -->
