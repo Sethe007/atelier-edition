@@ -9188,10 +9188,12 @@ function _noteContextLabel(annot, lang) {
     const raw = (typeof getDomVal === 'function') ? (getDomVal('raw-input') || '') : '';
     let off = (typeof annot.offset === 'number') ? annot.offset
             : (annot.anchor ? raw.indexOf(annot.anchor) : -1);
-    if (off >= 0 && raw) {
-      const before = raw.slice(0, off);
-      const ms = before.match(/^(?:CHAPITRE|Chapitre|Chapter|PARTIE|Partie|Part|Acte|Prologue|Épilogue|Epilogue|Incipit|[IVXLC]+\.?|\d+[.\-—)])[^\n]*/gm);
-      if (ms && ms.length) return ms[ms.length - 1].trim().slice(0, 30);
+    if (off >= 0 && raw && typeof detectHeadingLevel === 'function') {
+      const lines = raw.slice(0, off).split('\n');
+      for (let i = lines.length - 1; i >= 0; i--) {
+        const l = lines[i].trim();
+        if (l && detectHeadingLevel(l) === 1) return l.slice(0, 30);
+      }
     }
   } catch (e) {}
   return (lang==='es'?'Nota':lang==='de'?'Notiz':lang==='it'?'Nota':lang==='pt'?'Nota':'Note');
