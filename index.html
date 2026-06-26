@@ -556,7 +556,7 @@
           <div id="wt-stats-ai-box" style="display:none;margin-bottom:8px;padding:10px 12px;background:var(--parchment);border:1px solid var(--cream);border-radius:6px;font-size:11.5px;line-height:1.7;color:var(--ink-soft);"></div>
           <div id="wt-stats-results">
             <div class="wt-empty wt-intro">
-              <div class="wt-empty-ic"><i class="ti ti-chart-histogram" aria-hidden="true"></i></div>
+              <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runStatsAnalysis()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runStatsAnalysis();}" title="Calculer les statistiques" data-i18n-title="btn_stats_calc"><i class="ti ti-chart-histogram" aria-hidden="true"></i></div>
               <div class="wt-empty-title">Statistiques avancées</div>
               <div class="wt-empty-sub" data-i18n="wt_empty_stats">Cliquez pour obtenir des statistiques détaillées.</div>
             </div>

@@ -2295,3 +2295,15 @@ aside select:focus, aside input:focus, aside textarea:focus,
 
 /* ═══ Synonymes : bouton + hint masqués (action portée par l'icône) ═══ */
 #wt-btn-syn, #wt-syn-hint { display: none !important; }
+
+/* === Statistiques avancées : nettoyage panneau (même traitement que Cohérence/Synonymes) === */
+/* Le bouton « Calculer » est masqué : son action est portée par l'icône-déclencheur (.wt-ic-action). */
+#wt-btn-stats { display: none !important; }
+/* « ✦ IA » conservé mais compact & discret (fonction distincte : ne rien perdre). */
+#wt-btn-stats-ai {
+  flex: 0 0 auto !important;
+  margin: 0 auto !important;
+  padding: 6px 14px !important;
+  font-size: 11px !important;
+  box-shadow: none !important;
+}
