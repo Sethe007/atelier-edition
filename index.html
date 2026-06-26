@@ -523,7 +523,11 @@
             <button class="wt-run-btn" id="wt-btn-autofix"  onclick="runAutoFix()"   style="flex:1;margin:0;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_autofix">⚡ Corriger</button>
           </div>
           <div id="wt-correct-results">
-            <div class="wt-empty" data-i18n="wt_empty_correct_full">Cliquez sur <strong>Analyser</strong> pour lancer la vérification.</div>
+            <div class="wt-empty wt-intro">
+              <div class="wt-empty-ic"><i class="ti ti-writing-sign" aria-hidden="true"></i></div>
+              <div class="wt-empty-title">Correcteur</div>
+              <div class="wt-empty-sub" data-i18n="wt_empty_correct_full">Cliquez sur Analyser pour lancer la vérification.</div>
+            </div>
           </div>
         </div>
 
@@ -535,7 +539,11 @@
           </div>
           <div id="wt-style-ai-box" style="display:none;margin-bottom:8px;padding:10px 12px;background:var(--parchment);border:1px solid var(--cream);border-radius:6px;font-size:11.5px;line-height:1.7;color:var(--ink-soft);"></div>
           <div id="wt-style-results">
-            <div class="wt-empty" data-i18n="wt_empty_style">Cliquez sur Analyser pour obtenir des statistiques de style.</div>
+            <div class="wt-empty wt-intro">
+              <div class="wt-empty-ic"><i class="ti ti-palette" aria-hidden="true"></i></div>
+              <div class="wt-empty-title">Analyse de style</div>
+              <div class="wt-empty-sub" data-i18n="wt_empty_style">Cliquez sur Analyser pour obtenir des statistiques de style.</div>
+            </div>
           </div>
         </div>
 
@@ -547,7 +555,11 @@
           </div>
           <div id="wt-stats-ai-box" style="display:none;margin-bottom:8px;padding:10px 12px;background:var(--parchment);border:1px solid var(--cream);border-radius:6px;font-size:11.5px;line-height:1.7;color:var(--ink-soft);"></div>
           <div id="wt-stats-results">
-            <div class="wt-empty" data-i18n="wt_empty_stats">Cliquez pour obtenir des statistiques détaillées.</div>
+            <div class="wt-empty wt-intro">
+              <div class="wt-empty-ic"><i class="ti ti-chart-histogram" aria-hidden="true"></i></div>
+              <div class="wt-empty-title">Statistiques avancées</div>
+              <div class="wt-empty-sub" data-i18n="wt_empty_stats">Cliquez pour obtenir des statistiques détaillées.</div>
+            </div>
           </div>
         </div>
 
@@ -571,7 +583,11 @@
           <!-- Bouton -->
           <button class="wt-run-btn" id="wt-btn-syn" onclick="runSynonyms()" data-i18n="btn_syn_search">🔍 Chercher les synonymes</button>
           <!-- Résultats -->
-          <div id="wt-syn-results"></div>
+          <div id="wt-syn-results"><div class="wt-empty wt-intro">
+            <div class="wt-empty-ic"><i class="ti ti-vocabulary" aria-hidden="true"></i></div>
+            <div class="wt-empty-title">Synonymes</div>
+            <div class="wt-empty-sub">Dictionnaire des synonymes et antonymes contextuels.</div>
+          </div></div>
         </div>
 
         <!-- TAB: COHÉRENCE NARRATIVE IA -->
@@ -585,7 +601,11 @@
             </div>
           </div>
           <div id="wt-coherence-results">
-            <div class="wt-empty" data-i18n="wt_empty_coherence">Cliquez pour analyser la cohérence de votre roman (personnages, lieux, continuité).</div>
+            <div class="wt-empty wt-intro">
+              <div class="wt-empty-ic"><i class="ti ti-puzzle" aria-hidden="true"></i></div>
+              <div class="wt-empty-title">Cohérence narrative</div>
+              <div class="wt-empty-sub" data-i18n="wt_empty_coherence">Cliquez pour analyser la cohérence de votre roman (personnages, lieux, continuité).</div>
+            </div>
           </div>
         </div>
 
@@ -600,7 +620,11 @@
             </div>
           </div>
           <div id="wt-rapport-results">
-            <div class="wt-empty" data-i18n="wt_empty_rapport_full">Cliquez sur <strong>Générer le rapport</strong> pour lancer l'analyse complète.</div>
+            <div class="wt-empty wt-intro">
+              <div class="wt-empty-ic"><i class="ti ti-file-text" aria-hidden="true"></i></div>
+              <div class="wt-empty-title">Rapport éditorial</div>
+              <div class="wt-empty-sub" data-i18n="wt_empty_rapport_full">Cliquez sur Générer le rapport pour lancer l'analyse complète.</div>
+            </div>
           </div>
         </div>
 

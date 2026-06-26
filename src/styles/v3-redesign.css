@@ -2259,3 +2259,30 @@ aside select:focus, aside input:focus, aside textarea:focus,
 
 /* ═══ ÉTAPE 3 : rail — Versions épinglé en bas (comme le prototype) ═══ */
 .nav-rail-buttons .nav-rail-sep:last-of-type { margin-top: auto !important; }
+
+/* ═══ ÉTAPE 4 : états vides des panneaux outils — gabarit élégant (prototype) ═══ */
+.wt-empty {
+  text-align: center !important;
+  padding: 38px 20px !important;
+  color: var(--c-ink-m) !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  background: transparent !important;
+  border: none !important;
+}
+.wt-empty.wt-intro { padding: 44px 20px !important; }
+.wt-empty-ic {
+  width: 54px !important; height: 54px !important;
+  margin: 0 auto 16px !important;
+  border-radius: 15px !important;
+  background: var(--c-parch-l) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  font-size: 24px !important; color: var(--c-sienna) !important;
+}
+.wt-empty-title {
+  font-family: var(--f-display) !important;
+  font-size: 18px !important; font-weight: 400 !important;
+  color: var(--c-ink) !important; margin-bottom: 8px !important;
+}
+.wt-empty-sub { max-width: 240px !important; margin: 0 auto !important; color: var(--c-ink-m) !important; }
