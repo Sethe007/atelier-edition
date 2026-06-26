@@ -17,6 +17,7 @@ const ALLOWLIST = new Set([
   'btn-view-edit', 'btn-view-split',
   'chapter-timeline-inner',
   'wt-api-dot', 'wt-api-section', 'wt-api-compact-label',
+  'wt-btn-coherence', // retiré : remplacé par l'icône-déclencheur (usage JS gardé par if)
 ]);
 
 function computeDead() {
