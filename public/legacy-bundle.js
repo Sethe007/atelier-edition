@@ -18260,16 +18260,8 @@ function _applyI18nNotesPanel(t) {
   const notesHeader = document.querySelector('.notes-manager-header span:first-child');
   if (notesHeader) notesHeader.textContent = t['notes_header_title'];
 
-  // Filter buttons (statut uniquement — les couleurs n'ont pas besoin de traduction)
-  const filterMap = {
-    'nf-all':  'notes_filter_all',
-    'nf-todo': 'notes_filter_todo',
-    'nf-done': 'notes_filter_done',
-  };
-  Object.entries(filterMap).forEach(([id, key]) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = t[key];
-  });
+  // Filter buttons : traduits via le <span data-i18n="nf_*"> interne (générique).
+  // On ne touche PLUS au textContent du bouton (préserve le <span.nf-count>).
 
   // Pastilles couleur (filtre) — mettre à jour le title tooltip traduit
   ['jaune','rose','vert','bleu','violet','orange','rouge','cyan'].forEach(c => {
@@ -18285,8 +18277,6 @@ function _applyI18nNotesPanel(t) {
     const span = btn.querySelector('[data-i18n="nit_color_' + c + '"]');
     if (span) span.textContent = t['nit_color_' + c] || span.textContent;
   });
-  const notesActions = document.querySelectorAll('.notes-action-btn');
-  if (notesActions[0]) notesActions[0].textContent = t['notes_action_refresh'] || notesActions[0].textContent;
   // Cibler par data-action si disponible, sinon par ordre
   document.querySelectorAll('.notes-action-btn[data-action="done"]').forEach(btn => {
     btn.textContent = t['notes_action_done'] || btn.textContent;
