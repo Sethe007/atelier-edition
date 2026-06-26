@@ -630,7 +630,7 @@ html body #save-indicator #save-label {
 html body .pane-label-topbar .pane-label-text { color: var(--ink-muted) !important; }
 
 /* Boutons de formatage : plats, sans relief */
-html body .pane-label-topbar .fmt-btn,
+html body .pane-label-topbar .fmt-btn:not(.fmt-btn-format),
 html body .pane-label-topbar .fmt-btn-tw {
   background: transparent !important;
   border: none !important;
@@ -641,7 +641,7 @@ html body .pane-label-topbar .fmt-btn-tw {
   padding: 0 6px !important;
   transition: background .12s, color .12s !important;
 }
-html body .pane-label-topbar .fmt-btn:hover,
+html body .pane-label-topbar .fmt-btn:not(.fmt-btn-format):hover,
 html body .pane-label-topbar .fmt-btn-tw:hover {
   background: color-mix(in srgb, var(--ink) 6%, transparent) !important;
   color: var(--ink) !important;
@@ -655,12 +655,16 @@ html body #btn-ai-continue { color: var(--theme-active-color) !important; }
 html body #btn-ai-continue:hover { color: var(--theme-active-color) !important; }
 
 /* Bouton « Formater » : plat encadré discret (modèle) */
-html body .fmt-btn-format {
+html body .pane-label-topbar .fmt-btn-format {
   background: var(--parchment) !important;
   border: 1px solid var(--theme-toolbar-border) !important;
   box-shadow: none !important;
   border-radius: 8px !important;
   height: 28px !important;
+  min-width: max-content !important;
+  flex-shrink: 0 !important;
+  padding: 0 11px !important;
+  margin-right: 2px !important;
   color: var(--ink-soft) !important;
 }
 html body .fmt-btn-format:hover {
