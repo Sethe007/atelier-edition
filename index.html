@@ -584,7 +584,7 @@
           <button class="wt-run-btn" id="wt-btn-syn" onclick="runSynonyms()" data-i18n="btn_syn_search">🔍 Chercher les synonymes</button>
           <!-- Résultats -->
           <div id="wt-syn-results"><div class="wt-empty wt-intro">
-            <div class="wt-empty-ic"><i class="ti ti-vocabulary" aria-hidden="true"></i></div>
+            <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runSynonyms()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runSynonyms();}" title="Chercher les synonymes" data-i18n-title="btn_syn_search"><i class="ti ti-vocabulary" aria-hidden="true"></i></div>
             <div class="wt-empty-title">Synonymes</div>
             <div class="wt-empty-sub">Dictionnaire des synonymes et antonymes contextuels.</div>
           </div></div>
