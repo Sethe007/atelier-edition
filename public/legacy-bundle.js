@@ -9196,6 +9196,7 @@ function notesRefresh() {
   if (ct) ct.textContent = allAnnotations.length + ' ' + totalLabel;
   if (dc) dc.textContent = doneCount + ' ' + doneLabel;
   if (rc) rc.textContent = (allAnnotations.length - doneCount) + ' ' + remLabel;
+  { const _pw=document.getElementById('notes-progress-wrap'); if(_pw) _pw.style.display = allAnnotations.length ? '' : 'none'; }
 
   // ── Filtrer ───────────────────────────────────────────────────────────
   let filtered = [...allAnnotations];
@@ -9340,6 +9341,7 @@ function _notesRefreshFromText() {
   if (dc) dc.textContent = doneCount + ' ' + _t('annot_done_label');
   const rc = document.getElementById('notes-remain-count');
   if (rc) rc.textContent = (notes.length - doneCount) + ' ' + _t('annot_remaining_label');
+  { const _pw=document.getElementById('notes-progress-wrap'); if(_pw) _pw.style.display = allAnnotations.length ? '' : 'none'; }
 
   // ── Filtrer ───────────────────────────────────────────────────────────
   let filtered = allAnnotations;

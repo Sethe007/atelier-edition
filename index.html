@@ -369,29 +369,28 @@
 
       <!-- En-tête avec barre de progression -->
       <div class="notes-manager-header">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);" data-i18n="notes_panel_title">Notes d'auteur</span>
-        </div>
-        <span id="notes-counter-text" style="font-size:10.5px;color:var(--ink-soft);">0 notes</span>
-        <div class="notes-progress-bar">
-          <div class="notes-progress-fill" id="notes-progress-fill" style="width:0%"></div>
-        </div>
-        <div class="notes-progress-label">
-          <span id="notes-done-count">0 traitées</span>
-          <span id="notes-remain-count">0 restantes</span>
+        <span id="notes-counter-text" class="notes-head-count">0 notes</span>
+        <div class="notes-progress-wrap" id="notes-progress-wrap" style="display:none;">
+          <div class="notes-progress-bar">
+            <div class="notes-progress-fill" id="notes-progress-fill" style="width:0%"></div>
+          </div>
+          <div class="notes-progress-label">
+            <span id="notes-done-count">0 traitées</span>
+            <span id="notes-remain-count">0 restantes</span>
+          </div>
         </div>
       </div>
 
       <!-- Barre d'insertion rapide — couleurs uniquement -->
       <div class="note-inline-toolbar">
-        <button class="nit-btn nit-color" id="nit-jaune"  onclick="insertNoteHL('jaune')"  title="Annoter en jaune"  data-i18n-title="title_nit_jaune"  style="--nit-c:#ca8a04;--nit-bg:rgba(253,224,71,0.35)"><span class="nit-dot" style="background:#ca8a04"></span><span data-i18n="nit_color_jaune">Jaune</span></button>
-        <button class="nit-btn nit-color" id="nit-rose"   onclick="insertNoteHL('rose')"   title="Annoter en rose"   data-i18n-title="title_nit_rose"   style="--nit-c:#be185d;--nit-bg:rgba(249,168,212,0.35)"><span class="nit-dot" style="background:#be185d"></span><span data-i18n="nit_color_rose">Rose</span></button>
-        <button class="nit-btn nit-color" id="nit-vert"   onclick="insertNoteHL('vert')"   title="Annoter en vert"   data-i18n-title="title_nit_vert"   style="--nit-c:#15803d;--nit-bg:rgba(134,239,172,0.35)"><span class="nit-dot" style="background:#15803d"></span><span data-i18n="nit_color_vert">Vert</span></button>
-        <button class="nit-btn nit-color" id="nit-bleu"   onclick="insertNoteHL('bleu')"   title="Annoter en bleu"   data-i18n-title="title_nit_bleu"   style="--nit-c:#1d4ed8;--nit-bg:rgba(147,197,253,0.35)"><span class="nit-dot" style="background:#1d4ed8"></span><span data-i18n="nit_color_bleu">Bleu</span></button>
-        <button class="nit-btn nit-color" id="nit-violet" onclick="insertNoteHL('violet')" title="Annoter en violet" data-i18n-title="title_nit_violet" style="--nit-c:#7c3aed;--nit-bg:rgba(196,181,253,0.35)"><span class="nit-dot" style="background:#7c3aed"></span><span data-i18n="nit_color_violet">Violet</span></button>
-        <button class="nit-btn nit-color" id="nit-orange" onclick="insertNoteHL('orange')" title="Annoter en orange" data-i18n-title="title_nit_orange" style="--nit-c:#c2410c;--nit-bg:rgba(253,186,116,0.35)"><span class="nit-dot" style="background:#c2410c"></span><span data-i18n="nit_color_orange">Orange</span></button>
-        <button class="nit-btn nit-color" id="nit-rouge"  onclick="insertNoteHL('rouge')"  title="Annoter en rouge"  data-i18n-title="title_nit_rouge"  style="--nit-c:#dc2626;--nit-bg:rgba(252,165,165,0.35)"><span class="nit-dot" style="background:#dc2626"></span><span data-i18n="nit_color_rouge">Rouge</span></button>
-        <button class="nit-btn nit-color" id="nit-cyan"   onclick="insertNoteHL('cyan')"   title="Annoter en cyan"   data-i18n-title="title_nit_cyan"   style="--nit-c:#0e7490;--nit-bg:rgba(103,232,249,0.35)"><span class="nit-dot" style="background:#0e7490"></span><span data-i18n="nit_color_cyan">Cyan</span></button>
+        <button class="nit-btn nit-color" id="nit-jaune"  onclick="insertNoteHL('jaune')"  title="Annoter en jaune"  data-i18n-title="title_nit_jaune"  style="--nit-c:#ca8a04;--nit-bg:rgba(253,224,71,0.35)"><span class="nit-dot" style="background:#ca8a04"></span></button>
+        <button class="nit-btn nit-color" id="nit-rose"   onclick="insertNoteHL('rose')"   title="Annoter en rose"   data-i18n-title="title_nit_rose"   style="--nit-c:#be185d;--nit-bg:rgba(249,168,212,0.35)"><span class="nit-dot" style="background:#be185d"></span></button>
+        <button class="nit-btn nit-color" id="nit-vert"   onclick="insertNoteHL('vert')"   title="Annoter en vert"   data-i18n-title="title_nit_vert"   style="--nit-c:#15803d;--nit-bg:rgba(134,239,172,0.35)"><span class="nit-dot" style="background:#15803d"></span></button>
+        <button class="nit-btn nit-color" id="nit-bleu"   onclick="insertNoteHL('bleu')"   title="Annoter en bleu"   data-i18n-title="title_nit_bleu"   style="--nit-c:#1d4ed8;--nit-bg:rgba(147,197,253,0.35)"><span class="nit-dot" style="background:#1d4ed8"></span></button>
+        <button class="nit-btn nit-color" id="nit-violet" onclick="insertNoteHL('violet')" title="Annoter en violet" data-i18n-title="title_nit_violet" style="--nit-c:#7c3aed;--nit-bg:rgba(196,181,253,0.35)"><span class="nit-dot" style="background:#7c3aed"></span></button>
+        <button class="nit-btn nit-color" id="nit-orange" onclick="insertNoteHL('orange')" title="Annoter en orange" data-i18n-title="title_nit_orange" style="--nit-c:#c2410c;--nit-bg:rgba(253,186,116,0.35)"><span class="nit-dot" style="background:#c2410c"></span></button>
+        <button class="nit-btn nit-color" id="nit-rouge"  onclick="insertNoteHL('rouge')"  title="Annoter en rouge"  data-i18n-title="title_nit_rouge"  style="--nit-c:#dc2626;--nit-bg:rgba(252,165,165,0.35)"><span class="nit-dot" style="background:#dc2626"></span></button>
+        <button class="nit-btn nit-color" id="nit-cyan"   onclick="insertNoteHL('cyan')"   title="Annoter en cyan"   data-i18n-title="title_nit_cyan"   style="--nit-c:#0e7490;--nit-bg:rgba(103,232,249,0.35)"><span class="nit-dot" style="background:#0e7490"></span></button>
       </div>
 
       <!-- Filtres : statut + couleurs uniquement -->

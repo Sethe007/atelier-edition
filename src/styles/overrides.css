@@ -725,3 +725,187 @@ html body .editor-statusbar .sb-sync-dot {
   flex-shrink: 0 !important;
 }
 html body .editor-statusbar .statusbar-spacer { flex: 1 1 auto !important; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   PANNEAU « NOTES D'AUTEUR » — refonte élégante (façon modèle)
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* En-tête : compteur discret + progression fine (masquée si vide) */
+html body #sb-pane-notes .notes-manager-header {
+  padding: 12px 14px 10px !important;
+  border-bottom: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
+}
+html body #sb-pane-notes .notes-head-count {
+  font-family: var(--f-display, 'Playfair Display', serif) !important;
+  font-size: 13px !important;
+  font-style: italic !important;
+  color: var(--ink-soft) !important;
+  letter-spacing: 0.01em !important;
+}
+html body #sb-pane-notes .notes-progress-wrap { margin-top: 9px !important; }
+html body #sb-pane-notes .notes-progress-bar {
+  height: 3px !important;
+  background: color-mix(in srgb, var(--ink) 8%, transparent) !important;
+  border-radius: 3px !important;
+}
+html body #sb-pane-notes .notes-progress-fill {
+  background: var(--theme-active-color) !important;
+  border-radius: 3px !important;
+}
+html body #sb-pane-notes .notes-progress-label {
+  font-size: 9.5px !important;
+  color: var(--ink-muted) !important;
+  margin-top: 4px !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Barre d'insertion : swatches ronds élégants, une seule rangée centrée */
+html body #sb-pane-notes .note-inline-toolbar {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  justify-content: center !important;
+  padding: 11px 14px !important;
+  border-bottom: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
+  background: transparent !important;
+}
+html body #sb-pane-notes .note-inline-toolbar .nit-btn {
+  width: 20px !important; height: 20px !important;
+  padding: 0 !important; margin: 0 !important;
+  border: none !important; background: transparent !important;
+  border-radius: 50% !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  cursor: pointer !important;
+  transition: transform .12s, box-shadow .12s !important;
+  box-shadow: none !important;
+}
+html body #sb-pane-notes .note-inline-toolbar .nit-btn .nit-dot {
+  width: 14px !important; height: 14px !important;
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.6) inset !important;
+}
+html body #sb-pane-notes .note-inline-toolbar .nit-btn:hover {
+  transform: translateY(-1px) scale(1.12) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18) !important;
+}
+
+/* Filtres : pills sobres + pastilles de filtre compactes */
+html body #sb-pane-notes .notes-filters {
+  gap: 5px !important;
+  padding: 10px 14px 6px !important;
+  border-bottom: none !important;
+}
+html body #sb-pane-notes .notes-color-filters {
+  padding: 0 14px 10px !important;
+  gap: 7px !important;
+  justify-content: flex-start !important;
+  border-bottom: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
+}
+html body #sb-pane-notes .note-filter-btn {
+  font-family: var(--f-body, 'DM Sans', sans-serif) !important;
+  font-size: 10.5px !important;
+  padding: 4px 11px !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
+  background: transparent !important;
+  color: var(--ink-muted) !important;
+  box-shadow: none !important;
+  transition: background .12s, color .12s !important;
+}
+html body #sb-pane-notes .note-filter-btn:hover {
+  background: color-mix(in srgb, var(--ink) 5%, transparent) !important;
+  color: var(--ink) !important;
+}
+html body #sb-pane-notes .note-filter-btn.active {
+  background: var(--theme-active-color) !important;
+  color: #fff !important;
+  border-color: var(--theme-active-color) !important;
+}
+html body #sb-pane-notes .note-filter-btn.nf-color {
+  width: 16px !important; height: 16px !important;
+  padding: 0 !important; border-radius: 50% !important;
+  border: 1px solid transparent !important;
+  opacity: 0.55 !important;
+  transition: opacity .12s, transform .12s, box-shadow .12s !important;
+}
+html body #sb-pane-notes .note-filter-btn.nf-color:hover { opacity: 1 !important; transform: scale(1.15) !important; }
+html body #sb-pane-notes .note-filter-btn.nf-color.active {
+  opacity: 1 !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--nf-c) 45%, transparent) !important;
+}
+html body #sb-pane-notes .nf-dot { width: 12px !important; height: 12px !important; }
+
+/* Liste */
+html body #sb-pane-notes .notes-list-scroll { padding: 12px 14px !important; gap: 10px !important; display: flex !important; flex-direction: column !important; }
+
+/* Cartes : surface sobre, coin droit arrondi, corps en serif (façon modèle) */
+html body #sb-pane-notes .note-card {
+  border: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
+  border-radius: 0 11px 11px 0 !important;
+  padding: 11px 13px !important;
+  box-shadow: none !important;
+  transition: box-shadow .15s, transform .15s !important;
+}
+html body #sb-pane-notes .note-card:hover {
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08) !important;
+  transform: translateX(1px) !important;
+  border-color: var(--theme-toolbar-border, var(--cream)) !important;
+}
+html body #sb-pane-notes .note-card .note-text {
+  font-family: var(--f-display, 'Spectral', Georgia, serif) !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  color: var(--ink-soft) !important;
+}
+/* Boutons d'action : discrets, révélés au survol */
+html body #sb-pane-notes .note-card .note-card-meta { margin-top: 9px !important; opacity: 0.5 !important; transition: opacity .15s !important; }
+html body #sb-pane-notes .note-card:hover .note-card-meta { opacity: 1 !important; }
+html body #sb-pane-notes .note-card .notes-action-btn {
+  border: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
+  background: transparent !important;
+  border-radius: 7px !important;
+  color: var(--ink-muted) !important;
+  box-shadow: none !important;
+  transition: background .12s, color .12s !important;
+}
+html body #sb-pane-notes .note-card .notes-action-btn:hover {
+  background: color-mix(in srgb, var(--ink) 6%, transparent) !important;
+  color: var(--ink) !important;
+}
+
+/* État vide : pastille-icône + titre serif + sous-titre muté (cohérent app) */
+html body #sb-pane-notes .note-empty-state {
+  text-align: center !important;
+  padding: 40px 22px !important;
+  color: var(--ink-muted) !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+}
+html body #sb-pane-notes .note-empty-state .icon {
+  width: 52px !important; height: 52px !important;
+  margin: 0 auto 14px !important;
+  border-radius: 15px !important;
+  background: color-mix(in srgb, var(--theme-active-color) 9%, transparent) !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  font-size: 24px !important; opacity: 1 !important;
+}
+html body #sb-pane-notes .note-empty-state strong { color: var(--ink-soft) !important; }
+
+/* Barre d'actions bas */
+html body #sb-pane-notes .notes-actions-bar {
+  padding: 10px 14px !important;
+  border-top: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
+}
+html body #sb-pane-notes .notes-action-btn {
+  border: 1px solid var(--theme-toolbar-border, var(--cream)) !important;
+  background: transparent !important;
+  border-radius: 8px !important;
+  color: var(--ink-muted) !important;
+  box-shadow: none !important;
+  font-family: var(--f-body, 'DM Sans', sans-serif) !important;
+  transition: background .12s, color .12s !important;
+}
+html body #sb-pane-notes .notes-actions-bar .notes-action-btn:hover {
+  background: color-mix(in srgb, var(--ink) 5%, transparent) !important;
+  color: var(--ink) !important;
+}
