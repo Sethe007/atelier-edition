@@ -701,3 +701,27 @@ html body .editor-statusbar {
 html body .editor-statusbar .statusbar-item,
 html body .editor-statusbar .statusbar-item span { color: var(--ink-muted) !important; }
 html body .editor-statusbar .statusbar-sep { background: var(--theme-toolbar-border) !important; }
+
+/* ── Footer enrichi (mots/signes/lecture/chapitre · sync/langue/Ln·Col) ── */
+html body .editor-statusbar .statusbar-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-family: var(--f-body, 'DM Sans', sans-serif) !important;
+}
+html body .editor-statusbar .statusbar-item i {
+  font-size: 12px !important;
+  opacity: 0.65 !important;
+  line-height: 1 !important;
+}
+html body .editor-statusbar .sb-lncol {
+  font-family: var(--f-mono, 'JetBrains Mono', monospace) !important;
+}
+html body .editor-statusbar .sb-sync-dot {
+  width: 6px !important; height: 6px !important;
+  border-radius: 50% !important;
+  background: #3E9A63;
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+}
+html body .editor-statusbar .statusbar-spacer { flex: 1 1 auto !important; }

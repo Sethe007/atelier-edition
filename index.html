@@ -910,13 +910,21 @@ Elle applique ensuite les standards de l'édition :
 Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRawInput()"></textarea>
         </div><!-- /.editor-input-wrap -->
         <div class="editor-statusbar" id="editor-statusbar">
-          <div class="statusbar-item"><span data-i18n="sb_ln">Ln</span> <span id="sb-line">1</span></div>
+          <div class="statusbar-item"><i class="ti ti-file-text" aria-hidden="true"></i> <span id="sb-words">0 mots</span></div>
           <div class="statusbar-sep"></div>
-          <div class="statusbar-item"><span data-i18n="sb_col">Col</span> <span id="sb-col">1</span></div>
+          <div class="statusbar-item"><i class="ti ti-letter-case" aria-hidden="true"></i> <span id="sb-chars">0 signes</span></div>
           <div class="statusbar-sep"></div>
-          <div class="statusbar-item" id="sb-sel-wrap" style="display:none"><span class="statusbar-sel" id="sb-sel"></span> <span id="sb-sel-label" data-i18n="sb_selected">sélectionnés</span></div>
+          <div class="statusbar-item"><i class="ti ti-clock-hour-4" aria-hidden="true"></i> <span id="sb-reading">≈ 0 min de lecture</span></div>
+          <div class="statusbar-sep"></div>
+          <div class="statusbar-item"><i class="ti ti-bookmark" aria-hidden="true"></i> <span id="sb-chapter">—</span></div>
           <div class="statusbar-sep" id="sb-sel-sep" style="display:none"></div>
-          <div class="statusbar-item"><span data-i18n="sb_tab_label">Tab</span> <span id="sb-tab">2 <span data-i18n="sb_tab_spaces">esp.</span></span></div>
+          <div class="statusbar-item" id="sb-sel-wrap" style="display:none"><span class="statusbar-sel" id="sb-sel"></span> <span id="sb-sel-label" data-i18n="sb_selected">sélectionnés</span></div>
+          <div class="statusbar-spacer" style="flex:1 1 auto"></div>
+          <div class="statusbar-item" id="sb-sync-wrap"><span class="sb-sync-dot" id="sb-sync-dot"></span> <span id="sb-sync">Synchronisé</span></div>
+          <div class="statusbar-sep"></div>
+          <div class="statusbar-item"><i class="ti ti-language" aria-hidden="true"></i> <span id="sb-lang">Français (FR)</span></div>
+          <div class="statusbar-sep"></div>
+          <div class="statusbar-item sb-lncol"><span data-i18n="sb_ln">Ln</span> <span id="sb-line">1</span> · <span data-i18n="sb_col">Col</span> <span id="sb-col">1</span></div>
         </div>
       </div>
 

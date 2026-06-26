@@ -739,6 +739,60 @@ function onRawInput() {
   }, DEBOUNCE_MS);
 }
 
+// ── Footer éditeur enrichi (barre de statut façon modèle) ──────────────
+var _footerHeadingLines = [];
+var _footerChaptersTotal = 0;
+var _FOOTER_UNITS = {
+  fr:{mots:'mots',signes:'signes',read:'min de lecture',chap:'Chapitre',sync:'Synchronisé',unsync:'Non sauvegardé'},
+  en:{mots:'words',signes:'characters',read:'min read',chap:'Chapter',sync:'Synced',unsync:'Unsaved'},
+  es:{mots:'palabras',signes:'caracteres',read:'min de lectura',chap:'Capítulo',sync:'Sincronizado',unsync:'Sin guardar'},
+  de:{mots:'Wörter',signes:'Zeichen',read:'Min. Lesezeit',chap:'Kapitel',sync:'Synchronisiert',unsync:'Nicht gespeichert'},
+  it:{mots:'parole',signes:'caratteri',read:'min di lettura',chap:'Capitolo',sync:'Sincronizzato',unsync:'Non salvato'},
+  pt:{mots:'palavras',signes:'caracteres',read:'min de leitura',chap:'Capítulo',sync:'Sincronizado',unsync:'Não guardado'},
+};
+function _footerLang() {
+  var code = (typeof getPref === 'function') ? (getPref('ui_lang') || 'fr') : 'fr';
+  return { code: code, U: _FOOTER_UNITS[code] || _FOOTER_UNITS.fr };
+}
+function _sbSet(id, v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+
+/** Compteurs lourds du footer : mots, signes, temps de lecture, total chapitres. */
+function updateFooterCounts(words, chars, headingLines) {
+  var lg=_footerLang(), code=lg.code, U=lg.U;
+  _footerHeadingLines = headingLines || [];
+  _footerChaptersTotal = _footerHeadingLines.length;
+  try {
+    _sbSet('sb-words', (words||0).toLocaleString(code) + ' ' + U.mots);
+    _sbSet('sb-chars', (chars||0).toLocaleString(code) + ' ' + U.signes);
+  } catch(e) {
+    _sbSet('sb-words', (words||0) + ' ' + U.mots);
+    _sbSet('sb-chars', (chars||0) + ' ' + U.signes);
+  }
+  var mins = words ? Math.max(1, Math.round(words/200)) : 0;
+  _sbSet('sb-reading', '≈ ' + mins + ' ' + U.read);
+  updateFooterCursor();
+}
+
+/** Éléments dépendant du curseur / état : chapitre courant, sync, langue. */
+function updateFooterCursor() {
+  var lg=_footerLang(), code=lg.code, U=lg.U;
+  var ta = document.getElementById('raw-input');
+  var Y = _footerChaptersTotal, X = 0;
+  if (ta && _footerHeadingLines.length) {
+    var pos = ta.selectionStart || 0;
+    var curLine = ta.value.slice(0, pos).split('\n').length - 1;
+    for (var i=0;i<_footerHeadingLines.length;i++){ if(_footerHeadingLines[i]<=curLine) X=i+1; else break; }
+  }
+  _sbSet('sb-chapter', U.chap + ' ' + (Y ? ((X||'—') + ' / ' + Y) : '—'));
+  var synced = (typeof _hasUnsavedChanges !== 'undefined') ? !_hasUnsavedChanges : true;
+  _sbSet('sb-sync', synced ? U.sync : U.unsync);
+  var dot = document.getElementById('sb-sync-dot');
+  if (dot) dot.style.background = synced ? '#3E9A63' : '#C8881F';
+  var label = (typeof LANGUE_LABELS !== 'undefined' && LANGUE_LABELS[code]) ? LANGUE_LABELS[code] : code;
+  label = label.charAt(0).toUpperCase() + label.slice(1);
+  _sbSet('sb-lang', label + ' (' + code.toUpperCase() + ')');
+}
+
 function updateStats() {
   const text  = getDomVal('raw-input');
   const clean = cleanForCounting(text);
@@ -747,7 +801,8 @@ function updateStats() {
   const chars = text.length;
   const lines = text.split('\n');
   let chapters = 0;
-  lines.forEach(line => { if (detectHeadingLevel(line.trim()) === 1) chapters++; });
+  const _headingLines = [];
+  lines.forEach((line, _i) => { if (detectHeadingLevel(line.trim()) === 1) { chapters++; _headingLines.push(_i); } });
 
   const fmt = getDomVal('page-format');
   const wordsPerPage = {
@@ -765,6 +820,7 @@ function updateStats() {
   document.getElementById('stat-pages').textContent    = pageLabel;
   const pageLbl = document.getElementById('stat-pages-lbl');
   if (pageLbl) pageLbl.textContent = isSubmitFormat(fmt) ? 'feuillets' : 'pages est.';
+  if (typeof updateFooterCounts === 'function') updateFooterCounts(words, chars, _headingLines);
 }
 
 // ── DÉTECTION STRUCTURE ────────────────────────────────
@@ -3925,6 +3981,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('sb-line').textContent = ln;
     document.getElementById('sb-col').textContent  = col;
+    if (typeof updateFooterCursor === 'function') updateFooterCursor();
 
     const selWrap = document.getElementById('sb-sel-wrap');
     const selSep  = document.getElementById('sb-sel-sep');
@@ -18025,6 +18082,7 @@ function applyI18n() {
   // Breadcrumb
   const bcRoot = document.getElementById('bc-root');
   if (bcRoot) bcRoot.textContent = t['bc_novel'] || 'Roman';
+  if (typeof updateStats === 'function') { try { updateStats(); } catch(e) {} }
   // Répétitions — panneau titre
   const repTitle = document.querySelector('#rep-panel [data-i18n="rep_title"]');
   if (repTitle) repTitle.textContent = t['rep_title'] || 'Répétitions proches';
@@ -20203,6 +20261,7 @@ function _updateBreadcrumb() {
     const pages = Math.max(1, Math.ceil(chapterWordCount / 250));
     bcPages.textContent = '~' + pages + ' p.';
   } else if (bcPages) { bcPages.textContent = ''; }
+  if (typeof updateFooterCursor === 'function') updateFooterCursor();
 }
 
 // Hook le scroll de l'éditeur pour mettre à jour le breadcrumb
