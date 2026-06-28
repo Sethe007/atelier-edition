@@ -9245,7 +9245,7 @@ function notesRefresh() {
   const prioOrder = { high: 0, mid: 1, low: 2, none: 3 };
   filtered.sort((a, b) => {
     if (a.done !== b.done) return a.done ? 1 : -1;
-    return (prioOrder[a.priority] || 3) - (prioOrder[b.priority] || 3);
+    return (prioOrder[a.priority] ?? 3) - (prioOrder[b.priority] ?? 3);
   });
 
   // ── Rendre les cartes ─────────────────────────────────────────────────
@@ -9294,7 +9294,10 @@ function notesRefresh() {
                    : (excerpt ? (escHtml ? escHtml(excerpt) : excerpt) : `<em class="note-nocomment">${placeholder}</em>`);
     card.innerHTML = `
       <div class="note-card-head">
-        <span class="note-card-cat" style="color:${col}">${escHtml ? escHtml(ctxLabel) : ctxLabel}</span>
+        <span class="note-card-head-left">
+          <span class="note-prio-dot prio-${annot.priority || 'none'}" role="button" tabindex="0" title="${_t('prio_change') || 'Changer la priorité'}" onclick="annotCyclePrio('${annot.id}', event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();annotCyclePrio('${annot.id}', event);}"></span>
+          <span class="note-card-cat" style="color:${col}">${escHtml ? escHtml(ctxLabel) : ctxLabel}</span>
+        </span>
         ${timeLabel ? `<span class="note-card-time">${timeLabel}</span>` : ''}
       </div>
       <div class="note-card-body">${safeNote}</div>
@@ -9396,7 +9399,7 @@ function _notesRefreshFromText() {
       const ma = _notesMeta[_noteKey(a.txt)] || {};
       const mb = _notesMeta[_noteKey(b.txt)] || {};
       if (!!ma.done !== !!mb.done) return ma.done ? 1 : -1;
-      return (prioOrder[ma.priority] || 3) - (prioOrder[mb.priority] || 3);
+      return (prioOrder[ma.priority] ?? 3) - (prioOrder[mb.priority] ?? 3);
     });
   }
 

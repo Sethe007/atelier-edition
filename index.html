@@ -382,9 +382,8 @@
         </div>
       </div>
 
-      <!-- Pied : palette d'insertion discrète + rafraîchir -->
+      <!-- Pied : bouton rafraîchir -->
       <div class="notes-footer">
-        <div class="note-inline-toolbar" title="Surligner la sélection"><button class="nit-btn nit-color" id="nit-jaune" onclick="insertNoteHL('jaune')" title="Surligner en jaune" data-i18n-title="title_nit_jaune" style="--nit-c:#ca8a04"><span class="nit-dot" style="background:#ca8a04"></span></button><button class="nit-btn nit-color" id="nit-rose" onclick="insertNoteHL('rose')" title="Surligner en rose" data-i18n-title="title_nit_rose" style="--nit-c:#be185d"><span class="nit-dot" style="background:#be185d"></span></button><button class="nit-btn nit-color" id="nit-vert" onclick="insertNoteHL('vert')" title="Surligner en vert" data-i18n-title="title_nit_vert" style="--nit-c:#15803d"><span class="nit-dot" style="background:#15803d"></span></button><button class="nit-btn nit-color" id="nit-bleu" onclick="insertNoteHL('bleu')" title="Surligner en bleu" data-i18n-title="title_nit_bleu" style="--nit-c:#1d4ed8"><span class="nit-dot" style="background:#1d4ed8"></span></button><button class="nit-btn nit-color" id="nit-violet" onclick="insertNoteHL('violet')" title="Surligner en violet" data-i18n-title="title_nit_violet" style="--nit-c:#7c3aed"><span class="nit-dot" style="background:#7c3aed"></span></button><button class="nit-btn nit-color" id="nit-orange" onclick="insertNoteHL('orange')" title="Surligner en orange" data-i18n-title="title_nit_orange" style="--nit-c:#c2410c"><span class="nit-dot" style="background:#c2410c"></span></button><button class="nit-btn nit-color" id="nit-rouge" onclick="insertNoteHL('rouge')" title="Surligner en rouge" data-i18n-title="title_nit_rouge" style="--nit-c:#dc2626"><span class="nit-dot" style="background:#dc2626"></span></button><button class="nit-btn nit-color" id="nit-cyan" onclick="insertNoteHL('cyan')" title="Surligner en cyan" data-i18n-title="title_nit_cyan" style="--nit-c:#0e7490"><span class="nit-dot" style="background:#0e7490"></span></button></div>
         <button class="notes-action-btn notes-refresh-btn" onclick="notesRefresh()" data-i18n-title="notes_refresh_btn" title="Relire les notes depuis le texte"><i class="ti ti-refresh" aria-hidden="true"></i></button>
       </div>
 
@@ -488,12 +487,12 @@
             </label>
           </div>
           <div style="display:flex;gap:6px;margin-bottom:2px;">
-            <button class="wt-run-btn" id="wt-btn-correct"  onclick="runCorrector()"  style="flex:1;margin:0;" data-i18n="btn_analyze">🔍 Analyser</button>
-            <button class="wt-run-btn" id="wt-btn-autofix"  onclick="runAutoFix()"   style="flex:1;margin:0;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_autofix">⚡ Corriger</button>
+            <button class="wt-run-btn" id="wt-btn-correct"  onclick="runCorrector()"  style="flex:1;margin:0;display:none;" data-i18n="btn_analyze">🔍 Analyser</button>
+            <button class="wt-run-btn" id="wt-btn-autofix"  onclick="runAutoFix()"   style="flex:1;margin:0;display:none;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_autofix">⚡ Corriger</button>
           </div>
           <div id="wt-correct-results">
             <div class="wt-empty wt-intro">
-              <div class="wt-empty-ic"><i class="ti ti-writing-sign" aria-hidden="true"></i></div>
+              <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runCorrector()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runCorrector();}" title="Analyser le texte" data-i18n-title="btn_analyze"><i class="ti ti-writing-sign" aria-hidden="true"></i></div>
               <div class="wt-empty-title">Correcteur</div>
               <div class="wt-empty-sub" data-i18n="wt_empty_correct_full">Cliquez sur Analyser pour lancer la vérification.</div>
             </div>
