@@ -1181,20 +1181,20 @@ body.dark-mode .es-repl-btn:hover { box-shadow: var(--nm-d-in-s) !important; col
 }
 .actx-item {
   border-radius: 6px !important; padding: 6px 10px !important;
-  color: var(--c-ink, rgba(255,255,255,0.65)) !important;
+  color: rgba(255,255,255,0.80) !important;
   font-family: var(--f-body) !important;
   background: transparent !important;
   transition: background var(--t), color var(--t) !important;
 }
 .actx-item:hover {
   background: var(--c-raise, rgba(255,255,255,0.06)) !important;
-  color: var(--c-ink-s, rgba(255,255,255,0.9)) !important;
+  color: rgba(255,255,255,0.96) !important;
 }
 .actx-section-label {
   padding: 4px 10px 2px !important; font-size: 9px !important;
   font-weight: 700 !important; letter-spacing: 0.14em !important;
   text-transform: uppercase !important;
-  color: var(--c-ink-m, rgba(255,255,255,0.3)) !important;
+  color: rgba(255,255,255,0.42) !important;
 }
 .actx-sep {
   margin: 3px 6px !important;
@@ -1255,7 +1255,7 @@ html body.theme-jour_ardoise .actx-word-count {
   border: 1px solid var(--c-line, rgba(255,255,255,0.055)) !important;
   border-radius: 10px !important;
   box-shadow: var(--nm-d-out) !important;
-  color: var(--c-ink, rgba(255,255,255,0.8)) !important;
+  color: rgba(240,232,216,0.92) !important;
 }
 #annot-tooltip::after { border-top-color: var(--c-lift, #221f1b) !important; }
 .att-text { color: rgba(200,160,48,0.9) !important; }

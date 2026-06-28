@@ -144,3 +144,37 @@ html body.dark-mode .project-badge { background: #1f1f1f !important; border-colo
 html body.dark-mode .book-page { background: #f5f2ec !important; color: #111 !important; }
 html body.dark-mode .book-page * { color: inherit !important; }
 html body.dark-mode .preview-pane { background: #161616 !important; }
+
+
+/* ============================================================
+   FIX CONTRASTE — popup de note (#annot-tooltip) sur thèmes clairs
+   Le fond passe en parchemin (clair) mais les textes enfants
+   restaient blancs/clairs -> illisibles. On force des encres sombres.
+   ============================================================ */
+html body.theme-light #annot-tooltip .att-text,
+html body.theme-jour_ivoire #annot-tooltip .att-text,
+html body.theme-jour_ardoise #annot-tooltip .att-text { color: var(--accent, #8b4513) !important; }
+
+html body.theme-light #annot-tooltip .att-excerpt,
+html body.theme-jour_ivoire #annot-tooltip .att-excerpt,
+html body.theme-jour_ardoise #annot-tooltip .att-excerpt {
+  color: var(--ink-muted, #6b6560) !important;
+  border-top-color: var(--cream, #ddd8cf) !important;
+}
+
+html body.theme-light #annot-tooltip .att-actions,
+html body.theme-jour_ivoire #annot-tooltip .att-actions,
+html body.theme-jour_ardoise #annot-tooltip .att-actions { border-top-color: var(--cream, #ddd8cf) !important; }
+
+html body.theme-light #annot-tooltip .att-action-btn,
+html body.theme-jour_ivoire #annot-tooltip .att-action-btn,
+html body.theme-jour_ardoise #annot-tooltip .att-action-btn {
+  color: var(--ink-soft, #3d3833) !important;
+  border-color: var(--cream, #ddd8cf) !important;
+}
+html body.theme-light #annot-tooltip .att-action-btn:hover,
+html body.theme-jour_ivoire #annot-tooltip .att-action-btn:hover,
+html body.theme-jour_ardoise #annot-tooltip .att-action-btn:hover {
+  background: var(--paper, #eeece6) !important;
+  color: var(--ink, #0f0f0f) !important;
+}
