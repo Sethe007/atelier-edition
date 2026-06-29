@@ -24387,7 +24387,7 @@ async function fsOpenProject() {
 
 // ── Enregistrer dans le fichier courant (sinon « Enregistrer sous ») ─
 async function fsSaveProject() {
-  if (!fsSupported()) { saveProject(); return; } // repli : download
+  if (!fsSupported()) { if (await _fsTrySaveOpfs()) return; saveProject(); return; } // OPFS (FF/Safari) sinon download
   try {
     if (!_fsHandle) {
       // Dossier de projets partagé (configuré sur le dashboard) : enregistrer
@@ -24561,11 +24561,62 @@ async function fsWriteBackup() {
   }
 }
 
+// ── OPFS (Firefox/Safari) : dossier de projets persistant du navigateur ─────
+async function _fsOpfsDir() {
+  if (!(navigator.storage && navigator.storage.getDirectory)) return null;
+  const root = await navigator.storage.getDirectory();
+  return await root.getDirectoryHandle('scrivaelo-projects', { create: true });
+}
+async function _fsTrySaveOpfs() {
+  try {
+    const dir = await _fsOpfsDir();
+    if (!dir) return false;
+    const fh = await dir.getFileHandle(_fsProjectFileName(), { create: true });
+    const data = collectProjectData();
+    await _fsWrite(fh, JSON.stringify(data, null, 2));
+    _fsHandle = fh;
+    _fsUpdateButton();
+    if (typeof currentProject !== 'undefined' && currentProject) currentProject.derniereSauvegarde = data.meta.derniereSauvegarde;
+    if (typeof markSaved === 'function') markSaved();
+    _fsToast('\uD83D\uDCBE Enregistr\u00e9 (stockage local) : ' + _fsProjectFileName());
+    return true;
+  } catch (e) { console.warn('OPFS save \u00e9chec :', e); return false; }
+}
+// ── Ouvrir le projet transmis par le tableau de bord (double-clic) ──────────
+async function _fsOpenOnLoad() {
+  try {
+    const fileName = await _fsIdbGet('openOnLoad');
+    if (!fileName) return;
+    try { await _fsIdbSet('openOnLoad', null); } catch (e) {}
+    let dir = null;
+    try {
+      const nat = await _fsIdbGet('projectsDir');
+      if (nat) {
+        if (typeof nat.queryPermission !== 'function') dir = nat;          // handle OPFS stocke
+        else if (await _fsHasPermission(nat, false)) dir = nat;            // dossier disque (permission ok)
+      }
+    } catch (e) {}
+    if (!dir) dir = await _fsOpfsDir();
+    if (!dir) return;
+    const fh = await dir.getFileHandle(fileName);
+    const file = await fh.getFile();
+    const data = JSON.parse(await file.text());
+    applyProjectData(data, file.name);
+    _fsHandle = fh;
+    _fsUpdateButton();
+    if (typeof markSaved === 'function') markSaved();
+    const _pm = document.getElementById('project-modal');
+    if (_pm) _pm.classList.remove('open');
+    _fsToast('\uD83D\uDCC2 Projet ouvert : ' + file.name);
+  } catch (e) { console.warn('openOnLoad \u00e9chec :', e); }
+}
+
 // Init : état du bouton + restauration du dossier de backups au chargement.
 if (typeof document !== 'undefined') {
   const _fsInit = function () {
     try { _fsUpdateButton(); } catch (e) {}
     try { _fsRestoreBackupDir(); } catch (e) {}
+    try { setTimeout(_fsOpenOnLoad, 350); } catch (e) {}
   };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _fsInit);
