@@ -2552,8 +2552,8 @@ async function printPDF() {
   try {
     // ── 1. Charger pdfmake si absent ───────────────────────────────────────
     if (typeof pdfMake === 'undefined') {
-      await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js');
-      await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/vfs_fonts.min.js');
+      await _loadScript('https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/pdfmake.min.js');
+      await _loadScript('https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/vfs_fonts.js');
     }
     // ── Polices embarquées (woff latin) ─────────────────────────────────────
     pdfMake.vfs = pdfMake.vfs || {};
@@ -3302,7 +3302,7 @@ async function _exportWordCore() {
 
   function flushSection(props = null) {
     if (current.length) {
-      const base = props || pageProps(PD.w, PD.h, PD.mT, PD.mB, PD.mL, PD.mR);
+      const base = props || pageProps(PD.pageW, PD.pageH, PD.padTop, PD.padBot, PD.padLeft, PD.padRight);
       sections.push({ ...base, children: current });
       current = [];
     }
@@ -3334,12 +3334,12 @@ async function _exportWordCore() {
           if (isFullPg) {
             // ── Image pleine page : section dédiée ─────
             flushSection();
-            const iMT = imgDat.marginTop  != null ? imgDat.marginTop  : PD.mT;
-            const iMB = imgDat.marginBot  != null ? imgDat.marginBot  : PD.mB;
-            const iML = imgDat.marginLeft != null ? imgDat.marginLeft : PD.mL;
-            const iMR = imgDat.marginRight!= null ? imgDat.marginRight: PD.mR;
-            const iZW = PD.w - iML - iMR;   // mm
-            const iZH = PD.h - iMT - iMB;   // mm
+            const iMT = imgDat.marginTop  != null ? imgDat.marginTop  : PD.padTop;
+            const iMB = imgDat.marginBot  != null ? imgDat.marginBot  : PD.padBot;
+            const iML = imgDat.marginLeft != null ? imgDat.marginLeft : PD.padLeft;
+            const iMR = imgDat.marginRight!= null ? imgDat.marginRight: PD.padRight;
+            const iZW = PD.pageW - iML - iMR;   // mm
+            const iZH = PD.pageH - iMT - iMB;   // mm
             const pct = (imgDat.width || 100) / 100;
             const rot = ((imgDat.rotation || 0) % 360 + 360) % 360;
 
@@ -3373,7 +3373,7 @@ async function _exportWordCore() {
               spacing: { before: mm2t(vMarginMm), after: 0 },
             });
 
-            const pgProps = pageProps(PD.w, PD.h, iMT, iMB, iML, iMR);
+            const pgProps = pageProps(PD.pageW, PD.pageH, iMT, iMB, iML, iMR);
             sections.push({ ...pgProps, children: [imgPg] });
             // La section suivante repart à zéro (current est déjà vide)
           } else {
@@ -3424,7 +3424,7 @@ async function _exportWordCore() {
 
   // Sécurité : si aucune section (texte vide après trim), créer une section vide
   if (!sections.length) {
-    const base = pageProps(PD.w, PD.h, PD.mT, PD.mB, PD.mL, PD.mR);
+    const base = pageProps(PD.pageW, PD.pageH, PD.padTop, PD.padBot, PD.padLeft, PD.padRight);
     sections.push({ ...base, children: [new Paragraph({ children:[] })] });
   }
 
