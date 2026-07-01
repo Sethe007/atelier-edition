@@ -893,3 +893,38 @@ html body #sb-pane-notes .notes-refresh-btn {
   font-size: 14px !important; transition: background .12s, color .12s !important;
 }
 html body #sb-pane-notes .notes-refresh-btn:hover { background: color-mix(in srgb, var(--ink) 6%, transparent) !important; color: var(--ink) !important; }
+
+/* ══════════════════════════════════════════════════════════
+   MODALE ANALYSE IA DU PASSAGE (#ai-analyze-modal) — thème-aware
+   ══════════════════════════════════════════════════════════ */
+#ai-analyze-modal .modal-box.aiaz-box { max-width: 640px !important; width: 92% !important; }
+.aiaz-sel-label {
+  font-size: 10px !important; font-weight: 700 !important; letter-spacing: .08em !important;
+  text-transform: uppercase !important; color: var(--ink-muted) !important; margin: 6px 0 3px !important;
+}
+.aiaz-sel {
+  max-height: 100px !important; overflow-y: auto !important;
+  font-family: 'Source Serif 4', Georgia, serif !important; font-size: 12.5px !important; line-height: 1.5 !important;
+  color: var(--ink-soft) !important; background: var(--paper) !important;
+  border: 1px solid var(--cream) !important; border-left: 3px solid var(--accent-light) !important;
+  border-radius: 0 6px 6px 0 !important; padding: 8px 10px !important; margin-bottom: 10px !important;
+  white-space: pre-wrap !important;
+}
+.aiaz-actions { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; margin-bottom: 10px !important; }
+.aiaz-act {
+  flex: 1 1 auto !important; min-width: 112px !important; padding: 7px 10px !important;
+  border-radius: 6px !important; cursor: pointer !important;
+  font-family: 'DM Sans', sans-serif !important; font-size: 12px !important; font-weight: 500 !important;
+  background: var(--paper) !important; color: var(--accent) !important; border: 1px solid var(--accent) !important;
+  transition: background .12s, color .12s !important;
+}
+.aiaz-act:hover { background: var(--accent) !important; color: #fff !important; }
+.aiaz-result {
+  min-height: 90px !important; max-height: 46vh !important; overflow-y: auto !important;
+  font-size: 12.5px !important; line-height: 1.65 !important; color: var(--ink) !important;
+  background: var(--parchment) !important; border: 1px solid var(--cream) !important;
+  border-radius: 6px !important; padding: 10px 12px !important; margin-bottom: 4px !important;
+}
+.aiaz-result h1, .aiaz-result h2, .aiaz-result h3, .aiaz-result h4 { color: var(--ink) !important; }
+.aiaz-hint, .aiaz-loading { color: var(--ink-muted) !important; font-style: italic !important; font-size: 12px !important; }
+.aiaz-error { color: #dc2626 !important; font-size: 12px !important; }

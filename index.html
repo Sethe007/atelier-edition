@@ -505,6 +505,7 @@
             <button class="wt-run-btn" id="wt-btn-style"    onclick="runStyleAnalysis()" style="flex:1;margin:0;" data-i18n="btn_style_analyze">📊 Style</button>
             <button class="wt-run-btn" id="wt-btn-style-ai" onclick="runStyleAI()"       style="flex:1;margin:0;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_style_ai">✦ IA</button>
           </div>
+          <button class="wt-run-btn" id="wt-btn-ai-passage" onclick="aiAnalyzeSelection()" style="width:100%;margin:6px 0 4px;background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500;" data-i18n="btn_ai_passage">✦ Analyser la sélection avec l'IA</button>
           <div id="wt-style-ai-box" style="display:none;margin-bottom:8px;padding:10px 12px;background:var(--parchment);border:1px solid var(--cream);border-radius:6px;font-size:11.5px;line-height:1.7;color:var(--ink-soft);"></div>
           <div id="wt-style-results">
             <div class="wt-empty wt-intro">
@@ -781,6 +782,13 @@
             </button>
 
             <div class="actx-sep"></div>
+
+            <!-- ── Assistant IA ── -->
+            <div class="actx-section-label actx-sel-only" data-i18n="actx_ai_label">✦ Assistant IA</div>
+            <button class="actx-item actx-sel-only" id="actx-ai-analyze" onclick="aiAnalyzeSelection()">
+              <span class="actx-item-left" data-i18n="ctx_ai_analyze">✦ Analyser avec l'IA</span>
+            </button>
+            <div class="actx-sep actx-sel-only"></div>
 
             <!-- ── Édition ── -->
             <div class="actx-section-label" data-i18n="ctx_section_edit">Édition</div>
@@ -1641,6 +1649,29 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
         <button class="btn btn-ghost" style="color:var(--ink-soft);border-color:var(--cream);" onclick="iaPropConfirmClose()" data-i18n="iap_cancel">Annuler</button>
         <button class="btn btn-accent" onclick="iaPropDoReplace()" data-i18n="iap_confirmbtn">Confirmer le remplacement</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE ANALYSE IA DU PASSAGE -->
+<div class="modal-overlay" id="ai-analyze-modal" role="dialog" aria-modal="true" aria-labelledby="aiaz-title-h" onclick="if(event.target===this)closeAiAnalyze()">
+  <div class="modal-box aiaz-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+      <h3 id="aiaz-title-h" data-i18n="aiaz_title" style="margin:0;">✦ Analyse IA du passage</h3>
+      <button class="btn btn-ghost" style="padding:2px 9px;color:var(--ink-soft);border-color:var(--cream);" onclick="closeAiAnalyze()" aria-label="Fermer">✕</button>
+    </div>
+    <div class="aiaz-sel-label" data-i18n="aiaz_sel_label">Passage sélectionné</div>
+    <div class="aiaz-sel" id="aiaz-sel"></div>
+    <div class="aiaz-actions">
+      <button class="aiaz-act" onclick="aiAnalyzeRun('analyse')" data-i18n="aiaz_act_analyse">🔍 Analyser</button>
+      <button class="aiaz-act" onclick="aiAnalyzeRun('reformulate')" data-i18n="aiaz_act_reformulate">🔄 Reformuler</button>
+      <button class="aiaz-act" onclick="aiAnalyzeRun('tighten')" data-i18n="aiaz_act_tighten">✂ Resserrer</button>
+      <button class="aiaz-act" onclick="aiAnalyzeRun('enrich')" data-i18n="aiaz_act_enrich">🎨 Enrichir</button>
+    </div>
+    <div class="aiaz-result" id="aiaz-result"><div class="aiaz-hint" data-i18n="aiaz_pick">Choisissez une action ci-dessus.</div></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="color:var(--ink-soft);border-color:var(--cream);" onclick="aiAnalyzeCopy()" data-i18n="aiaz_copy">⎘ Copier le résultat</button>
+      <button class="btn btn-ghost" style="color:var(--ink-soft);border-color:var(--cream);" onclick="closeAiAnalyze()" data-i18n="aiaz_close">Fermer</button>
     </div>
   </div>
 </div>

@@ -12374,6 +12374,24 @@ var _i18n = {
 
   // ── FRANÇAIS ──────────────────────────────────────────────────────────────
   fr: {
+    actx_ai_label: '✦ Assistant IA',
+    ctx_ai_analyze: '✦ Analyser avec l\'IA',
+    btn_ai_passage: '✦ Analyser la sélection (IA)',
+    aiaz_title: '✦ Analyse IA du passage',
+    aiaz_sel_label: 'Passage sélectionné',
+    aiaz_act_analyse: '🔍 Analyser',
+    aiaz_act_reformulate: '🔄 Reformuler',
+    aiaz_act_tighten: '✂ Resserrer',
+    aiaz_act_enrich: '🎨 Enrichir',
+    aiaz_pick: 'Choisissez une action ci-dessus.',
+    aiaz_copy: '⎘ Copier le résultat',
+    aiaz_close: 'Fermer',
+    aiaz_no_selection: 'Sélectionnez d\'abord un passage à analyser.',
+    aiaz_loading: '✦ L\'IA réfléchit…',
+    aiaz_no_response: 'Aucune réponse de l\'IA.',
+    aiaz_nothing_copy: 'Rien à copier.',
+    aiaz_copied: 'Résultat copié',
+    aiaz_copy_fail: 'Copie impossible.',
     // ── fragments restants ──
     wt_syn_hint: "Sélectionnez un mot dans l'éditeur ou tapez-le ci-dessus.",
     ctx_info_1: "ℹ️ Le contexte de l'œuvre (fiche Œuvre, personnages, lieux) est injecté automatiquement — inutile de le réécrire dans les prompts.",
@@ -13317,6 +13335,24 @@ var _i18n = {
 
   // ── ENGLISH ────────────────────────────────────────────────────────────────
   en: {
+    actx_ai_label: '✦ AI assistant',
+    ctx_ai_analyze: '✦ Analyze with AI',
+    btn_ai_passage: '✦ Analyze selection (AI)',
+    aiaz_title: '✦ AI passage analysis',
+    aiaz_sel_label: 'Selected passage',
+    aiaz_act_analyse: '🔍 Analyze',
+    aiaz_act_reformulate: '🔄 Rephrase',
+    aiaz_act_tighten: '✂ Tighten',
+    aiaz_act_enrich: '🎨 Enrich',
+    aiaz_pick: 'Pick an action above.',
+    aiaz_copy: '⎘ Copy result',
+    aiaz_close: 'Close',
+    aiaz_no_selection: 'Select a passage to analyze first.',
+    aiaz_loading: '✦ The AI is thinking…',
+    aiaz_no_response: 'No response from the AI.',
+    aiaz_nothing_copy: 'Nothing to copy.',
+    aiaz_copied: 'Result copied',
+    aiaz_copy_fail: 'Copy failed.',
     // ── fragments restants ──
     wt_syn_hint: "Select a word in the editor or type it above.",
     ctx_info_1: "ℹ️ The work's context (Work sheet, characters, locations) is injected automatically — no need to rewrite it in the prompts.",
@@ -14293,6 +14329,24 @@ var _i18n = {
     search_all_title:          'Search the entire project (Ctrl+Shift+G)',
   // ── ESPAÑOL ────────────────────────────────────────────────────────────────
   es: {
+    actx_ai_label: '✦ Asistente IA',
+    ctx_ai_analyze: '✦ Analizar con IA',
+    btn_ai_passage: '✦ Analizar la selección (IA)',
+    aiaz_title: '✦ Análisis IA del pasaje',
+    aiaz_sel_label: 'Pasaje seleccionado',
+    aiaz_act_analyse: '🔍 Analizar',
+    aiaz_act_reformulate: '🔄 Reformular',
+    aiaz_act_tighten: '✂ Condensar',
+    aiaz_act_enrich: '🎨 Enriquecer',
+    aiaz_pick: 'Elija una acción arriba.',
+    aiaz_copy: '⎘ Copiar resultado',
+    aiaz_close: 'Cerrar',
+    aiaz_no_selection: 'Seleccione primero un pasaje para analizar.',
+    aiaz_loading: '✦ La IA está pensando…',
+    aiaz_no_response: 'Sin respuesta de la IA.',
+    aiaz_nothing_copy: 'Nada que copiar.',
+    aiaz_copied: 'Resultado copiado',
+    aiaz_copy_fail: 'No se pudo copiar.',
     // ── fragments restants ──
     wt_syn_hint: "Seleccione una palabra en el editor o escríbala arriba.",
     ctx_info_1: "ℹ️ El contexto de la obra (ficha de Obra, personajes, lugares) se inyecta automáticamente — no hace falta reescribirlo en los prompts.",
@@ -15271,6 +15325,24 @@ var _i18n = {
 
   // ── DEUTSCH ─────────────────────────────────────────────────────────────────
   de: {
+    actx_ai_label: '✦ KI-Assistent',
+    ctx_ai_analyze: '✦ Mit KI analysieren',
+    btn_ai_passage: '✦ Auswahl analysieren (KI)',
+    aiaz_title: '✦ KI-Analyse der Passage',
+    aiaz_sel_label: 'Ausgewählte Passage',
+    aiaz_act_analyse: '🔍 Analysieren',
+    aiaz_act_reformulate: '🔄 Umformulieren',
+    aiaz_act_tighten: '✂ Straffen',
+    aiaz_act_enrich: '🎨 Anreichern',
+    aiaz_pick: 'Wählen Sie oben eine Aktion.',
+    aiaz_copy: '⎘ Ergebnis kopieren',
+    aiaz_close: 'Schließen',
+    aiaz_no_selection: 'Wählen Sie zuerst eine Passage aus.',
+    aiaz_loading: '✦ Die KI denkt nach…',
+    aiaz_no_response: 'Keine Antwort der KI.',
+    aiaz_nothing_copy: 'Nichts zu kopieren.',
+    aiaz_copied: 'Ergebnis kopiert',
+    aiaz_copy_fail: 'Kopieren fehlgeschlagen.',
     // ── fragments restants ──
     wt_syn_hint: "Wählen Sie ein Wort im Editor oder tippen Sie es oben ein.",
     ctx_info_1: "ℹ️ Der Werkkontext (Werk-Datenblatt, Figuren, Orte) wird automatisch eingefügt — kein erneutes Schreiben in den Prompts nötig.",
@@ -16182,6 +16254,24 @@ var _i18n = {
 
   // ── ITALIANO ────────────────────────────────────────────────────────────────
   it: {
+    actx_ai_label: '✦ Assistente IA',
+    ctx_ai_analyze: '✦ Analizza con l\'IA',
+    btn_ai_passage: '✦ Analizza la selezione (IA)',
+    aiaz_title: '✦ Analisi IA del passaggio',
+    aiaz_sel_label: 'Passaggio selezionato',
+    aiaz_act_analyse: '🔍 Analizza',
+    aiaz_act_reformulate: '🔄 Riformulare',
+    aiaz_act_tighten: '✂ Condensare',
+    aiaz_act_enrich: '🎨 Arricchire',
+    aiaz_pick: 'Scegli un\'azione qui sopra.',
+    aiaz_copy: '⎘ Copia risultato',
+    aiaz_close: 'Chiudi',
+    aiaz_no_selection: 'Seleziona prima un passaggio da analizzare.',
+    aiaz_loading: '✦ L\'IA sta pensando…',
+    aiaz_no_response: 'Nessuna risposta dall\'IA.',
+    aiaz_nothing_copy: 'Niente da copiare.',
+    aiaz_copied: 'Risultato copiato',
+    aiaz_copy_fail: 'Copia non riuscita.',
     // ── fragments restants ──
     wt_syn_hint: "Seleziona una parola nell'editor o digitala sopra.",
     ctx_info_1: "ℹ️ Il contesto dell'opera (scheda Opera, personaggi, luoghi) viene inserito automaticamente — non serve riscriverlo nei prompt.",
@@ -17089,6 +17179,24 @@ var _i18n = {
 
   // ── PORTUGUÊS ───────────────────────────────────────────────────────────────
   pt: {
+    actx_ai_label: '✦ Assistente IA',
+    ctx_ai_analyze: '✦ Analisar com IA',
+    btn_ai_passage: '✦ Analisar a seleção (IA)',
+    aiaz_title: '✦ Análise IA do trecho',
+    aiaz_sel_label: 'Trecho selecionado',
+    aiaz_act_analyse: '🔍 Analisar',
+    aiaz_act_reformulate: '🔄 Reformular',
+    aiaz_act_tighten: '✂ Condensar',
+    aiaz_act_enrich: '🎨 Enriquecer',
+    aiaz_pick: 'Escolha uma ação acima.',
+    aiaz_copy: '⎘ Copiar resultado',
+    aiaz_close: 'Fechar',
+    aiaz_no_selection: 'Selecione primeiro um trecho para analisar.',
+    aiaz_loading: '✦ A IA está pensando…',
+    aiaz_no_response: 'Sem resposta da IA.',
+    aiaz_nothing_copy: 'Nada para copiar.',
+    aiaz_copied: 'Resultado copiado',
+    aiaz_copy_fail: 'Falha ao copiar.',
     // ── fragments restants ──
     wt_syn_hint: "Selecione uma palavra no editor ou digite-a acima.",
     ctx_info_1: "ℹ️ O contexto da obra (ficha da Obra, personagens, locais) é injetado automaticamente — não é preciso reescrevê-lo nos prompts.",
@@ -17997,6 +18105,61 @@ var _i18n = {
 
 // ── Helper : traduction courte ─────────────────────────────────────────────────
 // Usage : _t('key') → string dans la langue courante de l'interface
+// ── Assistant IA : analyse / reformulation d'un passage selectionne ─────────
+var _aiazSelection = '';
+var _aiazLastResult = '';
+function _aiazGetSelection() {
+  const ta = document.getElementById('raw-input');
+  if (ta && typeof ta.selectionStart === 'number' && ta.selectionEnd > ta.selectionStart) {
+    return ta.value.slice(ta.selectionStart, ta.selectionEnd).trim();
+  }
+  try { const w = String(window.getSelection ? window.getSelection() : '').trim(); if (w) return w; } catch (e) {}
+  return '';
+}
+function aiAnalyzeSelection() {
+  try { document.getElementById('annot-ctx-menu')?.classList.remove('open'); } catch (e) {}
+  const sel = _aiazGetSelection();
+  if (!sel) { showToast(_t('aiaz_no_selection'), 3000, 'error'); return; }
+  _aiazSelection = sel;
+  _aiazLastResult = '';
+  const selBox = document.getElementById('aiaz-sel');
+  if (selBox) selBox.textContent = sel.length > 600 ? sel.slice(0, 600) + '…' : sel;
+  const res = document.getElementById('aiaz-result');
+  if (res) res.innerHTML = '<div class="aiaz-hint">' + escHtml(_t('aiaz_pick')) + '</div>';
+  document.getElementById('ai-analyze-modal')?.classList.add('open');
+}
+function closeAiAnalyze() {
+  try { if (typeof cancelCurrentAI === 'function') cancelCurrentAI(); } catch (e) {}
+  document.getElementById('ai-analyze-modal')?.classList.remove('open');
+}
+async function aiAnalyzeRun(mode) {
+  const box = document.getElementById('aiaz-result');
+  if (!box) return;
+  if (!_aiazSelection) { showToast(_t('aiaz_no_selection'), 3000, 'error'); return; }
+  box.innerHTML = '<div class="aiaz-loading">' + escHtml(_t('aiaz_loading')) + '</div>';
+  const instr = {
+    analyse:     "Analyse ce passage : points forts, faiblesses (clarte, rythme, repetitions, cliches, coherence du registre), en quelques puces breves.",
+    reformulate: "Propose 3 reformulations distinctes de ce passage, sens preserve, styles varies (plus fluide, plus litteraire, plus direct). Numerote-les.",
+    tighten:     "Propose une version resserree et plus percutante de ce passage, sans perte de sens, puis indique en une ligne ce que tu as coupe.",
+    enrich:      "Propose une version enrichie de ce passage (images, precision sensorielle, profondeur) sans le surcharger, puis explique brievement tes ajouts."
+  }[mode] || '';
+  const sys = "Tu es un editeur litteraire et coach d'ecriture, exigeant et bienveillant. " + instr +
+              " Reste concis et structure en Markdown (titres courts, listes). Ne reecris jamais tout sans raison.";
+  try {
+    const result = await callAI(sys, _aiazSelection.slice(0, 4000), 900);
+    if (!result || result.error) throw new Error((result && result.error) ? result.error : _t('aiaz_no_response'));
+    _aiazLastResult = String(result).trim();
+    box.innerHTML = renderAiLines(_aiazLastResult.split('\n'));
+  } catch (e) {
+    box.innerHTML = '<div class="aiaz-error">⚠ ' + escHtml(e.message || String(e)) + '</div>';
+  }
+}
+function aiAnalyzeCopy() {
+  if (!_aiazLastResult) { showToast(_t('aiaz_nothing_copy'), 2500, 'error'); return; }
+  try { navigator.clipboard.writeText(_aiazLastResult); showToast('⎘ ' + _t('aiaz_copied')); }
+  catch (e) { showToast(_t('aiaz_copy_fail'), 2500, 'error'); }
+}
+
 function _t(key) {
   const lang = (typeof getPref === 'function') ? (getPref('ui_lang') || 'fr') : 'fr';
   const _EN = _i18n['en'], _FR = _i18n['fr'];
