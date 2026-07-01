@@ -3649,6 +3649,7 @@ function addPerso(data = {}) {
   );
 
   card.innerHTML = header + s1 + s2 + s3 + s4 + s5 + s6;
+  card._orig = data || {};
   list.appendChild(card);
   markUnsaved();
 }
@@ -3661,6 +3662,7 @@ function removePerso(id) {
 function getPersos() {
   const cards = document.querySelectorAll('#perso-list > div[id^="perso-"]');
   return [...cards].map(card => ({
+    ...(card._orig || {}),
     nom:              card.querySelector('[data-field="nom"]')?.value?.trim()              || '',
     variantes:        card.querySelector('[data-field="variantes"]')?.value?.trim()        || '',
     role_narratif:    card.querySelector('[data-field="role_narratif"]')?.value?.trim()    || '',
