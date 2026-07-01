@@ -874,8 +874,17 @@ function isSceneBreak(line) {
 }
 
 // ── FORMATAGE PRINCIPAL ────────────────────────────────
+// Reflete l'interligne du format actif dans l'editeur (previsualisation) :
+// ex. double interligne (2.0) en format soumission editeur.
+function _syncEditorLineHeight() {
+  const ri = document.getElementById('raw-input');
+  if (!ri) return;
+  try { ri.style.lineHeight = String(getPageDims().lh); } catch (e) {}
+}
+
 function formatRoman() {
   _resetRenderNoteIdx();
+  _syncEditorLineHeight();
   const raw = getDomVal('raw-input');
   if (!raw.trim()) { paginateNodes([], []); return; }
 
