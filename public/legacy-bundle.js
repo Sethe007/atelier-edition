@@ -18144,7 +18144,7 @@ async function aiAnalyzeRun(mode) {
     enrich:      "Propose une version enrichie de ce passage (images, precision sensorielle, profondeur) sans le surcharger, puis explique brievement tes ajouts."
   }[mode] || '';
   const sys = "Tu es un editeur litteraire et coach d'ecriture, exigeant et bienveillant. " + instr +
-              " Reste concis et structure en Markdown (titres courts, listes). Ne reecris jamais tout sans raison.";
+              " Structure ta reponse avec des libelles en gras (**Libelle :**), des puces et des listes numerotees ; n utilise PAS de titres Markdown (#). Reste concis. Ne reecris jamais tout sans raison.";
   try {
     const result = await callAI(sys, _aiazSelection.slice(0, 4000), 900);
     if (!result || result.error) throw new Error((result && result.error) ? result.error : _t('aiaz_no_response'));
