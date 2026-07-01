@@ -879,7 +879,7 @@ function isSceneBreak(line) {
 function _syncEditorLineHeight() {
   const ri = document.getElementById('raw-input');
   if (!ri) return;
-  try { ri.style.lineHeight = String(getPageDims().lh); } catch (e) {}
+  try { ri.style.setProperty('line-height', String(getPageDims().lh), 'important'); } catch (e) {}
 }
 
 function formatRoman() {
