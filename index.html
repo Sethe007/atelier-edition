@@ -502,14 +502,14 @@
         <!-- TAB: STYLE -->
         <div id="wt-pane-style" style="display:none;">
           <div style="display:flex;gap:6px;margin-bottom:2px;">
-            <button class="wt-run-btn" id="wt-btn-style"    onclick="runStyleAnalysis()" style="flex:1;margin:0;" data-i18n="btn_style_analyze">📊 Style</button>
+            <button class="wt-run-btn" id="wt-btn-style"    onclick="runStyleAnalysis()" style="flex:1;margin:0;display:none;" data-i18n="btn_style_analyze">📊 Style</button>
             <button class="wt-run-btn" id="wt-btn-style-ai" onclick="runStyleAI()"       style="flex:1;margin:0;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_style_ai">✦ IA</button>
           </div>
           <button class="wt-run-btn" id="wt-btn-ai-passage" onclick="aiAnalyzeSelection()" style="width:100%;margin:6px 0 4px;background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500;" data-i18n="btn_ai_passage">✦ Analyser la sélection avec l'IA</button>
           <div id="wt-style-ai-box" style="display:none;margin-bottom:8px;padding:10px 12px;background:var(--parchment);border:1px solid var(--cream);border-radius:6px;font-size:11.5px;line-height:1.7;color:var(--ink-soft);"></div>
           <div id="wt-style-results">
             <div class="wt-empty wt-intro">
-              <div class="wt-empty-ic"><i class="ti ti-palette" aria-hidden="true"></i></div>
+              <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runStyleAnalysis()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runStyleAnalysis();}" title="Analyser le style" data-i18n-title="btn_style_analyze"><i class="ti ti-palette" aria-hidden="true"></i></div>
               <div class="wt-empty-title">Analyse de style</div>
               <div class="wt-empty-sub" data-i18n="wt_empty_style">Cliquez sur Analyser pour obtenir des statistiques de style.</div>
             </div>
