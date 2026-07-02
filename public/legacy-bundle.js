@@ -749,6 +749,11 @@ var _FOOTER_UNITS = {
   de:{mots:'Wörter',signes:'Zeichen',read:'Min. Lesezeit',chap:'Kapitel',sync:'Synchronisiert',unsync:'Nicht gespeichert'},
   it:{mots:'parole',signes:'caratteri',read:'min di lettura',chap:'Capitolo',sync:'Sincronizzato',unsync:'Non salvato'},
   pt:{mots:'palavras',signes:'caracteres',read:'min de leitura',chap:'Capítulo',sync:'Sincronizado',unsync:'Não guardado'},
+  ru:{mots:'слов',signes:'знаков',read:'мин чтения',chap:'Глава',sync:'Синхронизировано',unsync:'Не сохранено'},
+  da:{mots:'ord',signes:'tegn',read:'min læsning',chap:'Kapitel',sync:'Synkroniseret',unsync:'Ikke gemt'},
+  el:{mots:'λέξεις',signes:'χαρακτήρες',read:'λεπτά ανάγνωσης',chap:'Κεφάλαιο',sync:'Συγχρονίστηκε',unsync:'Μη αποθηκευμένο'},
+  fi:{mots:'sanaa',signes:'merkkiä',read:'min lukuaika',chap:'Luku',sync:'Synkronoitu',unsync:'Tallentamaton'},
+  hu:{mots:'szó',signes:'karakter',read:'perc olvasás',chap:'Fejezet',sync:'Szinkronizálva',unsync:'Nincs mentve'},
 };
 function _footerLang() {
   var code = (typeof getPref === 'function') ? (getPref('ui_lang') || 'fr') : 'fr';
@@ -29657,4 +29662,29 @@ if (typeof _i18n !== 'undefined') {
   Object.assign(_i18n.el || (_i18n.el={}), {"sm_key_ok": "✓ Το κλειδί διαμορφώθηκε για αυτόν τον πάροχο", "sm_key_none": "Δεν αποθηκεύτηκε κλειδί για αυτόν τον πάροχο.", "err_no_api_key": "⚠ Δεν έχει διαμορφωθεί κλειδί API. Ανοίξτε ⚙ Ρυθμίσεις → Διαμόρφωση AI, εισαγάγετε το κλειδί σας και κάντε κλικ στο 💾 Αποθήκευση.", "ia_prop_selected": "✓ Η πρόταση επιλέχθηκε — κάντε κλικ στο Αντικατάσταση.", "tb_download_title": "Λήψη του έργου σε αρχείο", "tb_saved_in": "Αποθηκεύτηκε σε: ", "ai_sw_empty": "Δεν έχει διαμορφωθεί AI.<br>Προσθέστε ένα κλειδί API στις ρυθμίσεις."});
   Object.assign(_i18n.fi || (_i18n.fi={}), {"sm_key_ok": "✓ Avain määritetty tälle palveluntarjoajalle", "sm_key_none": "Tälle palveluntarjoajalle ei ole tallennettu avainta.", "err_no_api_key": "⚠ API-avainta ei ole määritetty. Avaa ⚙ Asetukset → Tekoälyn määritys, anna avaimesi ja napsauta 💾 Tallenna.", "ia_prop_selected": "✓ Ehdotus valittu — napsauta Korvaa.", "tb_download_title": "Lataa projekti tiedostoon", "tb_saved_in": "Tallennettu kohteeseen: ", "ai_sw_empty": "Tekoälyä ei ole määritetty.<br>Lisää API-avain asetuksiin."});
   Object.assign(_i18n.hu || (_i18n.hu={}), {"sm_key_ok": "✓ Kulcs beállítva ehhez a szolgáltatóhoz", "sm_key_none": "Nincs mentett kulcs ehhez a szolgáltatóhoz.", "err_no_api_key": "⚠ Nincs beállítva API-kulcs. Nyisd meg a ⚙ Beállítások → MI-konfiguráció menüt, add meg a kulcsod, és kattints a 💾 Mentés gombra.", "ia_prop_selected": "✓ Javaslat kiválasztva — kattints a Csere gombra.", "tb_download_title": "A projekt letöltése fájlba", "tb_saved_in": "Mentve ide: ", "ai_sw_empty": "Nincs MI beállítva.<br>Adj hozzá egy API-kulcsot a beállításokban."});
+}
+
+
+// ── i18n : titres modules sidebar / desc synonymes / themes / touche Echap — toutes langues ──
+if (typeof _i18n !== 'undefined') {
+  Object.assign(_i18n.fr || (_i18n.fr={}), {
+    syn_empty_desc: "Dictionnaire des synonymes et antonymes contextuels.",
+    kbd_esc: "Échap",
+    theme_ardoise: "① Ardoise Bleue & Cuivre",
+    theme_foret: "② Forêt Profonde & Or Vert",
+    theme_sepia: "③ Sépia Ancien & Or",
+    theme_art_nouveau: "④ Journal Art Nouveau",
+    theme_jour_ivoire: "⑤ Jour — Ivoire & Encre",
+    theme_jour_ardoise: "⑥ Jour — Ardoise Claire"
+  });
+  Object.assign(_i18n.en || (_i18n.en={}), {"syn_empty_desc": "Contextual dictionary of synonyms and antonyms.", "kbd_esc": "Esc", "theme_ardoise": "① Blue Slate & Copper", "theme_foret": "② Deep Forest & Green Gold", "theme_sepia": "③ Antique Sepia & Gold", "theme_art_nouveau": "④ Art Nouveau Journal", "theme_jour_ivoire": "⑤ Day — Ivory & Ink", "theme_jour_ardoise": "⑥ Day — Light Slate"});
+  Object.assign(_i18n.es || (_i18n.es={}), {"syn_empty_desc": "Diccionario contextual de sinónimos y antónimos.", "kbd_esc": "Esc", "theme_ardoise": "① Pizarra Azul y Cobre", "theme_foret": "② Bosque Profundo y Oro Verde", "theme_sepia": "③ Sepia Antiguo y Oro", "theme_art_nouveau": "④ Diario Art Nouveau", "theme_jour_ivoire": "⑤ Día — Marfil y Tinta", "theme_jour_ardoise": "⑥ Día — Pizarra Clara"});
+  Object.assign(_i18n.de || (_i18n.de={}), {"syn_empty_desc": "Kontextbezogenes Wörterbuch für Synonyme und Antonyme.", "kbd_esc": "Esc", "theme_ardoise": "① Blauer Schiefer & Kupfer", "theme_foret": "② Tiefer Wald & Grüngold", "theme_sepia": "③ Antikes Sepia & Gold", "theme_art_nouveau": "④ Jugendstil-Journal", "theme_jour_ivoire": "⑤ Tag — Elfenbein & Tinte", "theme_jour_ardoise": "⑥ Tag — Heller Schiefer"});
+  Object.assign(_i18n.it || (_i18n.it={}), {"syn_empty_desc": "Dizionario contestuale di sinonimi e contrari.", "kbd_esc": "Esc", "theme_ardoise": "① Ardesia Blu e Rame", "theme_foret": "② Foresta Profonda e Oro Verde", "theme_sepia": "③ Seppia Antico e Oro", "theme_art_nouveau": "④ Diario Art Nouveau", "theme_jour_ivoire": "⑤ Giorno — Avorio e Inchiostro", "theme_jour_ardoise": "⑥ Giorno — Ardesia Chiara"});
+  Object.assign(_i18n.pt || (_i18n.pt={}), {"syn_empty_desc": "Dicionário contextual de sinónimos e antónimos.", "kbd_esc": "Esc", "theme_ardoise": "① Ardósia Azul e Cobre", "theme_foret": "② Floresta Profunda e Ouro Verde", "theme_sepia": "③ Sépia Antigo e Ouro", "theme_art_nouveau": "④ Diário Art Nouveau", "theme_jour_ivoire": "⑤ Dia — Marfim e Tinta", "theme_jour_ardoise": "⑥ Dia — Ardósia Clara"});
+  Object.assign(_i18n.ru || (_i18n.ru={}), {"syn_empty_desc": "Контекстный словарь синонимов и антонимов.", "kbd_esc": "Esc", "theme_ardoise": "① Синий сланец и медь", "theme_foret": "② Глубокий лес и зелёное золото", "theme_sepia": "③ Старинная сепия и золото", "theme_art_nouveau": "④ Дневник ар-нуво", "theme_jour_ivoire": "⑤ День — слоновая кость и чернила", "theme_jour_ardoise": "⑥ День — светлый сланец"});
+  Object.assign(_i18n.da || (_i18n.da={}), {"syn_empty_desc": "Kontekstuel ordbog over synonymer og antonymer.", "kbd_esc": "Esc", "theme_ardoise": "① Blå skifer & kobber", "theme_foret": "② Dyb skov & grønt guld", "theme_sepia": "③ Antik sepia & guld", "theme_art_nouveau": "④ Art Nouveau-journal", "theme_jour_ivoire": "⑤ Dag — elfenben & blæk", "theme_jour_ardoise": "⑥ Dag — lys skifer"});
+  Object.assign(_i18n.el || (_i18n.el={}), {"syn_empty_desc": "Συμφραστικό λεξικό συνωνύμων και αντωνύμων.", "kbd_esc": "Esc", "theme_ardoise": "① Μπλε σχιστόλιθος & χαλκός", "theme_foret": "② Βαθύ δάσος & πράσινο χρυσό", "theme_sepia": "③ Παλαιά σέπια & χρυσό", "theme_art_nouveau": "④ Ημερολόγιο Αρ Νουβό", "theme_jour_ivoire": "⑤ Μέρα — ελεφαντόδοντο & μελάνι", "theme_jour_ardoise": "⑥ Μέρα — ανοιχτός σχιστόλιθος"});
+  Object.assign(_i18n.fi || (_i18n.fi={}), {"syn_empty_desc": "Kontekstuaalinen synonyymien ja antonyymien sanakirja.", "kbd_esc": "Esc", "theme_ardoise": "① Sininen liuske & kupari", "theme_foret": "② Syvä metsä & vihreä kulta", "theme_sepia": "③ Antiikkiseepia & kulta", "theme_art_nouveau": "④ Art nouveau -päiväkirja", "theme_jour_ivoire": "⑤ Päivä — norsunluu & muste", "theme_jour_ardoise": "⑥ Päivä — vaalea liuske"});
+  Object.assign(_i18n.hu || (_i18n.hu={}), {"syn_empty_desc": "Szinonimák és antonimák kontextuális szótára.", "kbd_esc": "Esc", "theme_ardoise": "① Kék pala & réz", "theme_foret": "② Mély erdő & zöld arany", "theme_sepia": "③ Antik szépia & arany", "theme_art_nouveau": "④ Art nouveau napló", "theme_jour_ivoire": "⑤ Nappal — elefántcsont & tinta", "theme_jour_ardoise": "⑥ Nappal — vaalea pala"});
 }

@@ -493,7 +493,7 @@
           <div id="wt-correct-results">
             <div class="wt-empty wt-intro">
               <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runCorrector()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runCorrector();}" title="Analyser le texte" data-i18n-title="btn_analyze"><i class="ti ti-writing-sign" aria-hidden="true"></i></div>
-              <div class="wt-empty-title">Correcteur</div>
+              <div class="wt-empty-title" data-i18n="nrb_correct_title">Correcteur</div>
               <div class="wt-empty-sub" data-i18n="wt_empty_correct_full">Cliquez sur Analyser pour lancer la vérification.</div>
             </div>
           </div>
@@ -509,7 +509,7 @@
           <div id="wt-style-results">
             <div class="wt-empty wt-intro">
               <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runStyleAnalysis()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runStyleAnalysis();}" title="Analyser le style" data-i18n-title="btn_style_analyze"><i class="ti ti-palette" aria-hidden="true"></i></div>
-              <div class="wt-empty-title">Analyse de style</div>
+              <div class="wt-empty-title" data-i18n="nrb_style_title">Analyse de style</div>
               <div class="wt-empty-sub" data-i18n="wt_empty_style">Cliquez sur Analyser pour obtenir des statistiques de style.</div>
             </div>
           </div>
@@ -525,7 +525,7 @@
           <div id="wt-stats-results">
             <div class="wt-empty wt-intro">
               <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runStatsAnalysis()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runStatsAnalysis();}" title="Calculer les statistiques" data-i18n-title="btn_stats_calc"><i class="ti ti-chart-histogram" aria-hidden="true"></i></div>
-              <div class="wt-empty-title">Statistiques avancées</div>
+              <div class="wt-empty-title" data-i18n="nrb_stats_adv_title">Statistiques avancées</div>
               <div class="wt-empty-sub" data-i18n="wt_empty_stats">Cliquez pour obtenir des statistiques détaillées.</div>
             </div>
           </div>
@@ -553,8 +553,8 @@
           <!-- Résultats -->
           <div id="wt-syn-results"><div class="wt-empty wt-intro">
             <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runSynonyms()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runSynonyms();}" title="Chercher les synonymes" data-i18n-title="btn_syn_search"><i class="ti ti-vocabulary" aria-hidden="true"></i></div>
-            <div class="wt-empty-title">Synonymes</div>
-            <div class="wt-empty-sub">Dictionnaire des synonymes et antonymes contextuels.</div>
+            <div class="wt-empty-title" data-i18n="nrb_syn_title">Synonymes</div>
+            <div class="wt-empty-sub" data-i18n="syn_empty_desc">Dictionnaire des synonymes et antonymes contextuels.</div>
           </div></div>
         </div>
 
@@ -563,7 +563,7 @@
           <div id="wt-coherence-results">
             <div class="wt-empty wt-intro">
               <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runCoherenceCheck()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runCoherenceCheck();}" title="Vérifier la cohérence narrative" data-i18n-title="btn_coherence"><i class="ti ti-puzzle" aria-hidden="true"></i></div>
-              <div class="wt-empty-title">Cohérence narrative</div>
+              <div class="wt-empty-title" data-i18n="nrb_coherence_title">Cohérence narrative</div>
               <div class="wt-empty-sub" data-i18n="wt_empty_coherence">Cliquez pour analyser la cohérence de votre roman (personnages, lieux, continuité).</div>
             </div>
           </div>
@@ -582,7 +582,7 @@
           <div id="wt-rapport-results">
             <div class="wt-empty wt-intro">
               <div class="wt-empty-ic"><i class="ti ti-file-text" aria-hidden="true"></i></div>
-              <div class="wt-empty-title">Rapport éditorial</div>
+              <div class="wt-empty-title" data-i18n="module_rapport_label">Rapport éditorial</div>
               <div class="wt-empty-sub" data-i18n="wt_empty_rapport_full">Cliquez sur Générer le rapport pour lancer l'analyse complète.</div>
             </div>
           </div>
@@ -1290,12 +1290,12 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
             </div>
             <div class="pref-row-right">
               <select id="pref-theme" class="pref-select" onchange="applyTheme(this.value, true);">
-                <option value="ardoise">① Ardoise Bleue &amp; Cuivre</option>
-                <option value="foret">② Forêt Profonde &amp; Or Vert</option>
-                <option value="sepia">③ Sépia Ancien &amp; Or</option>
-                <option value="art_nouveau">④ Journal Art Nouveau</option>
-                <option value="jour_ivoire">⑤ Jour — Ivoire &amp; Encre</option>
-                <option value="jour_ardoise">⑥ Jour — Ardoise Claire</option>
+                <option value="ardoise" data-i18n="theme_ardoise">① Ardoise Bleue &amp; Cuivre</option>
+                <option value="foret" data-i18n="theme_foret">② Forêt Profonde &amp; Or Vert</option>
+                <option value="sepia" data-i18n="theme_sepia">③ Sépia Ancien &amp; Or</option>
+                <option value="art_nouveau" data-i18n="theme_art_nouveau">④ Journal Art Nouveau</option>
+                <option value="jour_ivoire" data-i18n="theme_jour_ivoire">⑤ Jour — Ivoire &amp; Encre</option>
+                <option value="jour_ardoise" data-i18n="theme_jour_ardoise">⑥ Jour — Ardoise Claire</option>
               </select>
             </div>
           </div>
@@ -1707,7 +1707,7 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
         <h4 data-i18n="help_h_search">Recherche &amp; aide</h4>
         <div class="help-row"><span data-i18n="help_gsearch">Recherche globale</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>Maj</kbd><kbd>G</kbd></span></div>
         <div class="help-row"><span data-i18n="help_help">Aide (cette fenêtre)</span><span class="help-keys"><kbd>Ctrl</kbd><kbd>?</kbd></span></div>
-        <div class="help-row"><span data-i18n="help_closewin">Fermer une fenêtre</span><span class="help-keys"><kbd>Échap</kbd></span></div>
+        <div class="help-row"><span data-i18n="help_closewin">Fermer une fenêtre</span><span class="help-keys"><kbd data-i18n="kbd_esc">Échap</kbd></span></div>
       </div>
     </div>
   </div>
