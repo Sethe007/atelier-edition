@@ -283,7 +283,7 @@ function chooseNew() {
   _projectPendingAction = 'new';
   document.getElementById('project-name-area').classList.add('visible');
   document.getElementById('project-confirm-btn').style.display = 'inline-block';
-  document.getElementById('project-confirm-btn').textContent = 'Créer le projet';
+  document.getElementById('project-confirm-btn').textContent = _t('btn_create_project');
   document.getElementById('project-skip-btn').style.display = 'inline-block';
   document.getElementById('project-name-input').focus();
 }
@@ -1846,9 +1846,9 @@ function syncSidebarToFormat() {
     indSel.value = '1em';
     fsSel.value  = '12';
     lhSel.disabled = indSel.disabled = fsSel.disabled = true;
-    lhSel.title  = 'Fixé par le format de soumission';
+    lhSel.title  = _t('format_fixed_by_submission');
     indSel.title = 'Sans tabulation en mode soumission';
-    fsSel.title  = 'Fixé par le format de soumission (12 pt)';
+    fsSel.title  = _t('format_fixed_12pt');
   } else {
     lhSel.disabled = indSel.disabled = fsSel.disabled = false;
     lhSel.title = indSel.title = fsSel.title = '';
@@ -4432,10 +4432,10 @@ function setAiProvider(prov) {
   const smStatus = document.getElementById('sm-api-status');
   if (smStatus) {
     if (_wtApiKey) {
-      smStatus.textContent = '✓ Clé configurée pour ce fournisseur';
+      smStatus.textContent = _t('sm_key_ok');
       smStatus.style.color = '#10b981';
     } else {
-      smStatus.textContent = 'Aucune clé enregistrée pour ce fournisseur.';
+      smStatus.textContent = _t('sm_key_none');
       smStatus.style.color = 'var(--ink-muted)';
     }
   }
@@ -8595,7 +8595,7 @@ async function runRapportEditorial() {
   res.innerHTML = rapportHTML;
   } finally {
     btn.disabled = false;
-    btn.textContent = '📋 Générer le rapport éditorial';
+    btn.textContent = _t('btn_rapport_footer');
   }
 }
 
@@ -10556,7 +10556,7 @@ function iaPropOpen(btnEl, type) {
     err.style.display = 'block';
     err.style.background = '#fee2e2';
     err.style.color = '#dc2626';
-    err.textContent = '⚠ Aucune clé API configurée. Ouvrez ⚙ Paramètres → Config IA, entrez votre clé et cliquez 💾 Enregistrer.';
+    err.textContent = _t('err_no_api_key');
   }
 
   document.getElementById('ia-prop-overlay').classList.add('open');
@@ -10648,7 +10648,7 @@ async function iaPropGenerate() {
         card.classList.add('selected');
         _iaProp.selected = line;
         document.getElementById('ia-prop-btn-replace').disabled = false;
-        document.getElementById('ia-prop-hint').textContent = '✓ Proposition sélectionnée — cliquez sur Remplacer.';
+        document.getElementById('ia-prop-hint').textContent = _t('ia_prop_selected');
       });
       list.appendChild(card);
     });
@@ -23774,7 +23774,7 @@ function _aiSwRenderMenu() {
   if (!list) return;
   const { active, current } = _aiSwGetActiveProviders();
   if (active.length === 0) {
-    list.innerHTML = '<div class="ai-sw-empty">Aucune IA configurée.<br>Ajoutez une clé API dans les paramètres.</div>';
+    list.innerHTML = '<div class="ai-sw-empty">' + _t('ai_sw_empty') + '</div>';
     return;
   }
   list.innerHTML = active.map(prov => {
@@ -24600,7 +24600,7 @@ function _fsUpdateButton() {
   const _F = (typeof _t === 'function') ? _t('tb_file') : 'Fichier';
   const name = _fsHandle && _fsHandle.name;
   if (name) {
-    btn.title = 'Enregistré dans : ' + name;
+    btn.title = _t('tb_saved_in') + name;
     btn.removeAttribute('data-fs-warn');
     if (span) span.textContent = _F;
   } else if (fsSupported()) {
@@ -24608,7 +24608,7 @@ function _fsUpdateButton() {
     btn.setAttribute('data-fs-warn', '1');
     if (span) span.textContent = _F + ' \u26A0';
   } else {
-    btn.title = 'Télécharger le projet dans un fichier';
+    btn.title = _t('tb_download_title');
     btn.removeAttribute('data-fs-warn');
     if (span) span.textContent = _F;
   }
@@ -24878,6 +24878,15 @@ if (typeof document !== 'undefined') {
   } else {
     _fsInit();
   }
+}
+
+
+// ── Complements i18n : cles manquantes en/de/it/pt (menu contextuel, versions, tags, coherence) ──
+if (typeof _i18n !== 'undefined') {
+Object.assign(_i18n.en || (_i18n.en={}), {"unsaved_label": "Unsaved", "project_label_prefix": "Project: ", "saved_label": "Saved", "btn_create_project": "Create project", "modal_new_project": "New project", "focus_mode_hint": "FOCUS MODE — Esc to exit", "ia_prop_generate_btn": "✦ Generate suggestions", "ia_prop_hint": "Select a suggestion to enable replacement.", "ia_prop_regenerate": "↺ Regenerate", "ia_prop_retry": "↺ Retry", "ia_generating": "Generating…", "ia_synthesizing": "Synthesizing…", "prompts_reset_confirm": "Reset all prompts to their default values?", "drag_to_reorder": "Drag to reorder", "search_all_title": "Search the entire project (Ctrl+Shift+G)"});
+Object.assign(_i18n.de || (_i18n.de={}), {"btn_export_epub": "⬇ ePub", "toast_generating_epub": "ePub-Datei wird erstellt…", "toast_epub_done": "ePub-Datei (.epub) heruntergeladen ✓", "versions_title": "Kapitelversionen", "versions_save_btn": "+ Snapshot", "versions_hint": "Speichern Sie benannte Snapshots Ihres aktiven Kapitels.", "versions_select_chapter": "— Kapitel wählen —", "versions_empty": "Noch keine Snapshots. Klicken Sie auf + Snapshot, um einen zu erstellen.", "versions_restore_btn": "↩ Wiederherstellen", "versions_saved": "Snapshot gespeichert ✓", "versions_restored": "Version wiederhergestellt ✓", "versions_select_first": "Bitte wählen Sie zuerst ein Kapitel.", "versions_no_text": "Kapiteltext nicht gefunden.", "versions_confirm_delete": "Diesen Snapshot löschen?", "versions_confirm_restore": "Diese Version wiederherstellen? Der aktuelle Kapiteltext wird ersetzt. Dies ist unwiderruflich.", "versions_label_prompt": "Snapshot-Name", "versions_chapter_not_found": "Kapitel im Text nicht gefunden.", "tags_modal_title": "🏷 Kapitel-Tags", "tags_modal_placeholder": "POV, Berlin, Adrian, Action…", "tags_modal_hint": "Trennen Sie Tags durch Kommas. Z. B.: POV:Adrian, Berlin, Action", "tags_cancel_btn": "Abbrechen", "tags_save_btn": "Speichern", "corkboard_title": "Kartenansicht — Roman", "cork_tag_filter_placeholder": "Nach Tag filtern…", "cork_empty": "Kein Kapitel erkannt. Fügen Sie Ihren Roman in den Editor ein.", "title_ai_continue": "Text per KI ab dem Cursor fortsetzen (Schlüssel erforderlich)", "ai_continue_title": "✦ KI-Fortsetzung", "ai_continue_no_context": "Platzieren Sie den Cursor in Ihrem Text.", "ai_continue_insert": "↩ Einfügen", "ai_continue_regen": "⟳ Neu generieren", "ai_continue_close": "✕ Schließen", "ai_continue_inserted": "Fortsetzung eingefügt ✓", "btn_coherence": "🧩 Narrative Konsistenz prüfen", "coherence_sub_hint": "Figuren · Orte · Kontinuität — KI erforderlich", "wt_empty_coherence": "Klicken Sie, um die Konsistenz Ihres Romans zu analysieren.", "title_tab_coherence": "Narrative Konsistenz KI", "nrb_corkboard_title": "Kartenansicht", "nrb_corkboard_desc": "Übersicht Ihres Romans — Kapitel, Status, Zusammenfassungen und Tags.", "nrb_versions_title": "Versionen", "nrb_versions_desc": "Benannte Snapshots Ihrer Kapitel, um den Schreibfortschritt zu verfolgen.", "ctx_section_clipboard": "Zwischenablage", "ctx_cut": "✂ Ausschneiden", "ctx_copy": "⎘ Kopieren", "ctx_paste": "📋 Einfügen", "ctx_copy_all": "📄 Gesamten Text kopieren", "ctx_section_edit": "Bearbeiten", "ctx_select_all": "⬜ Alles auswählen", "ctx_undo": "↩ Rückgängig", "ctx_redo": "↪ Wiederholen", "ctx_section_format": "Formatierung", "ctx_italic": "I Kursiv", "ctx_bold": "B Fett", "ctx_underline": "S Unterstrichen", "ctx_wc_word_s": "{n} Wort", "ctx_wc_words_pl": "{n} Wörter", "ctx_wc_char_s": "{n} Zeichen", "ctx_wc_chars_pl": "{n} Zeichen", "ctx_section_note": "Autorennotiz", "ctx_section_tools": "Werkzeuge", "ctx_search_word": "🔍 Im Text suchen", "ctx_search_word_preview": "🔍 Suchen « {w} »", "ctx_scene_break": "— Szenenwechsel einfügen", "ctx_image_tag": "🖼 Bild-Tag einfügen…", "ctx_toast_pasted": "📋 Text eingefügt ({n} Z.)", "ctx_toast_paste_denied": "⚠ Mit Strg+V einfügen — Zugriff auf Zwischenablage verweigert", "ctx_toast_copied_all": "📄 Gesamter Text kopiert ({n} Z.)"});
+Object.assign(_i18n.it || (_i18n.it={}), {"btn_export_epub": "⬇ ePub", "toast_generating_epub": "Generazione del file ePub…", "toast_epub_done": "File ePub (.epub) scaricato ✓", "versions_title": "Versioni del capitolo", "versions_save_btn": "+ Snapshot", "versions_hint": "Salva snapshot con nome del tuo capitolo attivo.", "versions_select_chapter": "— Scegli un capitolo —", "versions_empty": "Nessuno snapshot. Clicca su + Snapshot per crearne uno.", "versions_restore_btn": "↩ Ripristina", "versions_saved": "Snapshot salvato ✓", "versions_restored": "Versione ripristinata ✓", "versions_select_first": "Seleziona prima un capitolo.", "versions_no_text": "Testo del capitolo non trovato.", "versions_confirm_delete": "Eliminare questo snapshot?", "versions_confirm_restore": "Ripristinare questa versione? Il testo attuale del capitolo verrà sostituito. Questa azione è irreversibile.", "versions_label_prompt": "Nome dello snapshot", "versions_chapter_not_found": "Capitolo non trovato nel testo.", "tags_modal_title": "🏷 Tag del capitolo", "tags_modal_placeholder": "POV, Roma, Adrian, azione…", "tags_modal_hint": "Separa i tag con virgole. Es.: POV:Adrian, Roma, azione", "tags_cancel_btn": "Annulla", "tags_save_btn": "Salva", "corkboard_title": "Vista schede — Romanzo", "cork_tag_filter_placeholder": "Filtra per tag…", "cork_empty": "Nessun capitolo rilevato. Incolla il tuo romanzo nell'editor.", "title_ai_continue": "Continua il testo con l'IA dal cursore (chiave richiesta)", "ai_continue_title": "✦ Continuazione IA", "ai_continue_no_context": "Posiziona il cursore nel tuo testo.", "ai_continue_insert": "↩ Inserisci", "ai_continue_regen": "⟳ Rigenera", "ai_continue_close": "✕ Chiudi", "ai_continue_inserted": "Continuazione inserita ✓", "btn_coherence": "🧩 Verifica la coerenza narrativa", "coherence_sub_hint": "Personaggi · Luoghi · Continuità — IA richiesta", "wt_empty_coherence": "Clicca per analizzare la coerenza del tuo romanzo.", "title_tab_coherence": "Coerenza narrativa IA", "nrb_corkboard_title": "Vista schede", "nrb_corkboard_desc": "Panoramica del tuo romanzo — capitoli, stati, riassunti e tag.", "nrb_versions_title": "Versioni", "nrb_versions_desc": "Snapshot con nome dei tuoi capitoli per seguire l'evoluzione della scrittura.", "ctx_section_clipboard": "Appunti", "ctx_cut": "✂ Taglia", "ctx_copy": "⎘ Copia", "ctx_paste": "📋 Incolla", "ctx_copy_all": "📄 Copia tutto il testo", "ctx_section_edit": "Modifica", "ctx_select_all": "⬜ Seleziona tutto", "ctx_undo": "↩ Annulla", "ctx_redo": "↪ Ripristina", "ctx_section_format": "Formattazione", "ctx_italic": "I Corsivo", "ctx_bold": "B Grassetto", "ctx_underline": "S Sottolineato", "ctx_wc_word_s": "{n} parola", "ctx_wc_words_pl": "{n} parole", "ctx_wc_char_s": "{n} carattere", "ctx_wc_chars_pl": "{n} caratteri", "ctx_section_note": "Nota d'autore", "ctx_section_tools": "Strumenti", "ctx_search_word": "🔍 Cerca nel testo", "ctx_search_word_preview": "🔍 Cerca « {w} »", "ctx_scene_break": "— Inserisci stacco di scena", "ctx_image_tag": "🖼 Inserisci tag immagine…", "ctx_toast_pasted": "📋 Testo incollato ({n} car.)", "ctx_toast_paste_denied": "⚠ Incolla con Ctrl+V — accesso agli appunti negato", "ctx_toast_copied_all": "📄 Testo completo copiato ({n} car.)"});
+Object.assign(_i18n.pt || (_i18n.pt={}), {"btn_export_epub": "⬇ ePub", "toast_generating_epub": "A gerar o ficheiro ePub…", "toast_epub_done": "Ficheiro ePub (.epub) transferido ✓", "versions_title": "Versões do capítulo", "versions_save_btn": "+ Snapshot", "versions_hint": "Guarde snapshots nomeados do seu capítulo ativo.", "versions_select_chapter": "— Escolher um capítulo —", "versions_empty": "Ainda não há snapshots. Clique em + Snapshot para criar um.", "versions_restore_btn": "↩ Restaurar", "versions_saved": "Snapshot guardado ✓", "versions_restored": "Versão restaurada ✓", "versions_select_first": "Selecione primeiro um capítulo.", "versions_no_text": "Texto do capítulo não encontrado.", "versions_confirm_delete": "Eliminar este snapshot?", "versions_confirm_restore": "Restaurar esta versão? O texto atual do capítulo será substituído. Esta ação é irreversível.", "versions_label_prompt": "Nome do snapshot", "versions_chapter_not_found": "Capítulo não encontrado no texto.", "tags_modal_title": "🏷 Etiquetas do capítulo", "tags_modal_placeholder": "POV, Lisboa, Adrian, ação…", "tags_modal_hint": "Separe as etiquetas por vírgulas. Ex.: POV:Adrian, Lisboa, ação", "tags_cancel_btn": "Cancelar", "tags_save_btn": "Guardar", "corkboard_title": "Vista de cartões — Romance", "cork_tag_filter_placeholder": "Filtrar por etiqueta…", "cork_empty": "Nenhum capítulo detetado. Cole o seu romance no editor.", "title_ai_continue": "Continuar o texto com IA a partir do cursor (chave necessária)", "ai_continue_title": "✦ Continuação IA", "ai_continue_no_context": "Coloque o cursor no seu texto.", "ai_continue_insert": "↩ Inserir", "ai_continue_regen": "⟳ Regenerar", "ai_continue_close": "✕ Fechar", "ai_continue_inserted": "Continuação inserida ✓", "btn_coherence": "🧩 Verificar a coerência narrativa", "coherence_sub_hint": "Personagens · Locais · Continuidade — IA necessária", "wt_empty_coherence": "Clique para analisar a coerência do seu romance.", "title_tab_coherence": "Coerência narrativa IA", "nrb_corkboard_title": "Vista de cartões", "nrb_corkboard_desc": "Painel do seu romance — capítulos, estados, resumos e etiquetas.", "nrb_versions_title": "Versões", "nrb_versions_desc": "Snapshots nomeados dos seus capítulos para acompanhar a evolução da escrita.", "ctx_section_clipboard": "Área de transferência", "ctx_cut": "✂ Cortar", "ctx_copy": "⎘ Copiar", "ctx_paste": "📋 Colar", "ctx_copy_all": "📄 Copiar todo o texto", "ctx_section_edit": "Edição", "ctx_select_all": "⬜ Selecionar tudo", "ctx_undo": "↩ Anular", "ctx_redo": "↪ Refazer", "ctx_section_format": "Formatação", "ctx_italic": "I Itálico", "ctx_bold": "B Negrito", "ctx_underline": "S Sublinhado", "ctx_wc_word_s": "{n} palavra", "ctx_wc_words_pl": "{n} palavras", "ctx_wc_char_s": "{n} caractere", "ctx_wc_chars_pl": "{n} caracteres", "ctx_section_note": "Nota de autor", "ctx_section_tools": "Ferramentas", "ctx_search_word": "🔍 Procurar no texto", "ctx_search_word_preview": "🔍 Procurar « {w} »", "ctx_scene_break": "— Inserir quebra de cena", "ctx_image_tag": "🖼 Inserir etiqueta de imagem…", "ctx_toast_pasted": "📋 Texto colado ({n} car.)", "ctx_toast_paste_denied": "⚠ Cole com Ctrl+V — acesso à área de transferência negado", "ctx_toast_copied_all": "📄 Texto completo copiado ({n} car.)"});
 }
 
 
@@ -29633,3 +29642,19 @@ _registerLang('hu', {
   "ctx_toast_paste_denied": "⚠ Használd a Ctrl+V-t a beillesztéshez — a vágólap-hozzáférés megtagadva",
   "ctx_toast_copied_all": "📄 Teljes szöveg másolva ({n} kar.)"
 });
+
+
+// ── i18n : cles anti-hardcode (statut cle, erreurs, titres) — toutes langues ──
+if (typeof _i18n !== 'undefined') {
+  Object.assign(_i18n.fr || (_i18n.fr={}), {"sm_key_ok": "✓ Clé configurée pour ce fournisseur", "sm_key_none": "Aucune clé enregistrée pour ce fournisseur.", "err_no_api_key": "⚠ Aucune clé API configurée. Ouvrez ⚙ Paramètres → Config IA, entrez votre clé et cliquez 💾 Enregistrer.", "ia_prop_selected": "✓ Proposition sélectionnée — cliquez sur Remplacer.", "tb_download_title": "Télécharger le projet dans un fichier", "tb_saved_in": "Enregistré dans : ", "ai_sw_empty": "Aucune IA configurée.<br>Ajoutez une clé API dans les paramètres."});
+  Object.assign(_i18n.en || (_i18n.en={}), {"sm_key_ok": "✓ Key configured for this provider", "sm_key_none": "No key saved for this provider.", "err_no_api_key": "⚠ No API key configured. Open ⚙ Settings → AI Config, enter your key and click 💾 Save.", "ia_prop_selected": "✓ Suggestion selected — click Replace.", "tb_download_title": "Download the project to a file", "tb_saved_in": "Saved in: ", "ai_sw_empty": "No AI configured.<br>Add an API key in the settings."});
+  Object.assign(_i18n.es || (_i18n.es={}), {"sm_key_ok": "✓ Clave configurada para este proveedor", "sm_key_none": "Ninguna clave guardada para este proveedor.", "err_no_api_key": "⚠ Ninguna clave API configurada. Abra ⚙ Ajustes → Config IA, introduzca su clave y haga clic en 💾 Guardar.", "ia_prop_selected": "✓ Propuesta seleccionada — haga clic en Reemplazar.", "tb_download_title": "Descargar el proyecto en un archivo", "tb_saved_in": "Guardado en: ", "ai_sw_empty": "Ninguna IA configurada.<br>Añada una clave API en los ajustes."});
+  Object.assign(_i18n.de || (_i18n.de={}), {"sm_key_ok": "✓ Schlüssel für diesen Anbieter konfiguriert", "sm_key_none": "Kein Schlüssel für diesen Anbieter gespeichert.", "err_no_api_key": "⚠ Kein API-Schlüssel konfiguriert. Öffnen Sie ⚙ Einstellungen → KI-Konfiguration, geben Sie Ihren Schlüssel ein und klicken Sie auf 💾 Speichern.", "ia_prop_selected": "✓ Vorschlag ausgewählt — klicken Sie auf Ersetzen.", "tb_download_title": "Projekt in eine Datei herunterladen", "tb_saved_in": "Gespeichert in: ", "ai_sw_empty": "Keine KI konfiguriert.<br>Fügen Sie einen API-Schlüssel in den Einstellungen hinzu."});
+  Object.assign(_i18n.it || (_i18n.it={}), {"sm_key_ok": "✓ Chiave configurata per questo provider", "sm_key_none": "Nessuna chiave salvata per questo provider.", "err_no_api_key": "⚠ Nessuna chiave API configurata. Apri ⚙ Impostazioni → Config IA, inserisci la tua chiave e clicca 💾 Salva.", "ia_prop_selected": "✓ Proposta selezionata — clicca su Sostituisci.", "tb_download_title": "Scarica il progetto in un file", "tb_saved_in": "Salvato in: ", "ai_sw_empty": "Nessuna IA configurata.<br>Aggiungi una chiave API nelle impostazioni."});
+  Object.assign(_i18n.pt || (_i18n.pt={}), {"sm_key_ok": "✓ Chave configurada para este fornecedor", "sm_key_none": "Nenhuma chave guardada para este fornecedor.", "err_no_api_key": "⚠ Nenhuma chave API configurada. Abra ⚙ Definições → Config IA, introduza a sua chave e clique em 💾 Guardar.", "ia_prop_selected": "✓ Proposta selecionada — clique em Substituir.", "tb_download_title": "Transferir o projeto para um ficheiro", "tb_saved_in": "Guardado em: ", "ai_sw_empty": "Nenhuma IA configurada.<br>Adicione uma chave API nas definições."});
+  Object.assign(_i18n.ru || (_i18n.ru={}), {"sm_key_ok": "✓ Ключ настроен для этого поставщика", "sm_key_none": "Для этого поставщика не сохранён ключ.", "err_no_api_key": "⚠ Ключ API не настроен. Откройте ⚙ Настройки → Настройка ИИ, введите ключ и нажмите 💾 Сохранить.", "ia_prop_selected": "✓ Предложение выбрано — нажмите «Заменить».", "tb_download_title": "Скачать проект в файл", "tb_saved_in": "Сохранено в: ", "ai_sw_empty": "ИИ не настроен.<br>Добавьте ключ API в настройках."});
+  Object.assign(_i18n.da || (_i18n.da={}), {"sm_key_ok": "✓ Nøgle konfigureret for denne udbyder", "sm_key_none": "Ingen nøgle gemt for denne udbyder.", "err_no_api_key": "⚠ Ingen API-nøgle konfigureret. Åbn ⚙ Indstillinger → AI-konfiguration, indtast din nøgle og klik 💾 Gem.", "ia_prop_selected": "✓ Forslag valgt — klik på Erstat.", "tb_download_title": "Download projektet til en fil", "tb_saved_in": "Gemt i: ", "ai_sw_empty": "Ingen AI konfigureret.<br>Tilføj en API-nøgle i indstillingerne."});
+  Object.assign(_i18n.el || (_i18n.el={}), {"sm_key_ok": "✓ Το κλειδί διαμορφώθηκε για αυτόν τον πάροχο", "sm_key_none": "Δεν αποθηκεύτηκε κλειδί για αυτόν τον πάροχο.", "err_no_api_key": "⚠ Δεν έχει διαμορφωθεί κλειδί API. Ανοίξτε ⚙ Ρυθμίσεις → Διαμόρφωση AI, εισαγάγετε το κλειδί σας και κάντε κλικ στο 💾 Αποθήκευση.", "ia_prop_selected": "✓ Η πρόταση επιλέχθηκε — κάντε κλικ στο Αντικατάσταση.", "tb_download_title": "Λήψη του έργου σε αρχείο", "tb_saved_in": "Αποθηκεύτηκε σε: ", "ai_sw_empty": "Δεν έχει διαμορφωθεί AI.<br>Προσθέστε ένα κλειδί API στις ρυθμίσεις."});
+  Object.assign(_i18n.fi || (_i18n.fi={}), {"sm_key_ok": "✓ Avain määritetty tälle palveluntarjoajalle", "sm_key_none": "Tälle palveluntarjoajalle ei ole tallennettu avainta.", "err_no_api_key": "⚠ API-avainta ei ole määritetty. Avaa ⚙ Asetukset → Tekoälyn määritys, anna avaimesi ja napsauta 💾 Tallenna.", "ia_prop_selected": "✓ Ehdotus valittu — napsauta Korvaa.", "tb_download_title": "Lataa projekti tiedostoon", "tb_saved_in": "Tallennettu kohteeseen: ", "ai_sw_empty": "Tekoälyä ei ole määritetty.<br>Lisää API-avain asetuksiin."});
+  Object.assign(_i18n.hu || (_i18n.hu={}), {"sm_key_ok": "✓ Kulcs beállítva ehhez a szolgáltatóhoz", "sm_key_none": "Nincs mentett kulcs ehhez a szolgáltatóhoz.", "err_no_api_key": "⚠ Nincs beállítva API-kulcs. Nyisd meg a ⚙ Beállítások → MI-konfiguráció menüt, add meg a kulcsod, és kattints a 💾 Mentés gombra.", "ia_prop_selected": "✓ Javaslat kiválasztva — kattints a Csere gombra.", "tb_download_title": "A projekt letöltése fájlba", "tb_saved_in": "Mentve ide: ", "ai_sw_empty": "Nincs MI beállítva.<br>Adj hozzá egy API-kulcsot a beállításokban."});
+}
