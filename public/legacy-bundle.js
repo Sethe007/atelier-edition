@@ -11013,6 +11013,11 @@ var LANGUE_LABELS = {
   ar: 'العربية',
   zh: '中文',
   ja: '日本語',
+  ru: 'русский',
+  da: 'dansk',
+  el: 'ελληνικά',
+  fi: 'suomi',
+  hu: 'magyar',
 };
 
 let _prefs = null;
