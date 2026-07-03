@@ -3928,7 +3928,7 @@ const LanguageRules = {
     // Pas d'espace insécable pour la virgule/point
     highPunct: ['!', '?', ':', ';'],
     // Répétitions : mots courants courts
-    dupWords: /\b(le|la|les|de|du|un|une|des|et|en|à|au|aux|je|tu|il|elle|on|nous|vous|ils|elles|ce|se|sa|son|ses|mon|ton|ma|ta|me|te|que|qui|ne|y|si|ou|car|or|ni|mais|donc)\s+\1\b/gi,
+    dupWords: /\b(le|la|les|de|du|un|une|des|et|en|à|au|aux|je|tu|il|elle|on|ils|elles|ce|se|sa|son|ses|mon|ton|ma|ta|me|te|que|qui|ne|y|si|ou|car|or|ni|mais|donc)\s+\1\b/gi,
   },
   en: {
     openQuote:  '\u201c',
@@ -3940,7 +3940,7 @@ const LanguageRules = {
     punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u201d"'])/g,
     punctSpaceAfterReplace: '$1 $2',
     highPunct: [],
-    dupWords: /\b(the|a|an|of|in|on|at|to|for|and|but|or|nor|so|yet|as|it|is|was|are|be|I|he|she|we|they|my|your|his|her|its|our|this|that|these|those|with|by|from)\s+\1\b/gi,
+    dupWords: /\b(the|a|an|of|in|on|at|to|for|and|but|or|nor|so|yet|as|it|is|was|are|be|I|he|she|we|they|my|your|his|her|its|our|this|these|those|with|by|from)\s+\1\b/gi,
   },
   es: {
     openQuote:  '\u00ab',
@@ -3968,7 +3968,7 @@ const LanguageRules = {
     punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u201c\u201d"'])/g,
     punctSpaceAfterReplace: '$1 $2',
     highPunct: [],
-    dupWords: /(?<!\p{L})(der|die|das|den|dem|des|ein|eine|einen|einem|einer|und|oder|aber|ich|du|er|sie|es|wir|ihr|in|an|auf|mit|von|zu|bei|für|als|wie|dass|ist|war|nicht|auch|so|dann|doch|nur|noch|schon|sich|mein|dein|sein)\s+\1(?!\p{L})/giu,
+    dupWords: /(?<!\p{L})(ein|eine|einen|einem|einer|und|oder|aber|ich|du|er|es|wir|ihr|in|an|auf|mit|von|zu|bei|für|als|wie|dass|ist|war|nicht|auch|so|dann|doch|nur|noch|schon|sich|mein|dein|sein)\s+\1(?!\p{L})/giu,
   },
   it: {
     openQuote:  '\u00ab',
@@ -3992,7 +3992,7 @@ const LanguageRules = {
     punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u00bb"'])/g,
     punctSpaceAfterReplace: '$1 $2',
     highPunct: [],
-    dupWords: /(?<!\p{L})(o|a|os|as|um|uma|uns|umas|de|do|da|dos|das|e|ou|mas|que|se|em|no|na|nos|nas|com|por|para|não|mais|como|eu|tu|ele|ela|nós|eles|elas|me|te|lhe|vos|seu|sua|meu|minha)\s+\1(?!\p{L})/giu,
+    dupWords: /(?<!\p{L})(o|a|os|as|um|uma|uns|umas|de|do|da|dos|das|e|ou|mas|que|em|no|na|nos|nas|com|por|para|não|mais|como|eu|tu|ele|ela|nós|eles|elas|me|te|lhe|vos|seu|sua|meu|minha)\s+\1(?!\p{L})/giu,
   },
   ru: {
     openQuote:  '\u00ab',
@@ -4016,7 +4016,7 @@ const LanguageRules = {
     punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u00ab"'])/g,
     punctSpaceAfterReplace: '$1 $2',
     highPunct: [],
-    dupWords: /(?<!\p{L})(og|i|at|det|en|et|den|de|der|som|på|med|til|af|for|om|ikke|jeg|du|han|hun|vi|man|er|var|har|men|så|også|kun|nu|da|når|hvis|hvor|min|din|sin)\s+\1(?!\p{L})/giu,
+    dupWords: /(?<!\p{L})(og|i|at|en|et|som|på|med|til|af|for|om|ikke|jeg|du|han|hun|vi|man|er|var|har|men|så|også|kun|nu|da|når|hvis|hvor|min|din|sin)\s+\1(?!\p{L})/giu,
   },
   el: {
     openQuote:  '\u00ab',
@@ -4052,7 +4052,7 @@ const LanguageRules = {
     punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u201d"'])/g,
     punctSpaceAfterReplace: '$1 $2',
     highPunct: [],
-    dupWords: /(?<!\p{L})(az|és|hogy|nem|is|egy|de|ha|már|még|csak|mint|el|meg|fel|le|ki|be|én|te|ő|mi|ti|ők|ez|azt|ezt|van|volt|majd|most|itt|ott|úgy|így|vagy|mert)\s+\1(?!\p{L})/giu,
+    dupWords: /(?<!\p{L})(és|hogy|nem|is|egy|de|ha|már|még|csak|mint|el|meg|fel|le|ki|be|én|te|ő|mi|ti|ők|ez|azt|ezt|van|volt|majd|most|itt|ott|úgy|így|vagy|mert)\s+\1(?!\p{L})/giu,
   },
 };
 
@@ -4106,6 +4106,8 @@ const PluralEngine = (() => {
       if (/[sxz]$/i.test(noun)) return m;
       // Invariable ?
       if (NOUN_INVARIABLE_FR.has(noun.toLowerCase())) return m;
+      // ANTI-FAUTE : noms propres — « les Dupont » reste invariable
+      if (/^\p{Lu}/u.test(noun)) return m;
       // Mot trop court (articles, prépositions captées malgré le look-ahead)
       if (noun.length <= 2) return m;
       // Verbes conjugués communs qui ne doivent pas être touchés
@@ -4229,20 +4231,139 @@ const PluralEngine = (() => {
   }
 
   // Tables compilées (pronom pluriel) — créées à l'initialisation du module
-  const _VERB_FR_PRON_COMPILED  = _compileVerbTable(VERB_FR, '(?:ils|elles|nous|vous|on)');
+  // ANTI-FAUTE : la table donne la 3e pers. du PLURIEL — seuls ils/elles la
+  // prennent (« on mange » et « nous mangeons » se conjuguent autrement ;
+  // « il nous a vus » contient « nous a » et devenait « nous ont »).
+  const _VERB_FR_PRON_COMPILED  = _compileVerbTable(VERB_FR, '(?:ils|elles)');
   const _VERB_EN_PRON_COMPILED  = _compileVerbTable(VERB_EN, '(?:they|we|you)');
-  const _VERB_ES_PRON_COMPILED  = _compileVerbTable(VERB_ES, '(?:ellos|ellas|nosotros|nosotras|vosotros|vosotras|ustedes)');
+  // ANTI-FAUTE : nosotros/vosotros se conjuguent en -mos/-is, pas en 3e pluriel.
+  const _VERB_ES_PRON_COMPILED  = _compileVerbTable(VERB_ES, '(?:ellos|ellas|ustedes)');
+
+  // ── Langues ajoutées : accord verbal par PRONOM pluriel NON AMBIGU uniquement ──
+  // Pas d'accord sur sujet nominal (trop risqué sans analyse morphologique).
+  // de : « sie » = elle OU ils/elles → indécidable par regex, volontairement exclu.
+  // da : les verbes danois ne s'accordent pas en personne → rien à corriger.
+  // \\b ne fonctionne pas hors ASCII → lookarounds Unicode.
+  function _compileVerbTableU(table, subjRe) {
+    return Object.entries(table).map(([sing, plur]) => ({
+      re: new RegExp('(?<!\\p{L})(' + subjRe + ')\\s+(' + sing.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')(?!\\p{L})', 'giu'),
+      plur,
+    }));
+  }
+
+  // IT : 3e sing → 3e plur (sujets : loro non précédé d'un article — sinon possessif)
+  const VERB_IT = {
+    'parla':'parlano','va':'vanno','è':'sono','ha':'hanno','fa':'fanno',
+    'dice':'dicono','viene':'vengono','vede':'vedono','sa':'sanno','può':'possono',
+    'vuole':'vogliono','deve':'devono','prende':'prendono','mette':'mettono',
+    'parte':'partono','sente':'sentono','apre':'aprono','legge':'leggono',
+    'scrive':'scrivono','mangia':'mangiano','guarda':'guardano','cerca':'cercano',
+    'trova':'trovano','pensa':'pensano','crede':'credono','vive':'vivono',
+    'corre':'corrono','ride':'ridono','dorme':'dormono','torna':'tornano',
+    'resta':'restano','arriva':'arrivano','entra':'entrano','esce':'escono',
+    'ama':'amano','gioca':'giocano','canta':'cantano','lavora':'lavorano',
+    'aspetta':'aspettano','chiede':'chiedono','risponde':'rispondono',
+    'capisce':'capiscono','conosce':'conoscono','ricorda':'ricordano',
+    'comincia':'cominciano','finisce':'finiscono',
+  };
+  // PT : 3e sing → 3e plur (eles/elas/vocês)
+  const VERB_PT = {
+    'fala':'falam','come':'comem','vive':'vivem','vai':'vão','é':'são',
+    'está':'estão','tem':'têm','faz':'fazem','diz':'dizem','sabe':'sabem',
+    'pode':'podem','quer':'querem','deve':'devem','vem':'vêm','chega':'chegam',
+    'sai':'saem','entra':'entram','olha':'olham','procura':'procuram',
+    'encontra':'encontram','pensa':'pensam','acredita':'acreditam',
+    'corre':'correm','chora':'choram','dorme':'dormem','acorda':'acordam',
+    'trabalha':'trabalham','joga':'jogam','canta':'cantam','escreve':'escrevem',
+    'abre':'abrem','fecha':'fecham','começa':'começam','termina':'terminam',
+    'recebe':'recebem','perde':'perdem','ganha':'ganham','ouve':'ouvem',
+    'espera':'esperam','pergunta':'perguntam','responde':'respondem',
+    'lembra':'lembram','esquece':'esquecem','ama':'amam','precisa':'precisam',
+    'parece':'parecem','fica':'ficam','volta':'voltam','morre':'morrem',
+  };
+  // RU : 3e sing → 3e plur (они)
+  const VERB_RU = {
+    'идёт':'идут','говорит':'говорят','живёт':'живут','работает':'работают',
+    'делает':'делают','знает':'знают','думает':'думают','видит':'видят',
+    'слышит':'слышат','хочет':'хотят','может':'могут','любит':'любят',
+    'ест':'едят','пьёт':'пьют','спит':'спят','встаёт':'встают',
+    'бежит':'бегут','сидит':'сидят','стоит':'стоят','лежит':'лежат',
+    'читает':'читают','пишет':'пишут','смотрит':'смотрят','слушает':'слушают',
+    'ищет':'ищут','находит':'находят','берёт':'берут','даёт':'дают',
+    'играет':'играют','поёт':'поют','плачет':'плачут','приходит':'приходят',
+    'уходит':'уходят','отвечает':'отвечают','спрашивает':'спрашивают',
+    'понимает':'понимают','помнит':'помнят','забывает':'забывают',
+    'молчит':'молчат','кричит':'кричат','ждёт':'ждут','верит':'верят',
+    'боится':'боятся','смеётся':'смеются','возвращается':'возвращаются',
+  };
+  // EL : 3e sing → 3e plur (αυτοί/αυτές/αυτά)
+  const VERB_EL = {
+    'πηγαίνει':'πηγαίνουν','έχει':'έχουν','κάνει':'κάνουν','λέει':'λένε',
+    'βλέπει':'βλέπουν','ξέρει':'ξέρουν','θέλει':'θέλουν','μπορεί':'μπορούν',
+    'τρώει':'τρώνε','πίνει':'πίνουν','τρέχει':'τρέχουν','μιλάει':'μιλάνε',
+    'ακούει':'ακούνε','διαβάζει':'διαβάζουν','γράφει':'γράφουν',
+    'δουλεύει':'δουλεύουν','παίζει':'παίζουν','ψάχνει':'ψάχνουν',
+    'βρίσκει':'βρίσκουν','ζει':'ζουν','μένει':'μένουν','γελάει':'γελάνε',
+    'κλαίει':'κλαίνε','αγαπάει':'αγαπάνε','περιμένει':'περιμένουν',
+    'ρωτάει':'ρωτάνε','απαντάει':'απαντάνε','καταλαβαίνει':'καταλαβαίνουν',
+    'θυμάται':'θυμούνται','ξεχνάει':'ξεχνάνε','έρχεται':'έρχονται',
+    'φεύγει':'φεύγουν','κοιμάται':'κοιμούνται','σταματάει':'σταματάνε',
+    'αρχίζει':'αρχίζουν','τελειώνει':'τελειώνουν',
+  };
+  // FI : 3e sing → 3e plur (he). « on » exclu : « he on » est du puhekieli
+  // (registre parlé) volontaire dans les dialogues.
+  const VERB_FI = {
+    'menee':'menevät','tulee':'tulevat','sanoo':'sanovat','tekee':'tekevät',
+    'näkee':'näkevät','tietää':'tietävät','ajattelee':'ajattelevat',
+    'haluaa':'haluavat','voi':'voivat','ottaa':'ottavat','antaa':'antavat',
+    'lukee':'lukevat','kirjoittaa':'kirjoittavat','puhuu':'puhuvat',
+    'kuulee':'kuulevat','katsoo':'katsovat','etsii':'etsivät',
+    'löytää':'löytävät','elää':'elävät','asuu':'asuvat','juoksee':'juoksevat',
+    'nauraa':'nauravat','itkee':'itkevät','nukkuu':'nukkuvat','istuu':'istuvat',
+    'seisoo':'seisovat','lähtee':'lähtevät','saapuu':'saapuvat',
+    'pitää':'pitävät','alkaa':'alkavat','loppuu':'loppuvat','odottaa':'odottavat',
+    'kysyy':'kysyvät','vastaa':'vastaavat','muistaa':'muistavat',
+    'unohtaa':'unohtavat','ymmärtää':'ymmärtävät','uskoo':'uskovat',
+    'pelkää':'pelkäävät','rakastaa':'rakastavat',
+  };
+  // HU : 3e sing → 3e plur indéfini (ők)
+  const VERB_HU = {
+    'megy':'mennek','jön':'jönnek','van':'vannak','mond':'mondanak',
+    'tesz':'tesznek','lát':'látnak','tud':'tudnak','gondol':'gondolnak',
+    'akar':'akarnak','szeret':'szeretnek','eszik':'esznek','iszik':'isznak',
+    'alszik':'alszanak','fut':'futnak','ül':'ülnek','áll':'állnak',
+    'olvas':'olvasnak','ír':'írnak','beszél':'beszélnek','hall':'hallanak',
+    'néz':'néznek','keres':'keresnek','talál':'találnak','él':'élnek',
+    'lakik':'laknak','nevet':'nevetnek','sír':'sírnak','dolgozik':'dolgoznak',
+    'játszik':'játszanak','énekel':'énekelnek','vár':'várnak','kap':'kapnak',
+    'ad':'adnak','kérdez':'kérdeznek','válaszol':'válaszolnak','ért':'értenek',
+    'marad':'maradnak','indul':'indulnak','érkezik':'érkeznek','fél':'félnek',
+  };
+  // « il loro amico è » : loro précédé d'un article = possessif → lookbehind.
+  const _VERB_IT_PRON_COMPILED = _compileVerbTableU(VERB_IT, '(?<!(?:il|la|i|le|del|della|dei|delle|al|alla|dal|dalla|nel|nella|sul|sulla|un|una)\\s)loro');
+  const _VERB_PT_PRON_COMPILED = _compileVerbTableU(VERB_PT, '(?:eles|elas|vocês|voces)');
+  const _VERB_RU_PRON_COMPILED = _compileVerbTableU(VERB_RU, 'они');
+  const _VERB_EL_PRON_COMPILED = _compileVerbTableU(VERB_EL, '(?:αυτοί|αυτές|αυτά)');
+  const _VERB_FI_PRON_COMPILED = _compileVerbTableU(VERB_FI, 'he');
+  const _VERB_HU_PRON_COMPILED = _compileVerbTableU(VERB_HU, 'ők');
+
+
+  // Déterminants pour l'accord VERBAL avec sujet nominal — sous-ensemble SANS
+  // ambiguïté : « des »/« aux » exclus (compléments génitifs : « le bruit des
+  // vagues est doux »), possessifs EN exclus (nombre ambigu : « their boss runs »).
+  const DET_NOM_FR = '(?:les|ces|mes|tes|ses|nos|vos|leurs|plusieurs|quelques|certains|certaines)';
+  const DET_NOM_EN = '(?:the|these|those|some|many|few|several|all|both)';
 
   // Tables compilées (sujet nominal pluriel FR)
   const _VERB_FR_NOM_COMPILED = Object.entries(VERB_FR).map(([sing, plur]) => ({
     re: new RegExp(
-      '\\b(' + DET_PLUR_FR + '(?:\\s+[a-zA-Z\u00C0-\u017E]+){1,3})\\s+(' +
+      '\\b(' + DET_NOM_FR + '(?:\\s+[a-zA-Z\u00C0-\u017E]+){1,3})\\s+(' +
       sing.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')\\b', 'gi'),
     plur,
   }));
   const _VERB_EN_NOM_COMPILED = Object.entries(VERB_EN).map(([sing, plur]) => ({
     re: new RegExp(
-      '\\b(' + DET_PLUR_EN + '(?:\\s+[a-zA-Z]+){1,2})\\s+(' +
+      '\\b(' + DET_NOM_EN + '(?:\\s+[a-zA-Z]+){1,2})\\s+(' +
       sing.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')\\b', 'gi'),
     plur,
   }));
@@ -4269,7 +4390,11 @@ const PluralEngine = (() => {
     // Pattern 2 : déterminant + NOM pluriel(s/x) + verbe non accordé (sujet nominal)
     for (const { re, plur } of _VERB_FR_NOM_COMPILED) {
       re.lastIndex = 0;
-      result = result.replace(re, (m, subj, v) => {
+      result = result.replace(re, (m, subj, v, _off, _whole) => {
+        // ANTI-FAUTE : « L'un des enfants mange », « chacune de ces femmes… »
+        // → le vrai sujet est singulier, ne pas accorder.
+        const _before = _whole.slice(Math.max(0, _off - 18), _off);
+        if (/(?:\b(?:un|une|chacun|chacune|aucun|aucune|celui|celle)|l['\u2019]une?)\s*$/i.test(_before)) return m;
         const lastWord = subj.trim().split(/\s+/).pop();
         // Condition resserrée : le dernier mot doit finir par s ou x (marque pluriel)
         // et avoir au moins 4 caractères pour éviter les articles/déterminants courts
@@ -4287,9 +4412,13 @@ const PluralEngine = (() => {
     // Sujet nominal pluriel
     for (const { re, plur } of _VERB_EN_NOM_COMPILED) {
       re.lastIndex = 0;
-      result = result.replace(re, (m, subj, v) => {
+      result = result.replace(re, (m, subj, v, _off, _whole) => {
+        // ANTI-FAUTE : complément génitif (« the sound of the waves has »)
+        if (/\bof\s*$/i.test(_whole.slice(Math.max(0, _off - 6), _off))) return m;
         const lastWord = subj.trim().split(/\s+/).pop();
-        if (/[sx]$/i.test(lastWord)) return subj + ' ' + _preserveCase(v, plur);
+        // ANTI-FAUTE : singuliers en -ss/-us/-is/-ous (« the boss runs »)
+        if (/(?:ss|us|is|ous)$/i.test(lastWord)) return m;
+        if (/[sx]$/i.test(lastWord) && lastWord.length >= 4) return subj + ' ' + _preserveCase(v, plur);
         return m;
       });
     }
@@ -4311,7 +4440,9 @@ const PluralEngine = (() => {
     let result = _applyVerbTable(text, _VERB_ES_PRON_COMPILED);
     for (const { re, plur } of _VERB_ES_NOM_COMPILED) {
       re.lastIndex = 0;
-      result = result.replace(re, (m, subj, v) => {
+      result = result.replace(re, (m, subj, v, _off, _whole) => {
+        // ANTI-FAUTE : complément génitif (« la casa de los abuelos está »)
+        if (/\bde\s*$/i.test(_whole.slice(Math.max(0, _off - 6), _off))) return m;
         const lastWord = subj.trim().split(/\s+/).pop();
         if (/[sx]$/i.test(lastWord) && lastWord.length >= 4) return subj + ' ' + _preserveCase(v, plur);
         return m;
@@ -4336,7 +4467,13 @@ const PluralEngine = (() => {
     if (lang === 'en') return _applyPluralVerbEN(text);
     if (lang === 'es') return _applyPluralVerbES(text);
     if (lang === 'fr') return _applyPluralVerbFR(text);
-    return text; // autres langues : pas de table d'accord — ne rien toucher
+    if (lang === 'it') return _applyVerbTable(text, _VERB_IT_PRON_COMPILED);
+    if (lang === 'pt') return _applyVerbTable(text, _VERB_PT_PRON_COMPILED);
+    if (lang === 'ru') return _applyVerbTable(text, _VERB_RU_PRON_COMPILED);
+    if (lang === 'el') return _applyVerbTable(text, _VERB_EL_PRON_COMPILED);
+    if (lang === 'fi') return _applyVerbTable(text, _VERB_FI_PRON_COMPILED);
+    if (lang === 'hu') return _applyVerbTable(text, _VERB_HU_PRON_COMPILED);
+    return text; // de : « sie » ambigu ; da : pas d'accord en personne — ne rien toucher
   }
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -4386,6 +4523,9 @@ const PluralEngine = (() => {
     );
     result = result.replace(reAdj, (m, pre, adj) => {
       if (/[s]$/i.test(adj)) return m;
+      // ANTI-FAUTE : « algunas veces pienso » (verbe en -o), noms propres
+      if (/^(?:pienso|quiero|tengo|digo|hago|veo|creo|siento|puedo|debo|vengo|salgo|pongo|traigo|oigo|conozco|sigo|juego|cuento|vuelvo|duermo|pido)$/i.test(adj)) return m;
+      if (/^\p{Lu}/u.test(adj)) return m;
       return pre + adj + 's';
     });
     return result;
@@ -4405,7 +4545,7 @@ const PluralEngine = (() => {
   const ADJ_GENDER_FR = [
     ['noir','noire'],['blanc','blanche'],['bleu','bleue'],['rouge','rouge'],
     ['vert','verte'],['grand','grande'],['petit','petite'],['gros','grosse'],
-    ['fort','forte'],['court','courte'],['long','longue'],['bon','bonne'],
+    ['court','courte'],['long','longue'],['bon','bonne'],
     ['beau','belle'],['nouveau','nouvelle'],['vieux','vieille'],
     ['froid','froide'],['chaud','chaude'],['lourd','lourde'],['léger','légère'],
     ['rapide','rapide'],['lent','lente'],['doux','douce'],['dur','dure'],
@@ -4437,10 +4577,15 @@ const PluralEngine = (() => {
       // Cas 1 : déterminant féminin + NOM + adjectif masculin → féminin
       // ex. "la chaussure noir" → "la chaussure noire"
       const reMascAfterFem = new RegExp(
-        '\\b(' + DET_FEM_FR + '(?:\\s+[a-zA-ZÀ-ÿ]+){1,2}\\s+)(' + escMasc + ')\\b',
+        '\\b(' + DET_FEM_FR + '(?:\\s+[a-zA-ZÀ-ÿ]+){1,2}\\s+)(' + escMasc + ')\\b(?!\\s+(?:clair|claire|foncé|foncée|pâle|vif|vive|sombre|marine|ciel|nuit|pastel|ouvert|ouverte)\\b)',
         'gi'
       );
       result = result.replace(reMascAfterFem, (m, pre, adj) => {
+        // ANTI-FAUTE : ne pas traverser une frontière de syntagme
+        // (« la peur du noir », « la porte du grand salon »).
+        if (/\b(?:de|du|des|le|la|les|un|une|au|aux|en|à|par|pour|sans|sous|sur|chez|vers|dans|que|qui|et|ou)\b/i.test(pre.replace(/^\S+/, ''))) return m;
+        // ANTI-FAUTE : couleur composée invariable (« une robe bleu clair »)
+        if (/\b(?:noir|blanc|bleu|vert|rouge|gris|jaune|rose|brun|violet|orange|beige|marron|pourpre|mauve|turquoise|ocre)\s*$/i.test(pre)) return m;
         // Vérifier que l'adjectif n'est pas déjà au féminin
         const lower = adj.toLowerCase();
         if (lower === fem) return m;
@@ -4450,10 +4595,14 @@ const PluralEngine = (() => {
       // Cas 2 : déterminant masculin + NOM + adjectif féminin → masculin
       // ex. "le lapin blanche" → "le lapin blanc"
       const reFemAfterMasc = new RegExp(
-        '\\b(' + DET_MASC_FR + '(?:\\s+[a-zA-ZÀ-ÿ]+){1,2}\\s+)(' + escFem + ')\\b(?!s\\b)',
+        '\\b(' + DET_MASC_FR + '(?:\\s+[a-zA-ZÀ-ÿ]+){1,2}\\s+)(' + escFem + ')\\b(?!s\\b)(?!\\s+(?:clair|claire|foncé|foncée|pâle|vif|vive|sombre|marine|ciel|nuit|pastel|ouvert|ouverte)\\b)',
         'gi'
       );
       result = result.replace(reFemAfterMasc, (m, pre, adj) => {
+        // ANTI-FAUTE : frontière de syntagme (« le chant de la belle »).
+        if (/\b(?:de|du|des|le|la|les|un|une|au|aux|en|à|par|pour|sans|sous|sur|chez|vers|dans|que|qui|et|ou)\b/i.test(pre.replace(/^\S+/, ''))) return m;
+        // ANTI-FAUTE : couleur composée invariable (« un rideau rouge sombre »)
+        if (/\b(?:noir|blanc|bleu|vert|rouge|gris|jaune|rose|brun|violet|orange|beige|marron|pourpre|mauve|turquoise|ocre)\s*$/i.test(pre)) return m;
         const lower = adj.toLowerCase();
         // Ne corriger que si le adj est clairement au féminin (différent du masculin)
         if (lower === masc) return m;
@@ -4497,14 +4646,13 @@ const SpellEngine = {
     'electricite':'électricité','electricien':'électricien',
     'ecole':'école','ecoles':'écoles','ecolier':'écolier',
     'etude':'étude','etudes':'études','etudiant':'étudiant','etudiants':'étudiants',
-    'etat':'État','etats':'États',
+    'etat':'état','etats':'états',
     'evenement':'événement','evenements':'événements',
     'element':'élément','elements':'éléments',
     'equipe':'équipe','equipes':'équipes',
     'epoque':'époque','epoques':'époques',
     'ecrit':'écrit','ecrits':'écrits','ecrire':'écrire','ecrivent':'écrivent',
     'espace':'espace', // pas d'accent
-    'tache':'tâche','taches':'tâches',
     'meme':'même','memes':'mêmes',
     'etre':'être',
     'fete':'fête','fetes':'fêtes',
@@ -4513,7 +4661,6 @@ const SpellEngine = {
     'interets':'intérêts','interet':'intérêt',
     'hopital':'hôpital','hopitaux':'hôpitaux',
     'hotel':'hôtel','hotels':'hôtels',
-    'cote':'côté','cotes':'côtés',
     'grace':'grâce',
     'baton':'bâton','batons':'bâtons',
     'depot':'dépôt','depots':'dépôts',
@@ -4560,7 +4707,7 @@ const SpellEngine = {
     'savament':'savamment',
     'elegament':'élégamment','elegamment':'élégamment',
     // Noms communs courants mal orthographiés
-    'employes':'employés','employais':'employés',
+    'employes':'employés',
     'employe':'employé',
     'travaile':'travaille',
     'reponse':'réponse','reponses':'réponses',
@@ -4577,13 +4724,12 @@ const SpellEngine = {
   _dict_en: {
     // Accords sujet-verbe (singulier avec sujet pluriel / pronom incorrect)
     'childrens':'children','childs':'children',
-    'peoples':'people',
     'informations':'information','informations':'information',
     'advices':'advice','furnitures':'furniture','equipments':'equipment',
     // Conjugaisons courantes erronées
     'dont':'don\'t','doesnt':'doesn\'t','isnt':'isn\'t','arent':'aren\'t',
     'wasnt':'wasn\'t','werent':'weren\'t','hasnt':'hasn\'t','havent':'haven\'t',
-    'hadnt':'hadn\'t','wont':'won\'t','cant':'can\'t','shouldnt':'shouldn\'t',
+    'hadnt':'hadn\'t','shouldnt':'shouldn\'t',
     'wouldnt':'wouldn\'t','couldnt':'couldn\'t',
     // "they is" / "i has" : géré par PluralEngine, mais fallback ici
     // Mots fréquemment mal orthographiés
@@ -4625,18 +4771,17 @@ const SpellEngine = {
     'debil':'débil','debiles':'débiles',
     // Conjugaisons incorrectes courantes
     'soy':'soy','eres':'eres','somos':'somos','son':'son',
-    'esta':'está','estan':'están','estas':'estás',
+    'estan':'están',
     'tenia':'tenía','teniamos':'teníamos','habia':'había',
-    'venia':'venía','sabia':'sabía','podia':'podía','queria':'quería',
-    'hacia':'hacía','decia':'decía',
+    'podia':'podía','queria':'quería',
+    'decia':'decía',
     // Mots courants mal orthographiés
-    'haiga':'haya','hubieron':'hubo','preveer':'prever',
+    'haiga':'haya','preveer':'prever',
     'satisfacer':'satisfacer','satisfaga':'satisfaga',
     'influir':'influir','construir':'construir',
-    'sobretodo':'sobre todo','sinembargo':'sin embargo',
-    'acerca':'acerca','atraves':'a través','porqué':'por qué',
-    'masomenos':'más o menos','entretanto':'entre tanto',
-    'sinnúmero':'sin número','contrarreloj':'contra reloj',
+    'sinembargo':'sin embargo',
+    'atraves':'a través',
+    'masomenos':'más o menos',
   },
 
   // ── Dictionnaires ajoutés : corrections SÛRES uniquement ───────────────────
@@ -4669,6 +4814,42 @@ const SpellEngine = {
     'ate':'até',
   },
 
+  // Dictionnaire RU : fautes courantes sans ambiguïté (mots inexistants)
+  _dict_ru: {
+    'вообщем':'в общем','агенство':'агентство','будующий':'будущий',
+    'следущий':'следующий','искуство':'искусство','расчитывать':'рассчитывать',
+    'сдесь':'здесь','чуство':'чувство','чуствовать':'чувствовать',
+    'пожалуста':'пожалуйста','извените':'извините','прийдёт':'придёт',
+    'придти':'прийти','девчёнка':'девчонка','симпотичный':'симпатичный',
+    'координально':'кардинально','экстримальный':'экстремальный',
+  },
+  // Dictionnaire DA : soudures fautives courantes (norme : en deux mots)
+  _dict_da: {
+    'idag':'i dag','igår':'i går','imorgen':'i morgen',
+    'ihvertfald':'i hvert fald','iøvrigt':'i øvrigt','istand':'i stand',
+    'igang':'i gang','tilstede':'til stede','iorden':'i orden',
+    'ombord':'om bord',
+  },
+  // Dictionnaire EL : accents (tonos) manquants — mots NON ambigus uniquement
+  // (ποτε/πως/που exclus : deux graphies légitimes)
+  _dict_el: {
+    'ειναι':'είναι','εχει':'έχει','εχω':'έχω','αυτο':'αυτό','ομως':'όμως',
+    'τωρα':'τώρα','εγω':'εγώ','εσυ':'εσύ','μονο':'μόνο','πολυ':'πολύ',
+    'ακομα':'ακόμα','επισης':'επίσης','τιποτα':'τίποτα','καλα':'καλά',
+    'εδω':'εδώ','εκει':'εκεί','μετα':'μετά','παλι':'πάλι','παντα':'πάντα',
+    'τοτε':'τότε','οταν':'όταν','γιατι':'γιατί','επειδη':'επειδή','ισως':'ίσως',
+  },
+  // Dictionnaire FI : fautes courantes sans ambiguïté
+  _dict_fi: {
+    'enään':'enää','aikasemmin':'aikaisemmin','tarkottaa':'tarkoittaa',
+    'tarkotus':'tarkoitus','sinäänsä':'sinänsä','loppujenlopuksi':'loppujen lopuksi',
+  },
+  // Dictionnaire HU : fautes classiques sans ambiguïté
+  _dict_hu: {
+    'muszály':'muszáj','lessz':'lesz','kissebb':'kisebb','nagyob':'nagyobb',
+    'külömben':'különben','mindíg':'mindig','eggyet':'egyet','eggy':'egy',
+  },
+
   /** Corriger les fautes d'orthographe lexicales dans le texte */
   applySpell(text, lang) {
     let dict;
@@ -4678,14 +4859,26 @@ const SpellEngine = {
     else if (lang === 'de') dict = SpellEngine._dict_de;
     else if (lang === 'it') dict = SpellEngine._dict_it;
     else if (lang === 'pt') dict = SpellEngine._dict_pt;
-    else return text; // ru/da/el/fi/hu : pas de dictionnaire lexical local — ne rien toucher
+    else if (lang === 'ru') dict = SpellEngine._dict_ru;
+    else if (lang === 'da') dict = SpellEngine._dict_da;
+    else if (lang === 'el') dict = SpellEngine._dict_el;
+    else if (lang === 'fi') dict = SpellEngine._dict_fi;
+    else if (lang === 'hu') dict = SpellEngine._dict_hu;
+    else return text; // langue inconnue : ne rien toucher
 
-    return text.replace(/(?<![\p{L}'’-])([\p{L}'’-]{3,})(?![\p{L}'’-])/gu, (match) => {
+    return text.replace(/(?<![\p{L}'’-])([\p{L}'’-]{3,})(?![\p{L}'’-])/gu, (match, _w, off) => {
       const lower = match.toLowerCase();
       const correction = dict[lower];
       if (!correction || correction === lower) return match;
-      // Préserver la casse initiale
-      if (match[0] === match[0].toUpperCase() && match[0] !== match[0].toLowerCase()) {
+      const isCap = match[0] === match[0].toUpperCase() && match[0] !== match[0].toLowerCase();
+      if (isCap) {
+        // ANTI-FAUTE : mot capitalisé en MILIEU de phrase = probablement un nom
+        // propre (« Grace », « Childs »…). Ne corriger qu'en début de phrase, ou
+        // si la correction est elle-même un nom propre (« noel » → « Noël »).
+        const before = text.slice(Math.max(0, off - 12), off);
+        const sentenceStart = off === 0 || /(?:[.!?…:]\s*|["'«»„“‘’]\s*|\n\s*)$/.test(before);
+        const properFix = correction[0] === correction[0].toUpperCase() && correction[0] !== correction[0].toLowerCase();
+        if (!sentenceStart && !properFix) return match;
         return correction[0].toUpperCase() + correction.slice(1);
       }
       return correction;
@@ -4734,7 +4927,17 @@ const TypographicEngine = {
     // Début de texte / après newline
     text = text.replace(/(^|\n)([ \t]*)(\p{Ll})/gmu, (m, nl, sp, ch) => nl + sp + ch.toUpperCase());
     // Après . ? ! (suivi d'espace ou de quote)
-    text = text.replace(/([.?!])([\s\u202f]+)(\p{Ll})/gu, (m, p, sp, ch) => p + sp + ch.toUpperCase());
+    // ANTI-FAUTE : pas de majuscule après une abréviation (« M. le maire »,
+    // « etc. dans la nuit », initiales « J. K. ») — multilingue.
+    const _ABBR = new Set(['m','mm','mme','mlle','dr','pr','prof','st','ste','etc','cf','ex','pp','ch','art','vol','no','nos','mr','mrs','ms','jr','sr','sra','srta','dra','vs','viz','al','inc','ltd','co','fig','op','cit','usw','bzw','ca','nr','inkl','vgl','ecc','sig','dott','ing','av','pág','pag','ej','ud','vd','osv','bl','eks','esim','ym','jne','pl','stb','kb','κλπ','λπ','стр','гл','рис']);
+    text = text.replace(/([.?!])([\s\u202f]+)(\p{Ll})/gu, (m, p, sp, ch, off) => {
+      if (p === '.') {
+        const wm = /([\p{L}]+)$/u.exec(text.slice(Math.max(0, off - 12), off));
+        const w = wm ? wm[1].toLowerCase() : '';
+        if (w && (w.length === 1 || _ABBR.has(w))) return m;
+      }
+      return p + sp + ch.toUpperCase();
+    });
     return text;
   },
 
@@ -4774,7 +4977,12 @@ const TypographicEngine = {
   applyPunctuation(text, lang) {
     if (lang === 'fr') {
       // Ajoute espace insécable AVANT ! ? : ; (si absent)
-      text = text.replace(/([^\s\u202f\u00ab])([!?:;])/g, '$1\u202f$2');
+      text = text.replace(/([^\s\u202f\u00ab])([!?:;])/g, (m, a, p, off) => {
+        // ANTI-FAUTE : heures « 14:30 », URL « http:// »
+        const next = text[off + 2] || '';
+        if (p === ':' && ((/\d/.test(a) && /\d/.test(next)) || next === '/')) return m;
+        return a + '\u202f' + p;
+      });
       // Supprime espace(s) avant , .
       text = text.replace(/\s+([,\.](?!\.))/g, '$1');
       // Espace après , ; ! ? si pas déjà espace ou fin de ligne
