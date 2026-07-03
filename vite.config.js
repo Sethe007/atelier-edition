@@ -28,6 +28,23 @@ function buildLegacyBundle() {
       const dest = path.resolve(__dirname, 'dist/legacy-bundle.js');
       if (!fs.existsSync(src)) return;
       const code = fs.readFileSync(src, 'utf8');
+
+      // 1) OBFUSCATION (défaut en prod) — protège l'artefact ; désactivable via OBFUSCATE=0.
+      if (process.env.OBFUSCATE === '1') {
+        try {
+          const { obfuscateBundle } = await import('./scripts/obfuscate.mjs');
+          const r = await obfuscateBundle(src, dest);
+          if (r.ok) {
+            console.log(`[legacy] OBFUSQUÉ → dist/ : ${(r.in/1024).toFixed(0)} KB → ${(r.out/1024).toFixed(0)} KB (×${(r.out/r.in).toFixed(1)})`);
+            return;
+          }
+          console.warn('[legacy] javascript-obfuscator absent → repli minification (npm i -D javascript-obfuscator pour activer).');
+        } catch (e) {
+          console.warn('[legacy] obfuscation échouée → repli minification :', e?.message);
+        }
+      }
+
+      // 2) REPLI : minification conservatrice (whitespace + commentaires).
       try {
         const result = await minify(code, {
           mangle: false,      // ne JAMAIS renommer (globales + onclick inline)
