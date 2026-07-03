@@ -595,8 +595,37 @@ function checkCliches(text) {
 // Chaque projet calcule SES règles au moment de l'appel.
 // Aucune règle n'est hardcodée pour une œuvre future.
 // ══════════════════════════════════════════════════════════
+// ── Langue du manuscrit → code LanguageTool ──────────────
+// Convention identique au moteur d'autocorrection : la langue de correction est
+// pilotée par le sélecteur de langue du projet (ui_lang). Le finnois et le
+// hongrois ne sont pas couverts par l'API publique LanguageTool → null
+// (le correcteur LT est désactivé proprement ; l'autocorrection locale reste active).
+const LT_LANG_CODES = { fr:'fr', en:'en-US', es:'es', de:'de-DE', it:'it', pt:'pt-PT', ru:'ru-RU', da:'da-DK', el:'el-GR', fi:null, hu:null };
+// Règle du vérificateur orthographique LT par langue (IDs officiels).
+const LT_SPELLER_RULES = {
+  fr: ['MORFOLOGIK_RULE_FR'],
+  en: ['MORFOLOGIK_RULE_EN_US','MORFOLOGIK_RULE_EN_GB'],
+  es: ['MORFOLOGIK_RULE_ES'],
+  de: ['GERMAN_SPELLER_RULE'],
+  it: ['MORFOLOGIK_RULE_IT_IT'],
+  pt: ['MORFOLOGIK_RULE_PT_PT','MORFOLOGIK_RULE_PT_BR'],
+  ru: ['MORFOLOGIK_RULE_RU_RU'],
+  da: ['MORFOLOGIK_RULE_DA_DK'],
+  el: ['MORFOLOGIK_RULE_EL_GR'],
+};
+function _ltManuscriptLang() {
+  const l = (typeof getPref === 'function') ? (getPref('ui_lang') || 'fr') : 'fr';
+  return Object.prototype.hasOwnProperty.call(LT_LANG_CODES, l) ? l : 'fr';
+}
+function _ltApiCode() {
+  const c = LT_LANG_CODES[_ltManuscriptLang()];
+  return (c === undefined) ? 'fr' : c;
+}
+
 function buildLtParams() {
-  const disabledRules      = new Set(['WHITESPACE_RULE','FRENCH_WHITESPACE','COMMA_PARENTHESIS_WHITESPACE']);
+  const appLang = _ltManuscriptLang();
+  const disabledRules      = new Set(['WHITESPACE_RULE','COMMA_PARENTHESIS_WHITESPACE']);
+  if (appLang === 'fr') disabledRules.add('FRENCH_WHITESPACE');
   const disabledCategories = new Set();
 
   // Mots à ignorer : noms de personnages + lieux (centralisé)
@@ -612,7 +641,7 @@ function buildLtParams() {
 
   if (temps.includes('Passé simple') || temps.includes('Mélange')) {
     disabledRules.add('AGREEMENT_VERB_SUBJECT');
-    disabledRules.add('FR_AGREEMENT_VERB');
+    if (appLang === 'fr') disabledRules.add('FR_AGREEMENT_VERB');
     disabledRules.add('VERB_TENSE_ERROR');
   }
   if (temps.includes('Présent')) {
@@ -627,7 +656,7 @@ function buildLtParams() {
   if (registre.includes('Familier') || registre.includes('Argotique')) {
     disabledCategories.add('STYLE');
     disabledRules.add('REGISTER_SHIFT');
-    disabledRules.add('FR_INFORMAL_SPEECH');
+    if (appLang === 'fr') disabledRules.add('FR_INFORMAL_SPEECH');
   }
   if (narration.includes('non-fiable')) {
     disabledRules.add('VERB_TENSE_ERROR');
@@ -638,13 +667,14 @@ function buildLtParams() {
   }
   const isCreativeFiction = ['Roman','Nouvelle','Novella','Recueil','Scénario'].some(t => type.includes(t));
   if (isCreativeFiction) {
-    disabledRules.add('MORFOLOGIK_RULE_FR');
+    (LT_SPELLER_RULES[appLang] || []).forEach(r => disabledRules.add(r));
   }
   const isSpeculative = ['Fantasy','Science-Fiction','Space Opera','Cyberpunk','Steampunk',
     'Post-apocalyptique','Dystopie','Uchronie','Fantastique','Gothique','Horreur'].some(g => genre.includes(g));
   if (isSpeculative) {
-    disabledRules.add('MORFOLOGIK_RULE_FR');
+    (LT_SPELLER_RULES[appLang] || []).forEach(r => disabledRules.add(r));
     disabledRules.add('SPELLING_RULE');
+    disabledRules.add('HUNSPELL_RULE');
   }
 
   return {
@@ -668,7 +698,7 @@ function ltPostFilter(issues) {
 
   return issues.filter(issue => {
     // Nettoyer la ponctuation autour du mot signalé pour la comparaison
-    const raw     = (issue.raw || '').toLowerCase().replace(/[^a-zA-ZàâéèêëîïôùûüœçÀÂÉÈÊËÎÏÔÙÛÜŒÇ]/g, '').trim();
+    const raw     = (issue.raw || '').toLowerCase().replace(/[^\p{L}]/gu, '').trim();
     const ruleId  = (issue.ruleId || '');
     const issueType = (issue.type || '');
 
@@ -677,7 +707,7 @@ function ltPostFilter(issues) {
       if (persoNames.has(raw)) return false;
       // Cas nom composé signalé en entier : "Roi Aldren" → chaque mot individuellement
       const subWords = (issue.raw || '').toLowerCase().split(/[\s\-]+/)
-        .map(w => w.replace(/[^a-zA-ZàâéèêëîïôùûüœçÀÂÉÈÊËÎÏÔÙÛÜŒÇ]/g, ''));
+        .map(w => w.replace(/[^\p{L}]/gu, ''));
       if (subWords.length > 1 && subWords.every(w => !w || persoNames.has(w))) return false;
     }
 
@@ -706,10 +736,17 @@ async function callLanguageTool(text) {
   const chunk = text.length > LT_MAX ? text.slice(0, LT_MAX) : text;
   const truncated = text.length > LT_MAX;
 
+  // Langue du manuscrit (pilotée par le sélecteur de langue du projet).
+  const ltCode = _ltApiCode();
+  if (!ltCode) {
+    const _m = (typeof _t === 'function') ? _t('lt_lang_unsupported') : null;
+    return { error: (_m && _m !== 'lt_lang_unsupported') ? _m : "cette langue n'est pas encore prise en charge par LanguageTool — l'autocorrection locale reste disponible.", unsupported: true };
+  }
+
   const ltParams = buildLtParams();
   const params = {
     text:          chunk,
-    language:      'fr',
+    language:      ltCode,
     enabledOnly:   'false',
     disabledRules: ltParams.disabledRules,
   };

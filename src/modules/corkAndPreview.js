@@ -899,7 +899,9 @@ const _ANNOT = (() => {
     const ctrl = _ltAbort;
 
     try {
-      const lang = getPref('ia_langue') === 'en' ? 'en-US' : 'fr';
+      // Langue du manuscrit → code LT (même convention que le correcteur complet)
+      const lang = (typeof _ltApiCode === 'function') ? _ltApiCode() : 'fr';
+      if (!lang) { loading.style.display = 'none'; sec.style.display = 'none'; return; }
       const body = 'text=' + encodeURIComponent(word) + '&language=' + lang + '&enabledOnly=false';
 
       const data = await new Promise((resolve, reject) => {
@@ -3952,6 +3954,106 @@ const LanguageRules = {
     highPunct: [],
     dupWords: /\b(el|la|los|las|de|del|un|una|unos|unas|y|en|a|al|que|se|es|su|sus|me|te|le|lo|nos|con|por|para|pero|si|o|ni)\s+\1\b/gi,
   },
+  // ── Langues ajoutées (typographie + répétitions) ─────────────────────────
+  // Les accords grammaticaux (PluralEngine/SpellEngine.participes) restent
+  // limités à fr/en/es ; pour ces langues, seules les corrections SÛRES
+  // (guillemets, ponctuation, répétitions, espaces, majuscules) s'appliquent.
+  de: {
+    openQuote:  '\u201e',
+    closeQuote: '\u201c',
+    punctSpaceBefore: /([^!\?\:;,\s])([\!\?\:;])/g,
+    punctSpaceBeforeReplace: null,
+    punctNoSpaceBefore: /\s+([\!\?\:;,\.])/g,
+    punctNoSpaceBeforeReplace: '$1',
+    punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u201c\u201d"'])/g,
+    punctSpaceAfterReplace: '$1 $2',
+    highPunct: [],
+    dupWords: /(?<!\p{L})(der|die|das|den|dem|des|ein|eine|einen|einem|einer|und|oder|aber|ich|du|er|sie|es|wir|ihr|in|an|auf|mit|von|zu|bei|für|als|wie|dass|ist|war|nicht|auch|so|dann|doch|nur|noch|schon|sich|mein|dein|sein)\s+\1(?!\p{L})/giu,
+  },
+  it: {
+    openQuote:  '\u00ab',
+    closeQuote: '\u00bb',
+    punctSpaceBefore: /([^!\?\:;,\s])([\!\?\:;])/g,
+    punctSpaceBeforeReplace: null,
+    punctNoSpaceBefore: /\s+([\!\?\:;,\.])/g,
+    punctNoSpaceBeforeReplace: '$1',
+    punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u00bb"'])/g,
+    punctSpaceAfterReplace: '$1 $2',
+    highPunct: [],
+    dupWords: /(?<!\p{L})(il|lo|la|le|gli|un|una|uno|di|del|della|dei|delle|e|o|ma|che|chi|si|se|in|al|alla|ai|con|per|su|da|non|più|come|io|tu|lui|lei|noi|voi|loro|mi|ti|ci|vi|ne)\s+\1(?!\p{L})/giu,
+  },
+  pt: {
+    openQuote:  '\u00ab',
+    closeQuote: '\u00bb',
+    punctSpaceBefore: /([^!\?\:;,\s])([\!\?\:;])/g,
+    punctSpaceBeforeReplace: null,
+    punctNoSpaceBefore: /\s+([\!\?\:;,\.])/g,
+    punctNoSpaceBeforeReplace: '$1',
+    punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u00bb"'])/g,
+    punctSpaceAfterReplace: '$1 $2',
+    highPunct: [],
+    dupWords: /(?<!\p{L})(o|a|os|as|um|uma|uns|umas|de|do|da|dos|das|e|ou|mas|que|se|em|no|na|nos|nas|com|por|para|não|mais|como|eu|tu|ele|ela|nós|eles|elas|me|te|lhe|vos|seu|sua|meu|minha)\s+\1(?!\p{L})/giu,
+  },
+  ru: {
+    openQuote:  '\u00ab',
+    closeQuote: '\u00bb',
+    punctSpaceBefore: /([^!\?\:;,\s])([\!\?\:;])/g,
+    punctSpaceBeforeReplace: null,
+    punctNoSpaceBefore: /\s+([\!\?\:;,\.])/g,
+    punctNoSpaceBeforeReplace: '$1',
+    punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u00bb"'])/g,
+    punctSpaceAfterReplace: '$1 $2',
+    highPunct: [],
+    dupWords: /(?<!\p{L})(и|а|но|или|что|как|это|я|ты|он|она|оно|мы|вы|они|в|во|на|с|со|к|ко|по|за|из|у|о|об|от|до|не|ни|же|бы|ли|то|так|уже|ещё|вот|его|её|их|мой|наш|ваш)\s+\1(?!\p{L})/giu,
+  },
+  da: {
+    openQuote:  '\u00bb',
+    closeQuote: '\u00ab',
+    punctSpaceBefore: /([^!\?\:;,\s])([\!\?\:;])/g,
+    punctSpaceBeforeReplace: null,
+    punctNoSpaceBefore: /\s+([\!\?\:;,\.])/g,
+    punctNoSpaceBeforeReplace: '$1',
+    punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u00ab"'])/g,
+    punctSpaceAfterReplace: '$1 $2',
+    highPunct: [],
+    dupWords: /(?<!\p{L})(og|i|at|det|en|et|den|de|der|som|på|med|til|af|for|om|ikke|jeg|du|han|hun|vi|man|er|var|har|men|så|også|kun|nu|da|når|hvis|hvor|min|din|sin)\s+\1(?!\p{L})/giu,
+  },
+  el: {
+    openQuote:  '\u00ab',
+    closeQuote: '\u00bb',
+    punctSpaceBefore: /([^!\?\:;,\s])([\!\?\:;])/g,
+    punctSpaceBeforeReplace: null,
+    punctNoSpaceBefore: /\s+([\!\?\:;,\.])/g,
+    punctNoSpaceBeforeReplace: '$1',
+    punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u00bb"'])/g,
+    punctSpaceAfterReplace: '$1 $2',
+    highPunct: [],
+    dupWords: /(?<!\p{L})(και|να|το|τα|η|ο|οι|του|της|των|τον|την|στο|στη|στην|στον|με|σε|για|από|δεν|μη|μην|που|πως|ότι|θα|ως|σαν|εγώ|εσύ|αυτός|αυτή|αυτό|εμείς|εσείς|μου|σου)\s+\1(?!\p{L})/giu,
+  },
+  fi: {
+    openQuote:  '\u201d',
+    closeQuote: '\u201d',
+    punctSpaceBefore: /([^!\?\:;,\s])([\!\?\:;])/g,
+    punctSpaceBeforeReplace: null,
+    punctNoSpaceBefore: /\s+([\!\?\:;,\.])/g,
+    punctNoSpaceBeforeReplace: '$1',
+    punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u201d"'])/g,
+    punctSpaceAfterReplace: '$1 $2',
+    highPunct: [],
+    dupWords: /(?<!\p{L})(ja|on|ei|se|hän|me|te|he|minä|sinä|että|kun|jos|mutta|tai|myös|vain|nyt|niin|kuin|joka|mikä|tämä|tuo|ne|sen|sitä|hänen|minun|sinun|oli|ovat)\s+\1(?!\p{L})/giu,
+  },
+  hu: {
+    openQuote:  '\u201e',
+    closeQuote: '\u201d',
+    punctSpaceBefore: /([^!\?\:;,\s])([\!\?\:;])/g,
+    punctSpaceBeforeReplace: null,
+    punctNoSpaceBefore: /\s+([\!\?\:;,\.])/g,
+    punctNoSpaceBeforeReplace: '$1',
+    punctSpaceAfter: /([,\.;!\?])([^\s\n\)\]\u201d"'])/g,
+    punctSpaceAfterReplace: '$1 $2',
+    highPunct: [],
+    dupWords: /(?<!\p{L})(az|és|hogy|nem|is|egy|de|ha|már|még|csak|mint|el|meg|fel|le|ki|be|én|te|ő|mi|ti|ők|ez|azt|ezt|van|volt|majd|most|itt|ott|úgy|így|vagy|mert)\s+\1(?!\p{L})/giu,
+  },
 };
 
 
@@ -3991,7 +4093,7 @@ const PluralEngine = (() => {
   ]);
 
   function applyNounPlural(text, lang) {
-    if (lang === 'en' || lang === 'es') return text; // EN/ES : accord nominal complexe, non traité
+    if (lang !== 'fr') return text; // accord nominal automatique : FR uniquement
     // FR uniquement
     const det = DET_PLUR_FR;
     // Pattern : déterminant pluriel + NOM qui ne finit pas par s/x/z
@@ -4233,7 +4335,8 @@ const PluralEngine = (() => {
   function applyPluralVerb(text, lang) {
     if (lang === 'en') return _applyPluralVerbEN(text);
     if (lang === 'es') return _applyPluralVerbES(text);
-    return _applyPluralVerbFR(text);
+    if (lang === 'fr') return _applyPluralVerbFR(text);
+    return text; // autres langues : pas de table d'accord — ne rien toucher
   }
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -4364,6 +4467,7 @@ const PluralEngine = (() => {
   function applyPluralAdj(text, lang) {
     if (lang === 'en') return text; // EN adj invariable
     if (lang === 'es') return _applyPluralAdjES(text);
+    if (lang !== 'fr') return text; // autres langues : non traité
     // FR : pluriel + genre
     let result = _applyPluralAdjFR(text);
     result = _applyGenderAdjFR(result);
@@ -4535,14 +4639,48 @@ const SpellEngine = {
     'sinnúmero':'sin número','contrarreloj':'contra reloj',
   },
 
+  // ── Dictionnaires ajoutés : corrections SÛRES uniquement ───────────────────
+  // (orthographe ancienne → nouvelle, accents/diacritiques manquants sans ambiguïté)
+  // Dictionnaire DE : ancienne orthographe (ß pré-1996) + fautes fréquentes
+  _dict_de: {
+    'daß':'dass','muß':'muss','mußte':'musste','müßte':'müsste','müßen':'müssen',
+    'wußte':'wusste','gewußt':'gewusst','läßt':'lässt','bißchen':'bisschen',
+    'schluß':'schluss','anläßlich':'anlässlich','schloß':'schloss','fluß':'fluss',
+    'standart':'standard','seperat':'separat','agressiv':'aggressiv',
+    'wiederspiegeln':'widerspiegeln','defintiv':'definitiv','vieleicht':'vielleicht',
+    'warscheinlich':'wahrscheinlich','wharscheinlich':'wahrscheinlich',
+  },
+  // Dictionnaire IT : accents finaux manquants (sans ambiguïté)
+  _dict_it: {
+    'perche':'perché','poiche':'poiché','affinche':'affinché','benche':'benché',
+    'finche':'finché','piu':'più','gia':'già','cosi':'così','puo':'può',
+    'cioe':'cioè','percio':'perciò','virtu':'virtù','citta':'città',
+    'universita':'università','qualita':'qualità','verita':'verità',
+    'felicita':'felicità','liberta':'libertà','difficolta':'difficoltà',
+    'realta':'realtà','laggiu':'laggiù','quaggiu':'quaggiù','lassu':'lassù',
+  },
+  // Dictionnaire PT : tildes/cédilles manquants (sans ambiguïté)
+  _dict_pt: {
+    'nao':'não','entao':'então','tambem':'também','voce':'você','voces':'vocês',
+    'alem':'além','porem':'porém','ninguem':'ninguém','alguem':'alguém',
+    'amanha':'amanhã','irmao':'irmão','coracao':'coração','acao':'ação',
+    'atencao':'atenção','informacao':'informação','situacao':'situação',
+    'condicao':'condição','licao':'lição','cancao':'canção','razao':'razão',
+    'ate':'até',
+  },
+
   /** Corriger les fautes d'orthographe lexicales dans le texte */
   applySpell(text, lang) {
     let dict;
-    if (lang === 'en') dict = SpellEngine._dict_en;
+    if (lang === 'fr') dict = SpellEngine._dict_fr;
+    else if (lang === 'en') dict = SpellEngine._dict_en;
     else if (lang === 'es') dict = SpellEngine._dict_es;
-    else dict = SpellEngine._dict_fr;
+    else if (lang === 'de') dict = SpellEngine._dict_de;
+    else if (lang === 'it') dict = SpellEngine._dict_it;
+    else if (lang === 'pt') dict = SpellEngine._dict_pt;
+    else return text; // ru/da/el/fi/hu : pas de dictionnaire lexical local — ne rien toucher
 
-    return text.replace(/\b([a-zA-ZÀ-ÿ'-]{3,})\b/g, (match) => {
+    return text.replace(/(?<![\p{L}'’-])([\p{L}'’-]{3,})(?![\p{L}'’-])/gu, (match) => {
       const lower = match.toLowerCase();
       const correction = dict[lower];
       if (!correction || correction === lower) return match;
@@ -4555,7 +4693,8 @@ const SpellEngine = {
   },
 
   /** Corriger "j'ai parle" → "j'ai parlé", "j'ai manger" → "j'ai mangé", etc. */
-  applyParticipes(text) {
+  applyParticipes(text, lang) {
+    if (lang && lang !== 'fr') return text; // participes passés : règle française uniquement
     // Liste des mots terminant en -er qui NE sont PAS des infinitifs
     // (noms, adjectifs, prépositions fréquentes) — à ne pas toucher
     const NON_INFINITIFS = new Set([
@@ -4593,9 +4732,9 @@ const TypographicEngine = {
   /** Capitalise après . ? ! et en début de paragraphe */
   applyCapitals(text) {
     // Début de texte / après newline
-    text = text.replace(/(^|\n)([ \t]*)([a-zàâäéèêëîïôùûüç])/gm, (m, nl, sp, ch) => nl + sp + ch.toUpperCase());
+    text = text.replace(/(^|\n)([ \t]*)(\p{Ll})/gmu, (m, nl, sp, ch) => nl + sp + ch.toUpperCase());
     // Après . ? ! (suivi d'espace ou de quote)
-    text = text.replace(/([.?!])([\s\u202f]+)([a-zàâäéèêëîïôùûüç])/g, (m, p, sp, ch) => p + sp + ch.toUpperCase());
+    text = text.replace(/([.?!])([\s\u202f]+)(\p{Ll})/gu, (m, p, sp, ch) => p + sp + ch.toUpperCase());
     return text;
   },
 
@@ -4717,7 +4856,7 @@ const SafeCorrectionEngine = (() => {
     if (prefs.capitals)        t = TypographicEngine.applyCapitals(t);
     // Corrections orthographiques lexicales + participes passés (conditionnelles)
     if (prefs.spell)           t = SpellEngine.applySpell(t, lang);
-    if (prefs.participes)      t = SpellEngine.applyParticipes(t);
+    if (prefs.participes)      t = SpellEngine.applyParticipes(t, lang);
 
     return t;
   }
@@ -4795,7 +4934,7 @@ const SafeCorrectionEngine = (() => {
     if (prefs.capitals)   t = TypographicEngine.applyCapitals(t);
     // Corrections orthographiques lexicales + participes passés (conditionnelles)
     if (prefs.spell)      t = SpellEngine.applySpell(t, lang);
-    if (prefs.participes) t = SpellEngine.applyParticipes(t);
+    if (prefs.participes) t = SpellEngine.applyParticipes(t, lang);
 
     return t;
   }
