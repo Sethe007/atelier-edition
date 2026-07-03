@@ -946,5 +946,7 @@ _registerLang('fi', {
   "ctx_image_tag": "🖼 Lisää kuvatunniste…",
   "ctx_toast_pasted": "📋 Teksti liitetty ({n} merk.)",
   "ctx_toast_paste_denied": "⚠ Liitä näppäimillä Ctrl+V — leikepöydän käyttö estetty",
-  "ctx_toast_copied_all": "📄 Koko teksti kopioitu ({n} merk.)"
+  "ctx_toast_copied_all": "📄 Koko teksti kopioitu ({n} merk.)",
+  "wt_lt_notice": "ℹ Korjaus käyttää LanguageToolia: analysoitu teksti lähetetään osoitteeseen api.languagetool.org (kolmannen osapuolen palvelu).",
+  "fs_overwrite_conflict": "Tätä projektia on muokattu muualla (hallintapaneelissa?) sen avaamisen jälkeen. Jos tallennat nyt, nämä muutokset korvataan. Jatketaanko?"
 });

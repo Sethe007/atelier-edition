@@ -946,5 +946,7 @@ _registerLang('da', {
   "ctx_image_tag": "🖼 Indsæt billedmærke…",
   "ctx_toast_pasted": "📋 Tekst indsat ({n} tegn)",
   "ctx_toast_paste_denied": "⚠ Brug Ctrl+V til at indsætte — adgang til udklipsholder nægtet",
-  "ctx_toast_copied_all": "📄 Fuld tekst kopieret ({n} tegn)"
+  "ctx_toast_copied_all": "📄 Fuld tekst kopieret ({n} tegn)",
+  "wt_lt_notice": "ℹ Korrekturen bruger LanguageTool: den analyserede tekst sendes til api.languagetool.org (tredjepartstjeneste).",
+  "fs_overwrite_conflict": "Dette projekt er ændret et andet sted (i dashboardet?), siden det blev åbnet. Hvis du gemmer nu, overskrives disse ændringer. Fortsæt?"
 });

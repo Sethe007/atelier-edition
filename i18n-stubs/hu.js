@@ -946,5 +946,7 @@ _registerLang('hu', {
   "ctx_image_tag": "🖼 Képcímke beszúrása…",
   "ctx_toast_pasted": "📋 Szöveg beillesztve ({n} kar.)",
   "ctx_toast_paste_denied": "⚠ Használd a Ctrl+V-t a beillesztéshez — a vágólap-hozzáférés megtagadva",
-  "ctx_toast_copied_all": "📄 Teljes szöveg másolva ({n} kar.)"
+  "ctx_toast_copied_all": "📄 Teljes szöveg másolva ({n} kar.)",
+  "wt_lt_notice": "ℹ A javítás a LanguageToolt használja: az elemzett szöveg elküldésre kerül az api.languagetool.org címre (harmadik féltől származó szolgáltatás).",
+  "fs_overwrite_conflict": "Ezt a projektet máshol módosították (az irányítópulton?) a megnyitása óta. Ha most mentesz, azok a módosítások felülíródnak. Folytatod?"
 });

@@ -12946,7 +12946,6 @@ var _i18n = {
     placeholder_syn_search:    'Mot à chercher… ou sélectionnez dans l\'éditeur',
     wt_syn_hint_full:          'Sélectionnez un mot dans l\'éditeur ou tapez-le ci-dessus.',
     wt_empty_correct_full:     'Cliquez sur Analyser pour lancer la vérification.',
-    wt_lt_notice:              'ℹ La correction utilise LanguageTool : le texte analysé est envoyé à api.languagetool.org (service tiers).',
     wt_empty_rapport_full:     'Cliquez sur Générer le rapport pour lancer l\'analyse complète.',
     rapport_sub_hint:          'Lance silencieusement les trois analyses (style, stats, grammaire) puis demande à l\'IA de compiler un rapport structuré par priorité.',
     rapport_footer_title:      'Lance les 3 analyses et compile un rapport éditorial structuré (IA requise)',
@@ -13410,7 +13409,6 @@ var _i18n = {
     modal_create_btn:            'Créer le projet',
     // ── Labels manquants ajoutés ────────────────────────────────────────────
     unsaved_label:             'Non sauvegardé',
-    fs_overwrite_conflict:     'Ce projet a été modifié ailleurs (le tableau de bord ?) depuis son ouverture. Enregistrer maintenant écrasera ces modifications. Continuer ?',
     project_label_prefix:      'Projet : ',
     saved_label:               'Sauvegardé',
     btn_create_project:        'Créer le projet',
@@ -13909,7 +13907,6 @@ var _i18n = {
     placeholder_syn_search:    'Word to search… or select in editor',
     wt_syn_hint_full:          'Select a word in the editor or type it above.',
     wt_empty_correct_full:     'Click Analyze to start the check.',
-    wt_lt_notice:              'ℹ Correction is powered by LanguageTool: the analysed text is sent to api.languagetool.org (third-party service).',
     wt_empty_rapport_full:     'Click Generate report to start the full analysis.',
     rapport_sub_hint:          'Silently runs all three analyses (style, stats, grammar) then asks the AI to compile a prioritized structured report.',
     rapport_footer_title:      'Runs 3 analyses and compiles a structured editorial report (AI required)',
@@ -14408,7 +14405,6 @@ var _i18n = {
 
     // ── Labels manquants ajoutés ────────────────────────────────────────────
     unsaved_label:             'Unsaved',
-    fs_overwrite_conflict:     'This project was modified elsewhere (the dashboard?) since it was opened. Saving now will overwrite those changes. Continue?',
     project_label_prefix:      'Project: ',
     saved_label:               'Saved',
     btn_create_project:        'Create project',
@@ -14905,7 +14901,6 @@ var _i18n = {
     placeholder_syn_search:    'Palabra a buscar… o seleccione en el editor',
     wt_syn_hint_full:          'Seleccione una palabra en el editor o escríbala arriba.',
     wt_empty_correct_full:     'Haga clic en Analizar para iniciar la verificación.',
-    wt_lt_notice:              'ℹ La corrección usa LanguageTool: el texto analizado se envía a api.languagetool.org (servicio de terceros).',
     wt_empty_rapport_full:     'Haga clic en Generar informe para iniciar el análisis completo.',
     rapport_sub_hint:          'Ejecuta silenciosamente los tres análisis (estilo, stats, gramática) y pide a la IA que compile un informe estructurado por prioridad.',
     rapport_footer_title:      'Ejecuta 3 análisis y compila un informe editorial estructurado (IA requerida)',
@@ -15404,7 +15399,6 @@ var _i18n = {
 
     // ── Labels manquants ajoutés ────────────────────────────────────────────
     unsaved_label:             'Sin guardar',
-    fs_overwrite_conflict:     'Este proyecto se modificó en otro lugar (¿el panel?) desde que se abrió. Guardar ahora sobrescribirá esos cambios. ¿Continuar?',
     project_label_prefix:      'Proyecto: ',
     saved_label:               'Guardado',
     btn_create_project:        'Crear proyecto',
@@ -29726,4 +29720,43 @@ if (typeof _i18n !== 'undefined') {
   Object.assign(_i18n.el || (_i18n.el={}), {"syn_empty_desc": "Συμφραστικό λεξικό συνωνύμων και αντωνύμων.", "kbd_esc": "Esc", "theme_ardoise": "① Μπλε σχιστόλιθος & χαλκός", "theme_foret": "② Βαθύ δάσος & πράσινο χρυσό", "theme_sepia": "③ Παλαιά σέπια & χρυσό", "theme_art_nouveau": "④ Ημερολόγιο Αρ Νουβό", "theme_jour_ivoire": "⑤ Μέρα — ελεφαντόδοντο & μελάνι", "theme_jour_ardoise": "⑥ Μέρα — ανοιχτός σχιστόλιθος"});
   Object.assign(_i18n.fi || (_i18n.fi={}), {"syn_empty_desc": "Kontekstuaalinen synonyymien ja antonyymien sanakirja.", "kbd_esc": "Esc", "theme_ardoise": "① Sininen liuske & kupari", "theme_foret": "② Syvä metsä & vihreä kulta", "theme_sepia": "③ Antiikkiseepia & kulta", "theme_art_nouveau": "④ Art nouveau -päiväkirja", "theme_jour_ivoire": "⑤ Päivä — norsunluu & muste", "theme_jour_ardoise": "⑥ Päivä — vaalea liuske"});
   Object.assign(_i18n.hu || (_i18n.hu={}), {"syn_empty_desc": "Szinonimák és antonimák kontextuális szótára.", "kbd_esc": "Esc", "theme_ardoise": "① Kék pala & réz", "theme_foret": "② Mély erdő & zöld arany", "theme_sepia": "③ Antik szépia & arany", "theme_art_nouveau": "④ Art nouveau napló", "theme_jour_ivoire": "⑤ Nappal — elefántcsont & tinta", "theme_jour_ardoise": "⑥ Nappal — vaalea pala"});
+}
+
+
+// ── i18n : avertissement LanguageTool + garde anti-écrasement — toutes langues ──
+// (Ajouté à la suite de l'audit sécurité/confidentialité. Même motif que les blocs
+//  anti-hardcode ci-dessus : garantit la présence des clés dans les 11 langues.)
+if (typeof _i18n !== 'undefined') {
+  const _WLT = {
+    fr: "ℹ La correction utilise LanguageTool : le texte analysé est envoyé à api.languagetool.org (service tiers).",
+    en: "ℹ Correction is powered by LanguageTool: the analysed text is sent to api.languagetool.org (third-party service).",
+    es: "ℹ La corrección usa LanguageTool: el texto analizado se envía a api.languagetool.org (servicio de terceros).",
+    de: "ℹ Die Korrektur nutzt LanguageTool: Der analysierte Text wird an api.languagetool.org gesendet (Drittanbieter).",
+    it: "ℹ La correzione usa LanguageTool: il testo analizzato viene inviato a api.languagetool.org (servizio di terzi).",
+    pt: "ℹ A correção usa o LanguageTool: o texto analisado é enviado para api.languagetool.org (serviço de terceiros).",
+    ru: "ℹ Проверка использует LanguageTool: анализируемый текст отправляется на api.languagetool.org (сторонний сервис).",
+    da: "ℹ Korrekturen bruger LanguageTool: den analyserede tekst sendes til api.languagetool.org (tredjepartstjeneste).",
+    el: "ℹ Η διόρθωση χρησιμοποιεί το LanguageTool: το αναλυόμενο κείμενο αποστέλλεται στο api.languagetool.org (υπηρεσία τρίτου μέρους).",
+    fi: "ℹ Korjaus käyttää LanguageToolia: analysoitu teksti lähetetään osoitteeseen api.languagetool.org (kolmannen osapuolen palvelu).",
+    hu: "ℹ A javítás a LanguageToolt használja: az elemzett szöveg elküldésre kerül az api.languagetool.org címre (harmadik féltől származó szolgáltatás)."
+  };
+  const _FSC = {
+    fr: "Ce projet a été modifié ailleurs (le tableau de bord ?) depuis son ouverture. Enregistrer maintenant écrasera ces modifications. Continuer ?",
+    en: "This project was modified elsewhere (the dashboard?) since it was opened. Saving now will overwrite those changes. Continue?",
+    es: "Este proyecto se modificó en otro lugar (¿el panel?) desde que se abrió. Guardar ahora sobrescribirá esos cambios. ¿Continuar?",
+    de: "Dieses Projekt wurde seit dem Öffnen anderswo geändert (im Dashboard?). Wenn Sie jetzt speichern, werden diese Änderungen überschrieben. Fortfahren?",
+    it: "Questo progetto è stato modificato altrove (nel pannello?) dopo la sua apertura. Salvando ora sovrascriverai quelle modifiche. Continuare?",
+    pt: "Este projeto foi modificado noutro local (no painel?) desde que foi aberto. Guardar agora irá substituir essas alterações. Continuar?",
+    ru: "Этот проект был изменён в другом месте (на панели?) после открытия. Сохранение сейчас перезапишет эти изменения. Продолжить?",
+    da: "Dette projekt er ændret et andet sted (i dashboardet?), siden det blev åbnet. Hvis du gemmer nu, overskrives disse ændringer. Fortsæt?",
+    el: "Αυτό το έργο τροποποιήθηκε αλλού (στον πίνακα ελέγχου;) αφότου άνοιξε. Η αποθήκευση τώρα θα αντικαταστήσει αυτές τις αλλαγές. Συνέχεια;",
+    fi: "Tätä projektia on muokattu muualla (hallintapaneelissa?) sen avaamisen jälkeen. Jos tallennat nyt, nämä muutokset korvataan. Jatketaanko?",
+    hu: "Ezt a projektet máshol módosították (az irányítópulton?) a megnyitása óta. Ha most mentesz, azok a módosítások felülíródnak. Folytatod?"
+  };
+  for (const _lc of ['fr','en','es','de','it','pt','ru','da','el','fi','hu']) {
+    Object.assign(_i18n[_lc] = _i18n[_lc] || {}, {
+      wt_lt_notice: _WLT[_lc],
+      fs_overwrite_conflict: _FSC[_lc],
+    });
+  }
 }
