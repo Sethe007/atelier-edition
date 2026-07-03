@@ -24,6 +24,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # La suite maison tourne via un shim Vitest (le Vitest natif crashe dans
+      # certains environnements). npm ci écrase node_modules/vitest : on le recrée.
+      - name: Recreate Vitest shim
+        run: |
+          mkdir -p node_modules/vitest
+          printf '{"name":"vitest","version":"0.0.0","type":"module","main":"index.mjs"}' > node_modules/vitest/package.json
+          printf 'export * from "../../test/_shim.mjs";\n' > node_modules/vitest/index.mjs
+
+      - name: Test
+        run: node test/_run.mjs
+
       - name: Build
         run: npm run build
 
