@@ -229,7 +229,7 @@ async function fsChooseBackupFolder() {
   try {
     const dir = await window.showDirectoryPicker({ mode: 'readwrite' });
     _fsBackupDir = dir;
-    try { await _fsIdbSet('backupDir', dir); } catch (e) {}
+    try { await _fsIdbSet('backupDir', dir); } catch (e) { console.warn('persistance backupDir :', e); }
     _fsToast('📦 Dossier de backups défini : ' + (dir.name || 'dossier'));
   } catch (e) {
     if (e && e.name === 'AbortError') return;

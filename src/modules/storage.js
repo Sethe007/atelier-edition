@@ -104,7 +104,35 @@ function loadProjectFile(event) {
   event.target.value = '';
 }
 
+// ── S-9 : garde-fou de forme pour les fichiers .scrivaelo importés ─────────
+// Validation LÉGÈRE et non bloquante : un fichier corrompu/malveillant est
+// neutralisé (types forcés, photos bornées) plutôt que rejeté brutalement.
+function _sanitizeProjectData(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
+  // Champs texte : forcés en chaînes (évite l'injection d'objets inattendus)
+  if (data.texte !== undefined && typeof data.texte !== 'string') data.texte = String(data.texte ?? '');
+  // Collections : forcées en tableaux
+  for (const k of ['persos', 'lieux']) {
+    if (data[k] !== undefined && !Array.isArray(data[k])) data[k] = [];
+  }
+  // Photos de fiches : uniquement des data-URL image, taille bornée (2 Mo)
+  const PHOTO_MAX = 2 * 1024 * 1024;
+  const cleanPhoto = (p) => (typeof p === 'string' && /^data:image\//.test(p) && p.length <= PHOTO_MAX) ? p : '';
+  for (const k of ['persos', 'lieux']) {
+    if (Array.isArray(data[k])) data[k].forEach(item => {
+      if (item && typeof item === 'object' && item.photo !== undefined) item.photo = cleanPhoto(item.photo);
+    });
+  }
+  // ia_config : jamais de clé importée depuis un fichier (voir S-2)
+  if (data.ia_config && data.ia_config.configs && typeof data.ia_config.configs === 'object') {
+    Object.values(data.ia_config.configs).forEach(c => { if (c && typeof c === 'object') delete c.key; });
+  }
+  return data;
+}
+
 function applyProjectData(data, fileName) {
+  data = _sanitizeProjectData(data);
+  if (!data) { console.warn('applyProjectData : fichier projet invalide, chargement annulé'); return; }
   // Vider l'état actuel
   Object.keys(images).forEach(k => delete images[k]);
   setDomVal('raw-input', '');

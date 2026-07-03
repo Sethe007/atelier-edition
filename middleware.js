@@ -34,7 +34,14 @@ export default async function middleware(request) {
   const secret = process.env.ACCESS_SECRET;
 
   // Dev bypass UNIQUEMENT si secret vaut exactement 'dev'
-  if (secret === 'dev') return;
+  // SECURITE : le bypass 'dev' n'est accepté QUE hors production
+  // (VERCEL_ENV: 'production' | 'preview' | 'development').
+  if (secret === 'dev') {
+    const env = (typeof process !== 'undefined' && process.env && process.env.VERCEL_ENV) || '';
+    if (env !== 'production') return;
+    // ACCESS_SECRET='dev' en production = configuration invalide -> accès refusé.
+    return new Response('Server misconfigured (ACCESS_SECRET)', { status: 503 });
+  }
 
   // Secret manquant = mauvaise config = on bloque par sécurité
   if (!secret) {

@@ -731,10 +731,25 @@ function ltPostFilter(issues) {
 }
 
 async function callLanguageTool(text) {
-  // Un seul appel API — tronqué à 20 000 caractères (limite API publique gratuite).
+  // Découpage en segments <= LT_MAX (limite API publique) sur des frontières de
+  // paragraphe/phrase, offsets agrégés. Au-delà de LT_CHUNKS_MAX segments
+  // (courtoisie vis-à-vis de l'API gratuite), le reste est signalé « tronqué ».
   const LT_MAX = 20000;
-  const chunk = text.length > LT_MAX ? text.slice(0, LT_MAX) : text;
-  const truncated = text.length > LT_MAX;
+  const LT_CHUNKS_MAX = 5;
+  const chunks = [];
+  let _pos = 0;
+  while (_pos < text.length && chunks.length < LT_CHUNKS_MAX) {
+    let end = Math.min(_pos + LT_MAX, text.length);
+    if (end < text.length) {
+      const win = text.slice(_pos, end);
+      let cut = Math.max(win.lastIndexOf('\n\n'), win.lastIndexOf('\n'));
+      if (cut < LT_MAX * 0.5) cut = Math.max(win.lastIndexOf('. '), win.lastIndexOf('! '), win.lastIndexOf('? '));
+      if (cut >= LT_MAX * 0.5) end = _pos + cut + 1;
+    }
+    chunks.push({ start: _pos, text: text.slice(_pos, end) });
+    _pos = end;
+  }
+  const truncated = _pos < text.length;
 
   // Langue du manuscrit (pilotée par le sélecteur de langue du projet).
   const ltCode = _ltApiCode();
@@ -744,28 +759,39 @@ async function callLanguageTool(text) {
   }
 
   const ltParams = buildLtParams();
-  const params = {
-    text:          chunk,
-    language:      ltCode,
-    enabledOnly:   'false',
-    disabledRules: ltParams.disabledRules,
-  };
-  if (ltParams.disabledCategories) params.disabledCategories = ltParams.disabledCategories;
-  // ── Envoyer la liste blanche des noms propres connus à l'API LT ──
-  // Le paramètre "words" permet à LT d'ignorer ces mots (niveau API, avant filtrage local)
-  if (ltParams.wordsToIgnore) params.words = ltParams.wordsToIgnore;
-
+  const allMatches = [];
   try {
-    const res = await fetch('https://api.languagetool.org/v2/check', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body:    new URLSearchParams(params).toString(),
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    const matches = data.matches || [];
-    matches.forEach(m => { m._globalOffset = m.offset; });
-    return { matches, truncated };
+    for (let i = 0; i < chunks.length; i++) {
+      if (i > 0) await new Promise(r => setTimeout(r, 600)); // rythme : API publique
+      const params = {
+        text:          chunks[i].text,
+        language:      ltCode,
+        enabledOnly:   'false',
+        disabledRules: ltParams.disabledRules,
+      };
+      if (ltParams.disabledCategories) params.disabledCategories = ltParams.disabledCategories;
+      // Liste blanche des noms propres connus (niveau API, avant filtrage local)
+      if (ltParams.wordsToIgnore) params.words = ltParams.wordsToIgnore;
+
+      const res = await fetch('https://api.languagetool.org/v2/check', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body:    new URLSearchParams(params).toString(),
+      });
+      if (!res.ok) {
+        // 1er segment en échec -> erreur franche ; sinon on garde l'acquis.
+        if (i === 0) throw new Error('HTTP ' + res.status);
+        console.warn('LanguageTool : segment ' + (i + 1) + ' ignoré (HTTP ' + res.status + ')');
+        break;
+      }
+      const data = await res.json();
+      (data.matches || []).forEach(m => {
+        m.offset += chunks[i].start;   // offset GLOBAL dans le texte complet
+        m._globalOffset = m.offset;
+        allMatches.push(m);
+      });
+    }
+    return { matches: allMatches, truncated };
   } catch(e) {
     console.warn('LanguageTool error:', e.message);
     return { error: 'LanguageTool inaccessible : ' + e.message };
@@ -1647,7 +1673,7 @@ async function runCorrector() {
       ltIssues = ltPostFilter(ltMatchesToIssues(ltResult.matches, analysisText));
       sources.push('LanguageTool');
       if (ltResult.truncated) {
-        errors.push('LanguageTool : texte tronqué à 20 000 caractères (utilisez « Chapitre actif seulement » pour analyser tout le roman).');
+        errors.push('LanguageTool : seuls les 100 000 premiers caractères (5 segments) ont été analysés — utilisez « Chapitre actif seulement » pour cibler la suite.');
       }
     }
   }
