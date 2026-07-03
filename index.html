@@ -495,6 +495,7 @@
               <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runCorrector()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runCorrector();}" title="Analyser le texte" data-i18n-title="btn_analyze"><i class="ti ti-writing-sign" aria-hidden="true"></i></div>
               <div class="wt-empty-title" data-i18n="nrb_correct_title">Correcteur</div>
               <div class="wt-empty-sub" data-i18n="wt_empty_correct_full">Cliquez sur Analyser pour lancer la vérification.</div>
+              <div class="wt-empty-sub" style="margin-top:6px;font-size:10px;opacity:.75;" data-i18n="wt_lt_notice">ℹ La correction utilise LanguageTool : le texte analysé est envoyé à api.languagetool.org (service tiers).</div>
             </div>
           </div>
         </div>
@@ -1226,8 +1227,8 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
 
         <div id="api-info-box" style="padding:10px 12px;background:var(--paper);border:1px solid var(--cream);border-radius:6px;font-size:10.5px;color:var(--ink-muted);line-height:1.6;">
           <span data-i18n="api_info_key">💾 La clé API est <strong>sauvegardée avec le projet</strong> (.json). Protégez votre fichier projet.</span><br>
-          ⚡ <strong>Groq</strong> <span data-i18n="api_info_groq">est gratuit sans CB — obtenez une clé sur</span> <a href="https://console.groq.com" target="_blank" style="color:var(--accent);">console.groq.com</a><br>
-          ⇄ <strong>OpenRouter</strong> <span data-i18n="api_info_openrouter">est gratuit sans CB — obtenez une clé sur</span> <a href="https://openrouter.ai/keys" target="_blank" style="color:var(--accent);">openrouter.ai/keys</a><br>
+          ⚡ <strong>Groq</strong> <span data-i18n="api_info_groq">est gratuit sans CB — obtenez une clé sur</span> <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">console.groq.com</a><br>
+          ⇄ <strong>OpenRouter</strong> <span data-i18n="api_info_openrouter">est gratuit sans CB — obtenez une clé sur</span> <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">openrouter.ai/keys</a><br>
           🛡 <span data-i18n="api_info_lt">Le correcteur <strong>LanguageTool</strong> fonctionne toujours sans clé API.</span>
         </div>
       </div>

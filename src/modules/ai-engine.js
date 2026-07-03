@@ -117,11 +117,12 @@ async function callAI(systemPrompt, userMsg, maxTokens = 1024) {
 
       // ── Gemini (Google) ──────────────────────────────────────
       case 'gemini': {
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeKey}`;
+        // SECURITE : cle via en-tete x-goog-api-key (pas en parametre d'URL).
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
         const res = await fetch(endpoint, {
           method: 'POST',
           signal: _signal,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': activeKey },
           body: JSON.stringify({
             system_instruction: { parts: [{ text: systemPrompt }] },
             contents: [{ role: 'user', parts: [{ text: userMsg }] }],

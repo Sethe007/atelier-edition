@@ -444,11 +444,14 @@ function collectProjectData() {
     lieux: getLieux(),
     ia_config: (() => {
       // Exporter ia_config sans les modules (ils restent locaux dans ia_modules_state)
+      // SECURITE : ne JAMAIS ecrire les cles API dans le fichier projet .scrivaelo.
+      // Les cles restent exclusivement dans localStorage['ia_config'] ; un fichier
+      // projet exporte/partage ne doit pas divulguer la cle (Anthropic/OpenAI/...).
       const cfg = _loadIaConfig();
       const cleanConfigs = {};
       Object.entries(cfg.configs || {}).forEach(([prov, provCfg]) => {
-        cleanConfigs[prov] = { key: provCfg.key || '', model: provCfg.model || '' };
-        // modules: volontairement exclus du JSON de projet
+        cleanConfigs[prov] = { model: provCfg.model || '' };
+        // key + modules: volontairement exclus du JSON de projet
       });
       return { provider: cfg.provider, configs: cleanConfigs };
     })(),
@@ -4838,11 +4841,12 @@ async function callAI(systemPrompt, userMsg, maxTokens = 1024) {
 
       // ── Gemini (Google) ──────────────────────────────────────
       case 'gemini': {
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeKey}`;
+        // SECURITE : cle via en-tete x-goog-api-key (pas en parametre d'URL ?key=).
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
         const res = await fetch(endpoint, {
           method: 'POST',
           signal: _signal,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': activeKey },
           body: JSON.stringify({
             system_instruction: { parts: [{ text: systemPrompt }] },
             contents: [{ role: 'user', parts: [{ text: userMsg }] }],
@@ -12942,6 +12946,7 @@ var _i18n = {
     placeholder_syn_search:    'Mot à chercher… ou sélectionnez dans l\'éditeur',
     wt_syn_hint_full:          'Sélectionnez un mot dans l\'éditeur ou tapez-le ci-dessus.',
     wt_empty_correct_full:     'Cliquez sur Analyser pour lancer la vérification.',
+    wt_lt_notice:              'ℹ La correction utilise LanguageTool : le texte analysé est envoyé à api.languagetool.org (service tiers).',
     wt_empty_rapport_full:     'Cliquez sur Générer le rapport pour lancer l\'analyse complète.',
     rapport_sub_hint:          'Lance silencieusement les trois analyses (style, stats, grammaire) puis demande à l\'IA de compiler un rapport structuré par priorité.',
     rapport_footer_title:      'Lance les 3 analyses et compile un rapport éditorial structuré (IA requise)',
@@ -13405,6 +13410,7 @@ var _i18n = {
     modal_create_btn:            'Créer le projet',
     // ── Labels manquants ajoutés ────────────────────────────────────────────
     unsaved_label:             'Non sauvegardé',
+    fs_overwrite_conflict:     'Ce projet a été modifié ailleurs (le tableau de bord ?) depuis son ouverture. Enregistrer maintenant écrasera ces modifications. Continuer ?',
     project_label_prefix:      'Projet : ',
     saved_label:               'Sauvegardé',
     btn_create_project:        'Créer le projet',
@@ -13903,6 +13909,7 @@ var _i18n = {
     placeholder_syn_search:    'Word to search… or select in editor',
     wt_syn_hint_full:          'Select a word in the editor or type it above.',
     wt_empty_correct_full:     'Click Analyze to start the check.',
+    wt_lt_notice:              'ℹ Correction is powered by LanguageTool: the analysed text is sent to api.languagetool.org (third-party service).',
     wt_empty_rapport_full:     'Click Generate report to start the full analysis.',
     rapport_sub_hint:          'Silently runs all three analyses (style, stats, grammar) then asks the AI to compile a prioritized structured report.',
     rapport_footer_title:      'Runs 3 analyses and compiles a structured editorial report (AI required)',
@@ -14401,6 +14408,7 @@ var _i18n = {
 
     // ── Labels manquants ajoutés ────────────────────────────────────────────
     unsaved_label:             'Unsaved',
+    fs_overwrite_conflict:     'This project was modified elsewhere (the dashboard?) since it was opened. Saving now will overwrite those changes. Continue?',
     project_label_prefix:      'Project: ',
     saved_label:               'Saved',
     btn_create_project:        'Create project',
@@ -14897,6 +14905,7 @@ var _i18n = {
     placeholder_syn_search:    'Palabra a buscar… o seleccione en el editor',
     wt_syn_hint_full:          'Seleccione una palabra en el editor o escríbala arriba.',
     wt_empty_correct_full:     'Haga clic en Analizar para iniciar la verificación.',
+    wt_lt_notice:              'ℹ La corrección usa LanguageTool: el texto analizado se envía a api.languagetool.org (servicio de terceros).',
     wt_empty_rapport_full:     'Haga clic en Generar informe para iniciar el análisis completo.',
     rapport_sub_hint:          'Ejecuta silenciosamente los tres análisis (estilo, stats, gramática) y pide a la IA que compile un informe estructurado por prioridad.',
     rapport_footer_title:      'Ejecuta 3 análisis y compila un informe editorial estructurado (IA requerida)',
@@ -15395,6 +15404,7 @@ var _i18n = {
 
     // ── Labels manquants ajoutés ────────────────────────────────────────────
     unsaved_label:             'Sin guardar',
+    fs_overwrite_conflict:     'Este proyecto se modificó en otro lugar (¿el panel?) desde que se abrió. Guardar ahora sobrescribirá esos cambios. ¿Continuar?',
     project_label_prefix:      'Proyecto: ',
     saved_label:               'Guardado',
     btn_create_project:        'Crear proyecto',
@@ -20742,8 +20752,9 @@ async function openSummaryPopup(triggerEl, chapterTitle) {
       headers = { 'Content-Type':'application/json', 'x-api-key':activeKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-client-side-api-key-allowed':'true' };
       bodyObj = { model, max_tokens:600, system:systemTxt, messages:[{ role:'user', content:userTxt }] };
     } else if (activeProv === 'gemini') {
-      url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeKey}`;
-      headers = { 'Content-Type':'application/json' };
+      // SECURITE : cle via en-tete x-goog-api-key (pas en parametre d'URL).
+      url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+      headers = { 'Content-Type':'application/json', 'x-goog-api-key':activeKey };
       bodyObj = { system_instruction:{ parts:[{ text:systemTxt }] }, contents:[{ role:'user', parts:[{ text:userTxt }] }], generationConfig:{ maxOutputTokens:600 } };
     } else {
       // OpenAI-compat : openai, groq, openrouter
@@ -24594,6 +24605,32 @@ async function _fsHasPermission(handle, readwrite) {
   return false;
 }
 
+// Garde anti-ecrasement (symetrique de hub.js saveProjectFull). Avant d'ecrire,
+// on relit le fichier sur disque : si sa derniereSauvegarde a change depuis notre
+// dernier chargement/enregistrement (ex. le tableau de bord a sauvegarde en
+// parallele), on previent l'utilisateur pour ne pas ecraser silencieusement ce
+// travail. Renvoie true si l'ecriture peut continuer, false si l'utilisateur annule.
+async function _fsGuardOverwrite(handle) {
+  try {
+    if (!handle || typeof handle.getFile !== 'function') return true;
+    const expected = (typeof currentProject !== 'undefined' && currentProject)
+      ? currentProject.derniereSauvegarde : null;
+    if (expected == null) return true;
+    const file = await handle.getFile();
+    if (!file || !file.size) return true;
+    let onDisk = null;
+    try { onDisk = JSON.parse(await file.text()); } catch (e) { return true; }
+    const diskSaved = (onDisk && onDisk.meta && onDisk.meta.derniereSauvegarde) || null;
+    if (diskSaved && diskSaved !== expected) {
+      const _m = (typeof _t === 'function') ? _t('fs_overwrite_conflict') : null;
+      const msg = (_m && _m !== 'fs_overwrite_conflict') ? _m
+        : 'Ce projet a ete modifie ailleurs (le tableau de bord ?) depuis son ouverture. Enregistrer maintenant ecrasera ces modifications. Continuer ?';
+      return (typeof confirm === 'function') ? confirm(msg) : true;
+    }
+  } catch (e) { console.warn('garde anti-ecrasement :', e); }
+  return true;
+}
+
 function _fsToast(msg, dur, type) {
   if (typeof showToast === 'function') showToast(msg, dur, type);
 }
@@ -24662,6 +24699,7 @@ async function fsSaveProject() {
       if (!_fsHandle) return fsSaveProjectAs();
     }
     if (!(await _fsHasPermission(_fsHandle, true))) return fsSaveProjectAs();
+    if (!(await _fsGuardOverwrite(_fsHandle))) { _fsToast('Enregistrement annulé.', 3000); return; }
     const data = collectProjectData();
     await _fsWrite(_fsHandle, JSON.stringify(data, null, 2));
     if (typeof currentProject !== 'undefined' && currentProject) {
@@ -24832,6 +24870,7 @@ async function _fsTrySaveOpfs() {
     const dir = await _fsOpfsDir();
     if (!dir) return false;
     const fh = await dir.getFileHandle(_fsProjectFileName(), { create: true });
+    if (!(await _fsGuardOverwrite(fh))) { _fsToast('Enregistrement annulé.', 3000); return true; }
     const data = collectProjectData();
     await _fsWrite(fh, JSON.stringify(data, null, 2));
     _fsHandle = fh;

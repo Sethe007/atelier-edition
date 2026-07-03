@@ -45,11 +45,12 @@ function collectProjectData() {
     lieux: getLieux(),
     ia_config: (() => {
       // Exporter ia_config sans les modules (ils restent locaux dans ia_modules_state)
+      // SECURITE : ne JAMAIS ecrire les cles API dans le fichier projet .scrivaelo.
       const cfg = _loadIaConfig();
       const cleanConfigs = {};
       Object.entries(cfg.configs || {}).forEach(([prov, provCfg]) => {
-        cleanConfigs[prov] = { key: provCfg.key || '', model: provCfg.model || '' };
-        // modules: volontairement exclus du JSON de projet
+        cleanConfigs[prov] = { model: provCfg.model || '' };
+        // key + modules: volontairement exclus du JSON de projet
       });
       return { provider: cfg.provider, configs: cleanConfigs };
     })(),

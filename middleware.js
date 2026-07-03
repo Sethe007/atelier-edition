@@ -9,13 +9,21 @@ async function hmac(secret, message) {
   return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
+// Comparaison a temps constant (evite les attaques de timing sur la signature).
+function timingSafeEqual(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 async function verifyCookie(value, secret) {
   const parts = value.split('.');
   if (parts.length !== 3) return false;
   const [userId, ts, sig] = parts;
   if (Date.now() - Number(ts) > 30 * 24 * 60 * 60 * 1000) return false;
   const expected = await hmac(secret, userId + ':' + ts);
-  return expected === sig;
+  return timingSafeEqual(expected, sig);
 }
 
 export const config = {
