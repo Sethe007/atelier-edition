@@ -949,7 +949,7 @@ function formatRoman() {
     }
 
     // Image placeholder
-    const imgMatch = trimmed.match(/^\[IMAGE:([^\]]+)\]$/i);
+    const imgMatch = trimmed.match(/^\[IMAGE\s*:\s*([^\]]+)\]$/i);
     if (imgMatch) {
       const key = imgMatch[1].trim().toLowerCase();
       if (images[key]) {
@@ -3419,7 +3419,7 @@ async function _exportWordCore() {
     if (!t) { prevEmpty = true; continue; }
 
     // ── Image ──────────────────────────────────────────
-    const imgMatch = t.match(/^\[IMAGE:(.+?)\]$/i);
+    const imgMatch = t.match(/^\[IMAGE\s*:\s*(.+?)\]$/i);
     if (imgMatch) {
       const key    = imgMatch[1].trim().toLowerCase();
       const imgDat = images[key];
@@ -23920,10 +23920,34 @@ var SafeCorrectionEngine = (() => {
   let _lastText   = null;
 
   /** Applique toutes les corrections activées sur le texte complet. */
+  // ── Protection des balises internes de l'app contre l'autocorrection ────────
+  // [IMAGE:nom], [NOTE:...], [HL:couleur texte], [TAG:...] : la ponctuation FR
+  // (espace insécable avant « : ») cassait ces balises (ex. [IMAGE:nom] ->
+  // [IMAGE :nom]) et la prévisualisation affichait alors le texte brut au lieu
+  // de l'image. On les masque par un caractère sentinelle (zone à usage privé)
+  // AVANT toute correction, puis on les restaure à l'identique.
+  const _AC_TAG_RE = /\[(?:IMAGE|NOTE|HL|TAG):[^\]\n]*\]/gi;
+  function _acMaskTags(text, store) {
+    return text.replace(_AC_TAG_RE, (m) => {
+      if (store.length >= 6000) return m; // garde : au-delà, ne pas masquer
+      const sentinel = String.fromCharCode(0xE000 + store.length);
+      store.push(m);
+      return sentinel;
+    });
+  }
+  function _acUnmaskTags(text, store) {
+    if (!store.length) return text;
+    return text.replace(/[\uE000-\uF8FF]/g, (ch) => {
+      const i = ch.charCodeAt(0) - 0xE000;
+      return (i >= 0 && i < store.length) ? store[i] : ch;
+    });
+  }
+
   function applyAll(text, prefs) {
     if (!prefs.enabled) return text;
     const lang = prefs.lang || 'fr';
-    let t = text;
+    const _tags = [];
+    let t = _acMaskTags(text, _tags);
 
     // Ordre important : ellipsis d'abord (évite interférence avec ponctuation)
     if (prefs.ellipsis)        t = TypographicEngine.applyEllipsis(t);
@@ -23941,7 +23965,7 @@ var SafeCorrectionEngine = (() => {
     if (prefs.spell)           t = SpellEngine.applySpell(t, lang);
     if (prefs.participes)      t = SpellEngine.applyParticipes(t, lang);
 
-    return t;
+    return _acUnmaskTags(t, _tags);
   }
 
   let _correctionCooldown = false;  // évite de re-corriger immédiatement après une correction
@@ -24003,7 +24027,8 @@ var SafeCorrectionEngine = (() => {
   function _applyAllSafe(text, prefs, cursorPos) {
     if (!prefs.enabled) return text;
     const lang = prefs.lang || 'fr';
-    let t = text;
+    const _tags = [];
+    let t = _acMaskTags(text, _tags);
 
     if (prefs.ellipsis)      t = TypographicEngine.applyEllipsis(t);
     if (prefs.apostrophes)   t = TypographicEngine.applyApostrophes(t);
@@ -24032,7 +24057,7 @@ var SafeCorrectionEngine = (() => {
     if (prefs.spell)      t = SpellEngine.applySpell(t, lang);
     if (prefs.participes) t = SpellEngine.applyParticipes(t, lang);
 
-    return t;
+    return _acUnmaskTags(t, _tags);
   }
 
   /**
