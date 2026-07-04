@@ -30222,15 +30222,19 @@ if (typeof _i18n !== 'undefined') {
 }
 
 
-// ── F-5 : mode hors-ligne réel — enregistrement du service worker ──────────
-// Portée RELATIVE : fonctionne en standalone (/) comme en embed (/app/).
-// Best-effort : jamais bloquant si l'enregistrement échoue (vieux navigateurs,
-// contexte non sécurisé, file://).
+// ── Nettoyage service worker (retrait du mode hors-ligne) ──────────────────
+// Le SW créait des problèmes de cache (contenu périmé resservi) pour un gain
+// marginal sur une app locale-first. On ne l'enregistre plus, et on PURGE tout
+// SW déjà enregistré + ses caches sur les navigateurs concernés (best-effort).
 try {
-  if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator &&
-      typeof window !== 'undefined' && window.isSecureContext) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(e => console.warn('service worker :', e.message));
-    });
+  if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then(regs => regs.forEach(r => r.unregister()))
+      .catch(() => {});
+  }
+  if (typeof caches !== 'undefined' && caches.keys) {
+    caches.keys().then(keys => keys.forEach(k => {
+      if (/scrivaelo|shell/i.test(k)) caches.delete(k);
+    })).catch(() => {});
   }
 } catch (e) { /* environnement sans SW : ignorer */ }
