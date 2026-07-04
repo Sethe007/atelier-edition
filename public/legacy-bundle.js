@@ -1023,7 +1023,14 @@ function formatRoman() {
         const im = document.createElement('img');
         im.src = img.src;
         im.alt = img.caption || key;
-        im.style.cssText = 'transform:rotate(' + rot + 'deg);max-width:100%;display:block;margin:0 auto;';
+        let _imCss = 'transform:rotate(' + rot + 'deg);max-width:100%;display:block;margin:0 auto;';
+        // Réserver la hauteur via aspect-ratio quand on connaît les dimensions
+        // naturelles : la pagination mesure alors la hauteur correcte AVANT le
+        // décodage asynchrone de l'image (évite images mal placées / superposées).
+        if (img.natW && img.natH && !rot) {
+          _imCss += 'width:100%;height:auto;aspect-ratio:' + img.natW + ' / ' + img.natH + ';';
+        }
+        im.style.cssText = _imCss;
         wrap.appendChild(im);
 
         // Poignées (masquées en mode bandeau et watermark pour éviter confusion)
@@ -1850,10 +1857,58 @@ function paginateNodes(nodes, chapters) {
 
   updateChapterList(chapters);
   renderImgList();
+  _scheduleImgReflowCheck();
 
   if (_previewPane && _savedScroll > 0) {
     requestAnimationFrame(() => { _previewPane.scrollTop = _savedScroll; });
   }
+}
+
+// ── Filet de sécurité images : re-paginer une fois les images décodées ──────
+// Les images (même en data-URL) se décodent de façon asynchrone. Si la pagination
+// a mesuré une hauteur incorrecte (image pas encore décodée), on capture les
+// dimensions naturelles au chargement puis on relance UN rendu (les rendus
+// suivants réservent alors la hauteur via aspect-ratio -> stable). Garde
+// anti-boucle : au plus quelques re-rendus, remis à zéro quand tout est chargé.
+let _imgReflowGuard = 0;
+let _imgReflowRAF   = null;
+function _scheduleImgReflowCheck() {
+  try {
+    const container = document.getElementById('pages-container');
+    if (!container) return;
+    const imgs = container.querySelectorAll('.book-image img');
+    let anyPending = false;
+    imgs.forEach(im => {
+      const wrap = im.closest ? im.closest('.book-image') : null;
+      const key  = (wrap && wrap.dataset) ? wrap.dataset.imgKey : null;
+      if (im.complete && im.naturalHeight) {
+        if (key && images[key] && (!images[key].natW || !images[key].natH)) {
+          images[key].natW = im.naturalWidth;
+          images[key].natH = im.naturalHeight;
+        }
+        return;
+      }
+      anyPending = true;
+      if (!im._reflowHooked) {
+        im._reflowHooked = true;
+        const onReady = () => {
+          if (key && images[key] && im.naturalHeight) {
+            images[key].natW = im.naturalWidth;
+            images[key].natH = im.naturalHeight;
+          }
+          if (_imgReflowGuard > 4) return; // garde anti-boucle
+          if (_imgReflowRAF) cancelAnimationFrame(_imgReflowRAF);
+          _imgReflowRAF = requestAnimationFrame(() => {
+            _imgReflowGuard++;
+            if (typeof formatRoman === 'function') formatRoman();
+          });
+        };
+        im.addEventListener('load',  onReady, { once: true });
+        im.addEventListener('error', () => {}, { once: true });
+      }
+    });
+    if (!anyPending) _imgReflowGuard = 0; // tout est décodé -> convergence atteinte
+  } catch (e) { /* best-effort */ }
 }
 
 // ── PARAMÈTRES TYPO ────────────────────────────────────
@@ -8774,19 +8829,13 @@ function autosaveToLS() {
   }
   try {
     const data = collectProjectData();
-    // Si un fichier disque/OPFS sauvegarde déjà le projet AVEC ses images, la
-    // copie localStorage n'a pas besoin de les dupliquer -> on l'allège pour ne
-    // pas saturer le stockage du navigateur. En mode navigateur seul (pas de
-    // fichier), on conserve tout car c'est l'unique copie.
-    let payload = data;
-    const _diskBacked = (typeof fsUsingBrowserStorageOnly === 'function') && !fsUsingBrowserStorageOnly();
-    if (_diskBacked && data && data.images && Object.keys(data.images).length) {
-      payload = Object.assign({}, data, { images: {} });
-    }
-    localStorage.setItem(key, JSON.stringify(payload));
+    // La copie localStorage reste COMPLÈTE (images incluses) : c'est un filet de
+    // sécurité, on ne veut pas qu'une restauration perde les images. La dégradation
+    // sans images n'intervient qu'en cas de saturation réelle (catch QuotaExceeded).
+    localStorage.setItem(key, JSON.stringify(data));
     flashBadge();
     _pruneAutosaves(key);
-    // Local-first : si un fichier disque est ouvert, l'autosave y écrit aussi (avec images)
+    // Local-first : si un fichier disque est ouvert, l'autosave y écrit aussi
     if (typeof fsAutosaveToFile === 'function') fsAutosaveToFile();
   } catch(e) {
     if (e.name === 'QuotaExceededError') {
