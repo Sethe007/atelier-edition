@@ -178,3 +178,37 @@ html body.theme-jour_ardoise #annot-tooltip .att-action-btn:hover {
   background: var(--paper, #eeece6) !important;
   color: var(--ink, #0f0f0f) !important;
 }
+
+/* ── Sélecteur IA du header (#ai-switcher-menu) sur thèmes CLAIRS ──────────
+   Le menu est conçu pour un fond sombre : ses libellés (« IA active », noms de
+   fournisseurs, modèles, « Configurer les IA… ») sont en blanc codé en dur.
+   Sur les thèmes jour/clairs, le fond du menu devient clair (var(--c-lift)) →
+   texte blanc illisible. On rétablit un popup clair à texte encre, comme pour
+   #annot-ctx-menu plus haut. */
+html body.theme-light #ai-switcher-menu,
+html body.theme-jour_ivoire #ai-switcher-menu,
+html body.theme-jour_ardoise #ai-switcher-menu {
+  background: var(--parchment) !important;
+  border-color: var(--cream) !important;
+}
+html body.theme-light .ai-sw-header,
+html body.theme-jour_ivoire .ai-sw-header,
+html body.theme-jour_ardoise .ai-sw-header { color: var(--ink-muted) !important; }
+html body.theme-light .ai-sw-item:not(.active),
+html body.theme-jour_ivoire .ai-sw-item:not(.active),
+html body.theme-jour_ardoise .ai-sw-item:not(.active) { color: var(--ink) !important; }
+html body.theme-light .ai-sw-item:not(.active) .ai-sw-name,
+html body.theme-jour_ivoire .ai-sw-item:not(.active) .ai-sw-name,
+html body.theme-jour_ardoise .ai-sw-item:not(.active) .ai-sw-name { color: var(--ink) !important; }
+html body.theme-light .ai-sw-model,
+html body.theme-jour_ivoire .ai-sw-model,
+html body.theme-jour_ardoise .ai-sw-model { color: var(--ink-muted) !important; }
+html body.theme-light .ai-sw-empty,
+html body.theme-jour_ivoire .ai-sw-empty,
+html body.theme-jour_ardoise .ai-sw-empty { color: var(--ink-muted) !important; }
+html body.theme-light .ai-sw-item:hover,
+html body.theme-jour_ivoire .ai-sw-item:hover,
+html body.theme-jour_ardoise .ai-sw-item:hover { background: var(--paper) !important; }
+html body.theme-light .ai-sw-sep,
+html body.theme-jour_ivoire .ai-sw-sep,
+html body.theme-jour_ardoise .ai-sw-sep { background: var(--cream) !important; }
