@@ -8745,6 +8745,22 @@ let _autosaveTimer  = null;
 var _wgStartWords   = null; // mots au début de session
 var _lastGoalPct    = 0;    // pour détecter le franchissement de 100%
 
+// Borne l'accumulation des sauvegardes automatiques dans localStorage : on garde
+// la sauvegarde courante + les KEEP plus récentes (par date), on supprime le
+// reste. Évite de saturer le stockage quand on a beaucoup de projets.
+function _pruneAutosaves(currentKey, keep = 4) {
+  try {
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(LS_KEY + '_'));
+    if (keys.length <= keep) return;
+    const dated = keys.map(k => {
+      let date = 0;
+      try { date = new Date(JSON.parse(localStorage.getItem(k))?.meta?.derniereSauvegarde || 0).getTime() || 0; } catch (e) {}
+      return { k, date };
+    }).sort((a, b) => b.date - a.date);
+    dated.slice(keep).forEach(({ k }) => { if (k !== currentKey) { try { localStorage.removeItem(k); } catch (e) {} } });
+  } catch (e) {}
+}
+
 function autosaveToLS() {
   const nomProjet = currentProject?.nom || 'Sans titre';
   const key = LS_KEY + '_' + slugify(nomProjet);
@@ -8758,9 +8774,19 @@ function autosaveToLS() {
   }
   try {
     const data = collectProjectData();
-    localStorage.setItem(key, JSON.stringify(data));
+    // Si un fichier disque/OPFS sauvegarde déjà le projet AVEC ses images, la
+    // copie localStorage n'a pas besoin de les dupliquer -> on l'allège pour ne
+    // pas saturer le stockage du navigateur. En mode navigateur seul (pas de
+    // fichier), on conserve tout car c'est l'unique copie.
+    let payload = data;
+    const _diskBacked = (typeof fsUsingBrowserStorageOnly === 'function') && !fsUsingBrowserStorageOnly();
+    if (_diskBacked && data && data.images && Object.keys(data.images).length) {
+      payload = Object.assign({}, data, { images: {} });
+    }
+    localStorage.setItem(key, JSON.stringify(payload));
     flashBadge();
-    // Local-first : si un fichier disque est ouvert, l'autosave y écrit aussi
+    _pruneAutosaves(key);
+    // Local-first : si un fichier disque est ouvert, l'autosave y écrit aussi (avec images)
     if (typeof fsAutosaveToFile === 'function') fsAutosaveToFile();
   } catch(e) {
     if (e.name === 'QuotaExceededError') {
@@ -24066,7 +24092,6 @@ var SafeCorrectionEngine = (() => {
     ta.addEventListener('keyup', _onKeyUp, { passive: true });
     ta.addEventListener('paste', _onPaste, { passive: true });
     _attached = true;
-    console.log('[ACEngine] Attached to #raw-input (keyup + paste)');
   }
 
   /** Appelé quand les préférences changent */

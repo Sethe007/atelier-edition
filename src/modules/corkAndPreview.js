@@ -5253,7 +5253,6 @@ const SafeCorrectionEngine = (() => {
     ta.addEventListener('keyup', _onKeyUp, { passive: true });
     ta.addEventListener('paste', _onPaste, { passive: true });
     _attached = true;
-    console.log('[ACEngine] Attached to #raw-input (keyup + paste)');
   }
 
   /** Appelé quand les préférences changent */
