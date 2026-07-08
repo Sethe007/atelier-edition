@@ -22236,6 +22236,15 @@ async function runCoherenceCheck() {
   const btn = document.getElementById('wt-btn-coherence');
   const box = document.getElementById('wt-coherence-results');
   if (!box) return;
+  // Icône de relance (↻) préfixée aux résultats : l'icône sert à lancer ET relancer
+  // l'analyse, sans bouton texte redondant.
+  const _coRe = '<div style="display:flex;justify-content:flex-end;margin-bottom:8px;">' +
+    '<div role="button" tabindex="0" onclick="runCoherenceCheck()" ' +
+    'onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();runCoherenceCheck();}" ' +
+    'title="' + ((typeof _t==='function') ? _t('btn_coherence') : 'Vérifier la cohérence narrative') + '" ' +
+    'style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid var(--cream);border-radius:8px;cursor:pointer;color:var(--accent);background:var(--paper);transition:background .12s;" ' +
+    'onmouseover="this.style.background=\'var(--cream)\'" onmouseout="this.style.background=\'var(--paper)\'">' +
+    '<i class="ti ti-refresh" aria-hidden="true"></i></div></div>';
 
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Analyse en cours…'; }
   box.innerHTML = `<div style="color:var(--ink-muted);font-style:italic;font-size:11px;text-align:center;padding:1rem;">✦ Analyse de cohérence narrative…</div>`;
@@ -22352,15 +22361,15 @@ Max 5 issues. Returning [] is better than inventing.`;
       const parsed  = JSON.parse(cleaned);
       issues = parsed.issues || [];
     } catch(e) {
-      box.innerHTML = `<div style="font-size:11px;color:var(--ink);line-height:1.6;padding:8px;">${escHtml(raw)}</div>`;
+      box.innerHTML = _coRe + `<div style="font-size:11px;color:var(--ink);line-height:1.6;padding:8px;">${escHtml(raw)}</div>`;
       return;
     }
 
     if (!issues.length) {
-      box.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--status-done);font-size:13px;">✓ Aucune incohérence certaine détectée</div>`;
+      box.innerHTML = _coRe + `<div style="text-align:center;padding:1.5rem;color:var(--status-done);font-size:13px;">✓ Aucune incohérence certaine détectée</div>`;
     } else {
       const icons = { personnage:'👤', lieu:'🗺', chronologie:'⏱', pov:'👁', objet:'📦', character:'👤', location:'🗺', timeline:'⏱', object:'📦' };
-      box.innerHTML = issues.map(issue => `
+      box.innerHTML = _coRe + issues.map(issue => `
         <div class="coherence-issue ${issue.severity || 'warn'}">
           <div class="coherence-type">${icons[issue.type] || '⚠'} ${escHtml(issue.type)}</div>
           <div class="coherence-msg">${escHtml(issue.message)}</div>
@@ -22369,7 +22378,7 @@ Max 5 issues. Returning [] is better than inventing.`;
         </div>`).join('');
     }
   } catch(e) {
-    box.innerHTML = `<div style="color:var(--danger);font-size:11px;">⚠ Erreur : ${escHtml(e.message)}</div>`;
+    box.innerHTML = _coRe + `<div style="color:var(--danger);font-size:11px;">⚠ Erreur : ${escHtml(e.message)}</div>`;
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = _nt('btn_coherence','🧩 Vérifier la cohérence narrative'); }
   }
