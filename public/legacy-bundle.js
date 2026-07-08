@@ -6270,7 +6270,13 @@ function runStatsAnalysis() {
       </div>`;
     }
 
-    let html = '';
+    // Bouton de relance : toujours présent en tête des résultats (indépendant du
+    // HTML de la barre d'outils, pour garantir la possibilité de recalculer).
+    let html = '<button class="wt-run-btn" onclick="runStatsAnalysis()" ' +
+      'style="width:100%;margin:0 0 10px 0;font-size:11.5px;padding:6px 12px;" ' +
+      'title="' + ((typeof _t==='function' && _t('btn_stats_recalc')!=='btn_stats_recalc') ? _t('btn_stats_recalc') : 'Recalculer les statistiques') + '">' +
+      '\u21ba ' + ((typeof _t==='function' && _t('btn_stats_recalc')!=='btn_stats_recalc') ? _t('btn_stats_recalc') : 'Recalculer les statistiques') +
+      '</button>';
     if (_textTooShort) {
       html += `<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:7px;padding:9px 12px;margin-bottom:10px;font-size:11px;color:#92400e;">
         ⚠ <strong>Texte court (${totalWords} mots)</strong> — certaines métriques (MATTR, temps narratifs, densité émotionnelle) sont peu fiables en dessous de 200 mots.
@@ -30403,3 +30409,24 @@ try {
     })).catch(() => {});
   }
 } catch (e) { /* environnement sans SW : ignorer */ }
+
+
+// ── i18n : bouton « Recalculer les statistiques » (toutes langues) ──────────
+if (typeof _i18n !== 'undefined') {
+  const _RC = {
+    fr: "Recalculer les statistiques",
+    en: "Recompute statistics",
+    es: "Recalcular estadísticas",
+    de: "Statistiken neu berechnen",
+    it: "Ricalcola le statistiche",
+    pt: "Recalcular estatísticas",
+    ru: "Пересчитать статистику",
+    da: "Genberegn statistik",
+    el: "Επανυπολογισμός στατιστικών",
+    fi: "Laske tilastot uudelleen",
+    hu: "Statisztika újraszámítása"
+  };
+  for (const _lc of ['fr','en','es','de','it','pt','ru','da','el','fi','hu']) {
+    Object.assign(_i18n[_lc] = _i18n[_lc] || {}, { btn_stats_recalc: _RC[_lc] });
+  }
+}
