@@ -3522,6 +3522,53 @@ async function _exportWordCore() {
   // Flush dernière section
   flushSection();
 
+  // ── Page de garde (si renseignée) : première section, sans folio ──────────
+  // Reproduit la page de garde de l'aperçu/PDF (genre, titre, sous-titre, auteur),
+  // centrée verticalement (~30 % de blanc au-dessus) et SANS numéro de page.
+  // Numérotation du corps qui suit : démarre à 1 (page de garde en « page 0 »).
+  (function _addWordTitlePage() {
+    const tTitre  = getDomVal('pg-titre').trim();
+    const tAuteur = getDomVal('pg-auteur').trim();
+    const tSous   = getDomVal('pg-soustitre').trim();
+    const tGenre  = getDomVal('pg-genre').trim();
+    if (!tTitre && !tAuteur) return;
+
+    const centered = (children, spacing) => new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: spacing || {},
+      children,
+    });
+    const topSpace = mm2t(Math.round((PD.pageH - PD.padTop - PD.padBot) * 0.30));
+    const tp = [];
+    if (tGenre) {
+      tp.push(centered([new TextRun({ text: tGenre.toUpperCase(), size: 20, color: '6B6B6B', characterSpacing: 30 })],
+        { before: topSpace, after: mm2t(16) }));
+    }
+    if (tTitre) {
+      tp.push(centered([new TextRun({ text: tTitre, bold: true, size: 56 })],
+        { before: tGenre ? 0 : topSpace, after: mm2t(6) }));
+    }
+    if (tSous) {
+      tp.push(centered([new TextRun({ text: tSous, italics: true, size: 26, color: '444444' })],
+        { after: mm2t(10) }));
+    }
+    if (tAuteur) {
+      tp.push(centered([new TextRun({ text: tAuteur, size: 26 })], { before: mm2t(12) }));
+    }
+    const titleSection = {
+      properties: {
+        page: {
+          size: { width: mm2t(PD.pageW), height: mm2t(PD.pageH), orientation: PageOrientation.PORTRAIT },
+          margin: { top: mm2t(PD.padTop), bottom: mm2t(PD.padBot), left: mm2t(PD.padLeft), right: mm2t(PD.padRight), footer: mm2t(9) },
+          pageNumbers: { start: 0 },
+        },
+      },
+      // Pas de footers -> aucun numéro sur la page de garde
+      children: tp,
+    };
+    sections.unshift(titleSection);
+  })();
+
   // Sécurité : si aucune section (texte vide après trim), créer une section vide
   if (!sections.length) {
     const base = pageProps(PD.pageW, PD.pageH, PD.padTop, PD.padBot, PD.padLeft, PD.padRight);
@@ -21230,8 +21277,11 @@ document.addEventListener('DOMContentLoaded', function() {
     .cork-pill-arrow { font-size:8px;margin-left:1px;opacity:.6; }
 
     /* Dropdown statut */
-    .cork-status-dropdown { display:none;position:absolute;top:100%;left:0;z-index:400;background:var(--parchment);border:1px solid var(--cream);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.14);padding:4px;min-width:120px;margin-top:3px;flex-direction:column;gap:2px; }
+    .cork-status-dropdown { display:none;position:absolute;top:100%;left:0;z-index:600;background:var(--parchment);border:1px solid var(--cream);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.14);padding:4px;min-width:120px;margin-top:3px;flex-direction:column;gap:2px; }
     .cork-status-dropdown.open { display:flex; }
+    /* Menu de statut ouvert : élever la carte au-dessus des cartes voisines pour
+       que le dropdown (« En révision » en dernier) ne passe plus dessous. */
+    .cork-card.cork-menu-open { z-index:500; }
     .cork-status-opt { display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:5px;border:none;background:transparent;cursor:pointer;font-size:11px;color:var(--ink-soft);font-family:'DM Sans',sans-serif;text-align:left;transition:background .1s;width:100%; }
     .cork-status-opt:hover { background:var(--cream); }
     .cork-status-opt.active { background:var(--paper);color:var(--ink);font-weight:500; }
@@ -21664,8 +21714,23 @@ var _corkChapters = [];
 // Ferme tous les dropdowns statut ouverts sauf celui dont l'id est passé
 function _closeCorkStatusDropdowns(exceptId) {
   document.querySelectorAll('.cork-status-dropdown.open').forEach(d => {
-    if (d.dataset.cardId !== exceptId) d.classList.remove('open');
+    if (d.dataset.cardId !== exceptId) {
+      d.classList.remove('open');
+      d.closest('.cork-card')?.classList.remove('cork-menu-open');
+    }
   });
+}
+// Bascule le menu de statut d'une carte + élève la carte (z-index) tant qu'il est
+// ouvert, pour que le dropdown ne passe pas sous la carte suivante.
+function corkToggleStatusDropdown(cardId) {
+  const card = document.querySelector('.cork-card[data-card-id="' + cardId + '"]');
+  if (!card) return;
+  const d = card.querySelector('.cork-status-dropdown');
+  if (!d) return;
+  const willOpen = !d.classList.contains('open');
+  _closeCorkStatusDropdowns(willOpen ? cardId : null);
+  d.classList.toggle('open', willOpen);
+  card.classList.toggle('cork-menu-open', willOpen);
 }
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.cork-status-pill')) _closeCorkStatusDropdowns(null);
@@ -21693,6 +21758,7 @@ function corkSetStatus(cardId, st) {
     if (lbl) lbl.textContent = STATUS_LABELS[st];
   }
   card.querySelector('.cork-status-dropdown')?.classList.remove('open');
+  card.classList.remove('cork-menu-open');
   card.querySelectorAll('.cork-status-opt').forEach(o => o.classList.toggle('active', +o.dataset.st === st));
 }
 
@@ -21814,7 +21880,7 @@ function corkboardRender() {
       </div>
       <div class="cork-card-controls" onclick="event.stopPropagation()">
         <div class="cork-status-pill" style="border-color:${statusColor};color:${statusColor}"
-          onclick="event.stopPropagation();var d=this.parentElement.querySelector('.cork-status-dropdown');var wasOpen=d.classList.contains('open');_closeCorkStatusDropdowns(wasOpen?null:'${cardId}');d.classList.toggle('open',!wasOpen);">
+          onclick="event.stopPropagation();corkToggleStatusDropdown('${cardId}');">
           <span class="cork-pill-dot" style="background:${statusColor}"></span>
           <span class="cork-pill-label">${escHtml(statusLabel)}</span>
           <span class="cork-pill-arrow">▾</span>

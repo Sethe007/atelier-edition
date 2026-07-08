@@ -487,8 +487,8 @@
             </label>
           </div>
           <div style="display:flex;gap:6px;margin-bottom:2px;">
-            <button class="wt-run-btn" id="wt-btn-correct"  onclick="runCorrector()"  style="flex:1;margin:0;display:none;" data-i18n="btn_analyze">🔍 Analyser</button>
-            <button class="wt-run-btn" id="wt-btn-autofix"  onclick="runAutoFix()"   style="flex:1;margin:0;display:none;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_autofix">⚡ Corriger</button>
+            <button class="wt-run-btn" id="wt-btn-correct"  onclick="runCorrector()"  style="flex:1;margin:0;" data-i18n="btn_analyze">🔍 Analyser</button>
+            <button class="wt-run-btn" id="wt-btn-autofix"  onclick="runAutoFix()"   style="flex:1;margin:0;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_autofix">⚡ Corriger</button>
           </div>
           <div id="wt-correct-results">
             <div class="wt-empty wt-intro">
@@ -503,7 +503,7 @@
         <!-- TAB: STYLE -->
         <div id="wt-pane-style" style="display:none;">
           <div style="display:flex;gap:6px;margin-bottom:2px;">
-            <button class="wt-run-btn" id="wt-btn-style"    onclick="runStyleAnalysis()" style="flex:1;margin:0;display:none;" data-i18n="btn_style_analyze">📊 Style</button>
+            <button class="wt-run-btn" id="wt-btn-style"    onclick="runStyleAnalysis()" style="flex:1;margin:0;" data-i18n="btn_style_analyze">📊 Style</button>
             <button class="wt-run-btn" id="wt-btn-style-ai" onclick="runStyleAI()"       style="flex:1;margin:0;background:var(--paper);color:var(--accent);border:1px solid var(--accent);" data-i18n="btn_style_ai">✦ IA</button>
           </div>
           <div id="wt-style-ai-box" style="display:none;margin-bottom:8px;padding:10px 12px;background:var(--parchment);border:1px solid var(--cream);border-radius:6px;font-size:11.5px;line-height:1.7;color:var(--ink-soft);"></div>
@@ -561,6 +561,9 @@
 
         <!-- TAB: COHÉRENCE NARRATIVE IA -->
         <div id="wt-pane-coherence" style="display:none;">
+          <div style="display:flex;gap:6px;margin-bottom:2px;">
+            <button class="wt-run-btn" id="wt-btn-coherence" onclick="runCoherenceCheck()" style="flex:1;margin:0;" data-i18n="btn_coherence">🧩 Vérifier la cohérence narrative</button>
+          </div>
           <div id="wt-coherence-results">
             <div class="wt-empty wt-intro">
               <div class="wt-empty-ic wt-ic-action" role="button" tabindex="0" onclick="runCoherenceCheck()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();runCoherenceCheck();}" title="Vérifier la cohérence narrative" data-i18n-title="btn_coherence"><i class="ti ti-puzzle" aria-hidden="true"></i></div>
