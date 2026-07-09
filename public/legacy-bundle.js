@@ -7411,9 +7411,12 @@ document.addEventListener('keydown', function(e) {
   // Laisser les raccourcis navigateur (Ctrl/Cmd+…) passer normalement
   if (e.ctrlKey || e.metaKey || e.altKey) return;
 
-  // Rediriger la frappe : mettre le focus sur la barre, laisser l'event se propager
-  bar.focus();
-  // Le focus est maintenant sur bar, l'event keydown va y atterrir normalement
+  // CORRECTIF FOCUS PIÉGÉ : après une recherche, l'éditeur reprend le focus et le
+  // mot trouvé est sélectionné. Si l'utilisateur tape une touche ici, il veut
+  // ÉDITER ce mot — pas prolonger la requête. On quitte donc le mode redirection
+  // et on laisse la frappe atteindre le textarea normalement (aucun bar.focus()).
+  // Pour re-rechercher, il suffit de recliquer dans la barre (onfocus réactive).
+  _esActive = false;
 }, true); // capture phase pour intercepter avant le textarea
 
 function esSearch() {
