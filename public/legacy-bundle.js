@@ -4305,11 +4305,11 @@ function esReplaceAll() {
   // BUG #4 FIX : la recherche _esSearchNow est insensible à la casse (toLowerCase).
   // On aligne esReplaceAll sur ce comportement en utilisant le flag 'gi'.
   // Si une future option case-sensitive est ajoutée, retirer le flag 'i' conditionnellement.
-  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const flags = 'gi';
-  const count = (ta.value.match(new RegExp(escaped, flags)) || []).length;
+  // Le remplacement suit la même option « mot entier » que la recherche.
+  const reAll = _esWordRegex(q);
+  const count = (ta.value.match(reAll) || []).length;
   if (!count) { showToast(_t('toast_no_occurrence'), 2000, 'error'); return; }
-  const newVal = ta.value.replace(new RegExp(escaped, flags), repl);
+  const newVal = ta.value.replace(_esWordRegex(q), repl);
   // Utiliser taWrite pour préserver l'historique Ctrl+Z
   taWrite(ta, newVal);
   onRawInput();
@@ -7389,6 +7389,55 @@ var _esCurrent     = -1;
 let _esSearchTimer = null;
 let _esLastQuery   = '';
 let _esActive      = false;  // true = mode recherche actif, frappes redirigées vers es-input
+let _esWholeWord   = true;   // true = la recherche ne matche que des MOTS ENTIERS (défaut)
+
+// Construit une regex GLOBALE insensible à la casse pour la requête. En mode
+// « mot entier », encadre par des frontières Unicode (lettres/chiffres/_), avec
+// repli sur \b (ASCII) si les lookbehind ne sont pas supportés (vieux Safari).
+function _esWordRegex(query) {
+  const esc = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  if (_esWholeWord) {
+    try { return new RegExp('(?<![\\p{L}\\p{N}_])' + esc + '(?![\\p{L}\\p{N}_])', 'giu'); }
+    catch (_e) { return new RegExp('\\b' + esc + '\\b', 'gi'); }
+  }
+  return new RegExp(esc, 'gi');
+}
+
+// Renvoie [{start,end}] des occurrences de query dans text selon l'option mot entier.
+function _esBuildMatches(text, query) {
+  const out = [];
+  if (!query) return out;
+  if (_esWholeWord) {
+    const re = _esWordRegex(query);
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      out.push({ start: m.index, end: m.index + m[0].length });
+      if (m.index === re.lastIndex) re.lastIndex++; // garde-fou anti-boucle
+    }
+  } else {
+    const lower = text.toLowerCase(), q = query.toLowerCase();
+    let pos = 0;
+    while (true) {
+      const idx = lower.indexOf(q, pos);
+      if (idx < 0) break;
+      out.push({ start: idx, end: idx + q.length });
+      pos = idx + 1;
+    }
+  }
+  return out;
+}
+
+// Bascule l'option mot entier et relance la recherche.
+function esToggleWholeWord() {
+  _esWholeWord = !_esWholeWord;
+  const btn = document.getElementById('es-word');
+  if (btn) {
+    btn.setAttribute('aria-pressed', _esWholeWord ? 'true' : 'false');
+    btn.style.background = _esWholeWord ? 'var(--gold)' : '';
+    btn.style.color      = _esWholeWord ? '#fff' : '';
+  }
+  if (typeof esSearch === 'function') esSearch();
+}
 
 // Quand le mode recherche est actif, toutes les frappes (sauf Entrée/Echap)
 // sont redirigées vers la barre de recherche, sans quitter le focus du textarea.
@@ -7444,16 +7493,8 @@ function _esSearchNow() {
     return;
   }
 
-  const text  = ta.value;
-  const lower = text.toLowerCase();
-  const q     = query.toLowerCase();
-  let pos = 0;
-  while (true) {
-    const idx = lower.indexOf(q, pos);
-    if (idx < 0) break;
-    _esMatches.push({ start: idx, end: idx + q.length });
-    pos = idx + 1;
-  }
+  // Recherche selon l'option « mot entier » (défaut) ou sous-chaîne.
+  _esMatches = _esBuildMatches(ta.value, query);
 
   count.style.color = _esMatches.length ? '' : '#dc2626';
   btnP.disabled = btnN.disabled = _esMatches.length === 0;
@@ -12922,6 +12963,7 @@ var _i18n = {
     nav_prev_t: "Précédent",
     nav_next_t: "Suivant",
     nav_replace_t: "Remplacer",
+    nav_wholeword_t: "Mot entier",
     nav_close_t: "Fermer",
     ch_add_isolated_t: "Nouveau chapitre (mode isolé)",
     ch_add_t: "Nouveau chapitre",
@@ -13883,6 +13925,7 @@ var _i18n = {
     nav_prev_t: "Previous",
     nav_next_t: "Next",
     nav_replace_t: "Replace",
+    nav_wholeword_t: "Whole word",
     nav_close_t: "Close",
     ch_add_isolated_t: "New chapter (isolated mode)",
     ch_add_t: "New chapter",
@@ -14877,6 +14920,7 @@ var _i18n = {
     nav_prev_t: "Anterior",
     nav_next_t: "Siguiente",
     nav_replace_t: "Reemplazar",
+    nav_wholeword_t: "Palabra completa",
     nav_close_t: "Cerrar",
     ch_add_isolated_t: "Nuevo capítulo (modo aislado)",
     ch_add_t: "Nuevo capítulo",
@@ -15872,6 +15916,7 @@ var _i18n = {
     nav_prev_t: "Zurück",
     nav_next_t: "Weiter",
     nav_replace_t: "Ersetzen",
+    nav_wholeword_t: "Ganzes Wort",
     nav_close_t: "Schließen",
     ch_add_isolated_t: "Neues Kapitel (isolierter Modus)",
     ch_add_t: "Neues Kapitel",
@@ -16801,6 +16846,7 @@ var _i18n = {
     nav_prev_t: "Precedente",
     nav_next_t: "Successivo",
     nav_replace_t: "Sostituisci",
+    nav_wholeword_t: "Parola intera",
     nav_close_t: "Chiudi",
     ch_add_isolated_t: "Nuovo capitolo (modalità isolata)",
     ch_add_t: "Nuovo capitolo",
@@ -17726,6 +17772,7 @@ var _i18n = {
     nav_prev_t: "Anterior",
     nav_next_t: "Próximo",
     nav_replace_t: "Substituir",
+    nav_wholeword_t: "Palavra inteira",
     nav_close_t: "Fechar",
     ch_add_isolated_t: "Novo capítulo (modo isolado)",
     ch_add_t: "Novo capítulo",
@@ -25094,16 +25141,9 @@ function _globalSearch() {
   // Construire le texte global et chercher toutes les occurrences
   const fullText = _joinChapters(IM.chapters);
   const results = [];
-  const lower = fullText.toLowerCase();
-  const q = query.toLowerCase();
-  let i = 0;
-  while (i < lower.length) {
-    const pos = lower.indexOf(q, i);
-    if (pos < 0) break;
-    // Trouver quel chapitre contient cette position
-    const chIdx = _chapterIdxAtOffset(pos);
-    results.push({ pos, chIdx });
-    i = pos + q.length;
+  // Recherche selon l'option « mot entier » (défaut) ou sous-chaîne.
+  for (const f of _esBuildMatches(fullText, query)) {
+    results.push({ pos: f.start, chIdx: _chapterIdxAtOffset(f.start) });
   }
 
   window._imGlobalSearchResults = results;
@@ -26018,6 +26058,7 @@ _registerLang('ru', {
   "nav_next_t": "Далее",
   "nav_prev_t": "Назад",
   "nav_replace_t": "Заменить",
+  "nav_wholeword_t": "Слово целиком",
   "nf_all": "Все",
   "nf_done": "Закрытые",
   "nf_hl": "🎨 Выделенные",
@@ -26968,6 +27009,7 @@ _registerLang('da', {
   "nav_next_t": "Næste",
   "nav_prev_t": "Forrige",
   "nav_replace_t": "Erstat",
+  "nav_wholeword_t": "Helt ord",
   "nf_all": "Alle",
   "nf_done": "Løst",
   "nf_hl": "🎨 Fremhævet",
@@ -27918,6 +27960,7 @@ _registerLang('el', {
   "nav_next_t": "Επόμενο",
   "nav_prev_t": "Προηγούμενο",
   "nav_replace_t": "Αντικατάσταση",
+  "nav_wholeword_t": "Ολόκληρη λέξη",
   "nf_all": "Όλα",
   "nf_done": "Επιλυμένα",
   "nf_hl": "🎨 Επισημασμένα",
@@ -28868,6 +28911,7 @@ _registerLang('fi', {
   "nav_next_t": "Seuraava",
   "nav_prev_t": "Edellinen",
   "nav_replace_t": "Korvaa",
+  "nav_wholeword_t": "Koko sana",
   "nf_all": "Kaikki",
   "nf_done": "Ratkaistut",
   "nf_hl": "🎨 Korostetut",
@@ -29818,6 +29862,7 @@ _registerLang('hu', {
   "nav_next_t": "Következő",
   "nav_prev_t": "Előző",
   "nav_replace_t": "Csere",
+  "nav_wholeword_t": "Teljes szó",
   "nf_all": "Összes",
   "nf_done": "Megoldott",
   "nf_hl": "🎨 Kiemelt",
