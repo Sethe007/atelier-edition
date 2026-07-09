@@ -23077,6 +23077,8 @@ const PluralEngine = (() => {
       'gi'
     );
     return text.replace(re, (m, d, noun) => {
+      // GARDE DÉFINITIVE : jamais d'accord sur une forme verbale ou un mot-outil
+      if (NEVER_INFLECT_FR.has(noun.toLowerCase())) return m;
       // Déjà au pluriel ?
       if (/[sxz]$/i.test(noun)) return m;
       // Invariable ?
@@ -23143,6 +23145,59 @@ const PluralEngine = (() => {
     'ignore':'ignorent','adore':'adorent','dévore':'dévorent',
     'parcoure':'parcourent','découvre':'découvrent','recouvre':'recouvrent',
   };
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GARDE DÉFINITIVE (FR) : mots qui ne doivent JAMAIS recevoir un pluriel
+  // nominal ou adjectival. Le vrai problème des accords automatiques est qu'ils
+  // ajoutent un « s » à TOUT mot après un déterminant pluriel sauf liste noire —
+  // liste toujours incomplète (« sont », « avec »…). Ici on couvre les CLASSES
+  // FERMÉES du français (formes verbales fréquentes + mots-outils) une fois pour
+  // toutes. Réutilisé par applyNounPlural ET _applyPluralAdjFR.
+  //   Principe : en cas de doute, NE PAS accorder (sous-correction) plutôt que
+  //   mutiler un texte correct (sur-correction) — c'est le comportement attendu.
+  // ══════════════════════════════════════════════════════════════════════════
+  const NEVER_INFLECT_FR = new Set([
+    // Formes verbales issues de la table d'accord verbal (sing. + plur.),
+    // ce qui capte déjà sont/ont/vont/font, mangent, prennent, etc.
+    ...Object.keys(VERB_FR), ...Object.values(VERB_FR),
+    // Auxiliaires & irréguliers très fréquents — principaux temps, 3e pers.
+    'est','sont','était','étaient','sera','seront','fut','furent','soit','soient',
+    'a','ont','avait','avaient','aura','auront','eut','eurent','ait','aient',
+    'va','vont','allait','allaient','ira','iront','aille','aillent',
+    'fait','font','faisait','faisaient','fera','feront','fasse','fassent',
+    'peut','peuvent','pouvait','pouvaient','pourra','pourront',
+    'veut','veulent','voulait','voulaient','voudra','voudront',
+    'doit','doivent','devait','devaient','devra','devront',
+    'sait','savent','savait','savaient','saura','sauront',
+    'voit','voient','voyait','voyaient','verra','verront',
+    'vient','viennent','venait','venaient','viendra','viendront',
+    'tient','tiennent','tenait','tenaient','tiendra','tiendront',
+    'prend','prennent','met','mettent','dit','disent','lit','lisent',
+    'part','partent','sort','sortent','dort','dorment','sert','servent',
+    'suit','suivent','vit','vivent','rit','rient','court','courent',
+    'boit','boivent','croit','croient','reçoit','reçoivent','écrit','écrivent',
+    // Prépositions
+    'à','de','du','des','en','dans','sur','sous','avec','sans','pour','par',
+    'vers','chez','entre','contre','depuis','pendant','avant','après','jusque',
+    'malgré','selon','sauf','hormis','outre','parmi','envers','durant','dès',
+    'près','loin','hors','via','moyennant','concernant','suivant',
+    // Conjonctions
+    'et','ou','mais','donc','or','ni','car','que','qu','si','comme','quand',
+    'lorsque','puisque','quoique','tandis','afin','ainsi','soit',
+    // Adverbes fréquents
+    'très','plus','moins','bien','mal','trop','peu','assez','beaucoup','fort',
+    'alors','aussi','encore','déjà','jamais','toujours','souvent','parfois',
+    'ici','là','où','partout','ailleurs','dedans','dehors','dessus','dessous',
+    'oui','non','ne','pas','point','guère','plutôt','presque','environ',
+    'notamment','surtout','enfin','ensuite','puis','cependant','pourtant',
+    'néanmoins','toutefois','certes','voire','sinon','peut-être','vraiment',
+    // Pronoms & déterminants (jamais des noms à accorder)
+    'je','tu','il','elle','on','nous','vous','ils','elles','me','te','se',
+    'le','la','les','lui','leur','leurs','moi','toi','soi','eux','ceci',
+    'cela','ça','ceux','celui','celle','celles','dont','qui','quoi',
+    'tous','toutes','tout','toute','chacun','chacune','autrui','rien',
+    'personne','aucun','aucune','nul','nulle','même','mêmes','autre','autres',
+  ]);
 
   // Note : VERB_RADICAL_FR et VERB_INF_TO_PLUR_FR supprimées (tables jamais utilisées)
 
@@ -23497,7 +23552,9 @@ const PluralEngine = (() => {
     );
     result = result.replace(reAdj, (m, pre, adj) => {
       if (/[sxz]$/i.test(adj)) return m;
-      // Exclure les prépositions, adverbes et mots invariables
+      // GARDE DÉFINITIVE partagée (formes verbales + mots-outils)
+      if (NEVER_INFLECT_FR.has(adj.toLowerCase())) return m;
+      // Exclure les prépositions, adverbes et mots invariables (filet historique)
       if (ADJ_INVARIABLE_FR.has(adj.toLowerCase())) return m;
       // Exclure les formes verbales et participes
       if (/(?:nt|ment|ant|ons|ez|er|ir|oir|re|[eé]e?s?)$/i.test(adj)) return m;

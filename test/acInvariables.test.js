@@ -78,3 +78,26 @@ describe('AC — les prépositions invariables ne sont jamais pluralisées', () 
     }
   }
 });
+
+describe('AC — formes verbales & mots-outils jamais pluralisés après déterminant', () => {
+  const CASES = [
+    'Tous sont prêts', '— Tous sont prêts, dit Nexia.', 'tous ont faim',
+    'toutes vont bien', 'plusieurs peuvent venir', 'certains font ça',
+    'les gens sont là', 'ils prennent tout', 'ces choix sont faits',
+    'les rois sont là', 'des mois pour accueillir', 'quelques mots avec',
+  ];
+  for (const t of CASES) {
+    it(`« ${t} » — aucun s parasite`, () => {
+      const out = run(t, 'fr');
+      expect(/\b\w*(?:sonts|onts|vonts|fonts|prennents|peuvents|fonts)\b/i.test(out)).toBe(false);
+      expect(/\b(avecs|pours|sanss)\b/i.test(out)).toBe(false);
+    });
+  }
+  it('idempotence sur les formes verbales', () => {
+    for (const t of CASES) { const a = run(t, 'fr'); expect(run(a, 'fr')).toBe(a); }
+  });
+  it('les vrais accords nominaux restent corrigés (non-sur-blocage)', () => {
+    expect(run('des chat', 'fr').toLowerCase()).toContain('chats');
+    expect(run('ces maison', 'fr').toLowerCase()).toContain('maisons');
+  });
+});
