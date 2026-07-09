@@ -6270,13 +6270,7 @@ function runStatsAnalysis() {
       </div>`;
     }
 
-    // Bouton de relance : toujours présent en tête des résultats (indépendant du
-    // HTML de la barre d'outils, pour garantir la possibilité de recalculer).
-    let html = '<button class="wt-run-btn" onclick="runStatsAnalysis()" ' +
-      'style="width:100%;margin:0 0 10px 0;font-size:11.5px;padding:6px 12px;" ' +
-      'title="' + ((typeof _t==='function' && _t('btn_stats_recalc')!=='btn_stats_recalc') ? _t('btn_stats_recalc') : 'Recalculer les statistiques') + '">' +
-      '\u21ba ' + ((typeof _t==='function' && _t('btn_stats_recalc')!=='btn_stats_recalc') ? _t('btn_stats_recalc') : 'Recalculer les statistiques') +
-      '</button>';
+    let html = _wtRelaunchIcon('runStatsAnalysis()', (typeof _t==='function' && _t('btn_stats_recalc')!=='btn_stats_recalc') ? _t('btn_stats_recalc') : 'Recalculer les statistiques');
     if (_textTooShort) {
       html += `<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:7px;padding:9px 12px;margin-bottom:10px;font-size:11px;color:#92400e;">
         ⚠ <strong>Texte court (${totalWords} mots)</strong> — certaines métriques (MATTR, temps narratifs, densité émotionnelle) sont peu fiables en dessous de 200 mots.
@@ -6494,6 +6488,19 @@ function runStatsAnalysis() {
 }
 
 // ── Correcteur principal (multi-moteur) ────────────────
+// Icône de relance (↻) partagée : les modules d'analyse (correcteur, style,
+// stats, cohérence) se lancent/relancent via cette icône, sans bouton texte.
+function _wtRelaunchIcon(onclick, title) {
+  const t = String(title || '').replace(/"/g, '&quot;');
+  return '<div style="display:flex;justify-content:flex-end;margin-bottom:8px;">' +
+    '<div role="button" tabindex="0" onclick="' + onclick + '" ' +
+    'onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}" ' +
+    'title="' + t + '" ' +
+    'style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid var(--cream);border-radius:8px;cursor:pointer;color:var(--accent);background:var(--paper);transition:background .12s;" ' +
+    'onmouseover="this.style.background=\'var(--cream)\'" onmouseout="this.style.background=\'var(--paper)\'">' +
+    '<i class="ti ti-refresh" aria-hidden="true"></i></div></div>';
+}
+
 async function runCorrector() {
   const ta   = getTA();
   const text = ta.value.trim();
@@ -6641,7 +6648,7 @@ function renderCorrectorResults(issues, source, originalText) {
   const res = document.getElementById('wt-correct-results');
 
   if (!issues.length) {
-    res.innerHTML = `
+    res.innerHTML = _wtRelaunchIcon('runCorrector()', (typeof _t==='function'?_t('btn_analyze'):'Analyser')) + `
       <div style="font-size:10px;color:var(--ink-muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
         <span>Moteur : <strong>${escHtml(source)}</strong></span>
         <span style="margin-left:auto;background:var(--cream);padding:1px 7px;border-radius:8px;">0 point(s)</span>
@@ -6769,7 +6776,7 @@ function renderCorrectorResults(issues, source, originalText) {
   });
 
   html += `<div class="wt-dismissed-count" id="wt-dismissed-bar" onclick="wtRestoreAll()"></div>`;
-  res.innerHTML = html;
+  res.innerHTML = _wtRelaunchIcon('runCorrector()', (typeof _t==='function'?_t('btn_analyze'):'Analyser')) + html;
 
   res._totalIssues    = issues.length;
   res._dismissedCount = 0;
@@ -8145,7 +8152,7 @@ function runStyleAnalysis() {
       adverbFreq, totalAdverbCount: allAdverbs.length,
     };
 
-    document.getElementById('wt-style-results').innerHTML = html;
+    document.getElementById('wt-style-results').innerHTML = _wtRelaunchIcon('runStyleAnalysis()', (typeof _t==='function'?_t('btn_style_analyze'):'Analyser')) + html;
   } finally {
     btn.disabled = false;
   }
@@ -22238,13 +22245,7 @@ async function runCoherenceCheck() {
   if (!box) return;
   // Icône de relance (↻) préfixée aux résultats : l'icône sert à lancer ET relancer
   // l'analyse, sans bouton texte redondant.
-  const _coRe = '<div style="display:flex;justify-content:flex-end;margin-bottom:8px;">' +
-    '<div role="button" tabindex="0" onclick="runCoherenceCheck()" ' +
-    'onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();runCoherenceCheck();}" ' +
-    'title="' + ((typeof _t==='function') ? _t('btn_coherence') : 'Vérifier la cohérence narrative') + '" ' +
-    'style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid var(--cream);border-radius:8px;cursor:pointer;color:var(--accent);background:var(--paper);transition:background .12s;" ' +
-    'onmouseover="this.style.background=\'var(--cream)\'" onmouseout="this.style.background=\'var(--paper)\'">' +
-    '<i class="ti ti-refresh" aria-hidden="true"></i></div></div>';
+  const _coRe = _wtRelaunchIcon('runCoherenceCheck()', (typeof _t==='function') ? _t('btn_coherence') : 'Vérifier la cohérence narrative');
 
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Analyse en cours…'; }
   box.innerHTML = `<div style="color:var(--ink-muted);font-style:italic;font-size:11px;text-align:center;padding:1rem;">✦ Analyse de cohérence narrative…</div>`;
