@@ -5,7 +5,10 @@ import fs from 'node:fs';
 // ne doit JAMAIS augmenter. Toute nouvelle injection de contenu doit passer par
 // setHTML()/sanitizeHTML() (DOMPurify) ou textContent. Si ce test échoue après
 // une modification légitime *qui réduit* le total, abaissez le plafond.
-const CEILING = 121;
+// 123 = 121 + 2 affectations SÛRES de resetAnalysisModules (restauration de
+// l'état vide capturé depuis le markup de l'app, et clear par chaîne vide) —
+// aucune donnée utilisateur, pas de surface XSS.
+const CEILING = 123;
 
 describe('S-8 — ratchet innerHTML', () => {
   it(`le bundle contient au plus ${CEILING} affectations innerHTML`, () => {

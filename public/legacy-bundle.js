@@ -318,6 +318,7 @@ function confirmProjectChoice() {
     _lieuCount = 0;
     // Réinitialiser les métadonnées chapitre
     _chapterMeta = {};
+    resetAnalysisModules();
     paginateNodes([], []);
     updateStats();
     updateSubmitInfoBox();
@@ -531,12 +532,50 @@ function _sanitizeProjectData(data) {
   return data;
 }
 
+// ── Réinitialisation des modules d'analyse au changement de projet ──────────
+// Les panneaux (correcteur, style, stats, cohérence) et leurs caches gardaient
+// les résultats du projet précédent. On restaure l'état vide initial (capturé au
+// chargement) et on purge les caches. Appelé à la création/au chargement d'un projet.
+window._wtEmptyState = window._wtEmptyState || {};
+const _WT_RESULT_IDS = ['wt-correct-results','wt-style-results','wt-stats-results','wt-coherence-results'];
+function _captureWtEmptyStates() {
+  _WT_RESULT_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window._wtEmptyState[id] == null) window._wtEmptyState[id] = el.innerHTML;
+  });
+}
+document.addEventListener('DOMContentLoaded', _captureWtEmptyStates);
+function resetAnalysisModules() {
+  try {
+    _captureWtEmptyStates(); // filet : capture si pas encore fait (état encore vide au 1er appel)
+    _WT_RESULT_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        if (window._wtEmptyState[id] != null) el.innerHTML = window._wtEmptyState[id];
+        el._dismissedCount = 0;
+      }
+    });
+    ['wt-style-ai-box','wt-stats-ai-box'].forEach(id => {
+      const b = document.getElementById(id);
+      if (b) { b.style.display = 'none'; b.innerHTML = ''; }
+    });
+    // Caches d'analyse de la session précédente
+    window._statsLocators    = [];
+    window._sePhrasesOffsets = [];
+    if (typeof _chapterSummaryCache !== 'undefined') _chapterSummaryCache = {};
+    if (typeof _currentChapterText !== 'undefined')  _currentChapterText  = null;
+    // Ré-appliquer les traductions aux états vides restaurés
+    if (typeof applyI18n === 'function') applyI18n();
+  } catch (e) { console.warn('resetAnalysisModules:', e); }
+}
+
 function applyProjectData(data, fileName) {
   data = _sanitizeProjectData(data);
   if (!data) { console.warn('applyProjectData : fichier projet invalide, chargement annulé'); return; }
   // Vider l'état actuel
   Object.keys(images).forEach(k => delete images[k]);
   setDomVal('raw-input', '');
+  resetAnalysisModules();
 
   // Restaurer le texte
   if (data.texte !== undefined) setDomVal('raw-input', data.texte);
