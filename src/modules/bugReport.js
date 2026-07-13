@@ -112,12 +112,15 @@
       e.preventDefault();
       msg.className = 'bugr-msg';
       const fd = new FormData(form);
+      let uiLang = 'fr';
+      try { uiLang = JSON.parse(localStorage.getItem('atelier_prefs') || '{}').ui_lang || 'fr'; } catch (e) { /* fr */ }
       const payload = {
         title: (fd.get('title') || '').toString().trim(),
         description: (fd.get('description') || '').toString().trim(),
         category: fd.get('category'),
         severity: fd.get('severity'),
         source: 'app',
+        lang: uiLang,
         context: 'UA: ' + navigator.userAgent,
       };
       if (payload.title.length < 3 || payload.description.length < 10) {

@@ -5,7 +5,24 @@ export const config = { runtime: 'edge' };
 
 const CATEGORIES = ['editeur', 'export', 'projets', 'compte', 'performance', 'autre'];
 const SEVERITES = ['bloquant', 'majeur', 'mineur'];
+const LANGS = ['fr', 'en', 'es', 'de', 'it', 'pt', 'ru', 'da', 'el', 'fi', 'hu'];
 const MAX_PAR_HEURE = 5;
+
+// Alias possibles des noms de tags Discord par langue (comparés normalisés :
+// minuscules, sans accents). Le forum utilise un tag par langue.
+const LANG_TAG_ALIASES = {
+  fr: ['francais', 'french', 'fr'],
+  en: ['english', 'anglais', 'en'],
+  es: ['espanol', 'spanish', 'espagnol', 'es'],
+  de: ['deutsch', 'german', 'allemand', 'de'],
+  it: ['italiano', 'italian', 'italien', 'it'],
+  pt: ['portugues', 'portuguese', 'portugais', 'pt'],
+  ru: ['русскии', 'русский', 'russian', 'russe', 'ru'],
+  da: ['dansk', 'danish', 'danois', 'da'],
+  el: ['ελληνικα', 'greek', 'grec', 'el'],
+  fi: ['suomi', 'finnish', 'finnois', 'fi'],
+  hu: ['magyar', 'hungarian', 'hongrois', 'hu'],
+};
 
 // ── Helpers auth (mêmes primitives que api/auth/activate.js) ──
 async function hmac(secret, message) {
@@ -119,6 +136,7 @@ export default async function handler(request) {
   const category = CATEGORIES.includes(body.category) ? body.category : 'autre';
   const severity = SEVERITES.includes(body.severity) ? body.severity : 'mineur';
   const source = body.source === 'app' ? 'app' : 'site';
+  const lang = LANGS.includes(body.lang) ? body.lang : 'fr';
   const context = String(body.context || '').slice(0, 500);
   if (title.length < 3 || description.length < 10) return json(400, { error: 'invalid_fields' });
 
@@ -143,7 +161,7 @@ export default async function handler(request) {
   const ins = await sb('bug_reports', {
     method: 'POST',
     headers: { Prefer: 'return=representation' },
-    body: JSON.stringify({ user_id: userId, title, description, category, severity, source, status: 'nouveau' }),
+    body: JSON.stringify({ user_id: userId, title, description, category, severity, source, lang, status: 'nouveau' }),
   });
   if (!ins.ok) return json(500, { error: 'db_insert_failed' });
   const ticket = (await ins.json())[0];
@@ -153,15 +171,22 @@ export default async function handler(request) {
   try {
     const chanId = process.env.DISCORD_FORUM_CHANNEL_ID;
     if (chanId && process.env.DISCORD_BOT_TOKEN) {
-      // Tag « Nouveau » (créé à la main dans le forum, retrouvé par son nom)
-      let tagId = null;
+      // Tags : le forum exige au moins un tag → tag de la LANGUE de l'utilisateur
+      // (+ tag « Nouveau » s'il existe). Filet de sécurité : premier tag disponible.
+      let appliedTags = [];
       try {
         const ch = await discord('/channels/' + chanId);
         if (ch.ok) {
           const chan = await ch.json();
-          const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
-          const tag = (chan.available_tags || []).find(t => norm(t.name) === 'nouveau');
-          if (tag) tagId = tag.id;
+          const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').trim();
+          const tags = chan.available_tags || [];
+          const aliases = (LANG_TAG_ALIASES[lang] || []).map(norm);
+          const langTag = tags.find(t => aliases.includes(norm(t.name)))
+            || tags.find(t => aliases.some(a => a.length > 2 && norm(t.name).includes(a)));
+          const newTag = tags.find(t => norm(t.name) === 'nouveau');
+          if (langTag) appliedTags.push(langTag.id);
+          if (newTag && newTag.id !== (langTag && langTag.id)) appliedTags.push(newTag.id);
+          if (!appliedTags.length && tags.length) appliedTags.push(tags[0].id);
         }
       } catch { /* non bloquant */ }
 
@@ -170,7 +195,7 @@ export default async function handler(request) {
       const payload = {
         name: `[${ticket.id.slice(0, 8)}] ${title}`.slice(0, 100),
         auto_archive_duration: 10080,
-        ...(tagId ? { applied_tags: [tagId] } : {}),
+        ...(appliedTags.length ? { applied_tags: appliedTags.slice(0, 5) } : {}),
         message: {
           embeds: [{
             title,
@@ -180,6 +205,7 @@ export default async function handler(request) {
               { name: 'Catégorie', value: category, inline: true },
               { name: 'Gravité', value: `${sevEmoji} ${severity}`, inline: true },
               { name: 'Source', value: source === 'app' ? 'Application' : 'Site', inline: true },
+              { name: 'Langue', value: lang.toUpperCase(), inline: true },
               { name: 'Auteur', value: `${prof.name || '—'} (${prof.email || userId})` },
               ...(context ? [{ name: 'Contexte', value: context.slice(0, 1000) }] : []),
               { name: 'Ticket', value: '`' + ticket.id + '`' },
