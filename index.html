@@ -137,6 +137,7 @@
     <button class="btn-dark-toggle"    onclick="toggleDarkMode()"    id="btn-dark"     title="Mode sombre"               aria-label="Mode sombre"   data-i18n-title="title_dark_mode"><i class="ti ti-moon"      aria-hidden="true"></i></button>
     <button class="btn-settings-toggle" onclick="openSettingsModal()" id="btn-settings" title="Paramètres du projet"     aria-label="Paramètres"    data-i18n-title="title_settings"><i class="ti ti-settings"   aria-hidden="true"></i></button>
     <button class="btn-help-toggle"    onclick="openHelpModal()"     id="btn-help"     title="Raccourcis clavier"        aria-label="Aide"          data-i18n-title="title_help"><i class="ti ti-keyboard"       aria-hidden="true"></i></button>
+    <button class="btn-help-toggle" onclick="window.openBugReportModal&&window.openBugReportModal()" id="btn-bugreport" title="Signaler un bug" aria-label="Signaler un bug"><i class="ti ti-bug" aria-hidden="true"></i></button>
     <button class="btn-help-toggle" onclick="if(confirm('Se déconnecter ?')) window.location.href='/api/auth/logout'" id="btn-logout" title="Déconnexion" data-i18n-title="tb_logout_t" aria-label="Déconnexion"><i class="ti ti-logout" aria-hidden="true"></i></button>
 
   </div>
