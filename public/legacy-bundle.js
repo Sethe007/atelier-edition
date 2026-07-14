@@ -1085,16 +1085,21 @@ function formatRoman() {
           wrap.appendChild(handleL);
         }
 
-        nodes.push(wrap);
-        if (img.caption) nodes.push(makeEl('p', 'caption', escHtml(img.caption)));
-
-        // BUG #6 FIX : injecter le clear dans le flux pour éviter que le texte
-        // suivant coule sous l'image flottante.
-        if (isFloat) {
-          const clearEl = document.createElement('div');
-          clearEl.className = 'img-float-clear';
-          nodes.push(clearEl);
+        // Images flottantes : la légende est intégrée AU bloc flottant (sinon
+        // elle s'enroulerait comme du texte à côté de l'image).
+        if (isFloat && img.caption) {
+          const cap = makeEl('p', 'caption', escHtml(img.caption));
+          cap.style.cssText = 'margin:2pt 0 0;text-align:center;';
+          wrap.appendChild(cap);
         }
+        nodes.push(wrap);
+        if (!isFloat && img.caption) nodes.push(makeEl('p', 'caption', escHtml(img.caption)));
+
+        // Images flottantes (float-left / float-right) : le texte qui suit DOIT
+        // s'enrouler à côté de l'image → on NE force PAS de clear:both ici.
+        // La .frame-body (position:absolute; overflow:hidden) établit un BFC qui
+        // contient le flottant dans la page. (Ancien « BUG #6 FIX » retiré :
+        // le clear renvoyait tout le texte sous l'image et cassait l'enroulement.)
       } else {
         nodes.push(makeEl('p', 'caption', '[Image ' + escHtml(imgMatch[1]) + ' non chargée]'));
       }
