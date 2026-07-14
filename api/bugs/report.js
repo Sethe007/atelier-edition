@@ -153,7 +153,7 @@ export default async function handler(request) {
   // Profil (pour le post Discord)
   let prof = {};
   try {
-    const pr = await sb(`profiles?id=eq.${userId}&select=name,email`);
+    const pr = await sb(`profiles?id=eq.${userId}&select=name`);
     if (pr.ok) prof = (await pr.json())[0] || {};
   } catch { /* non bloquant */ }
 
@@ -168,6 +168,7 @@ export default async function handler(request) {
 
   // Post dans le forum Discord (best effort : le ticket existe même si Discord échoue)
   let discordOk = false;
+  let discordErr = null;
   try {
     const chanId = process.env.DISCORD_FORUM_CHANNEL_ID;
     if (chanId && process.env.DISCORD_BOT_TOKEN) {
@@ -191,28 +192,23 @@ export default async function handler(request) {
       } catch { /* non bloquant */ }
 
       const sevEmoji = { bloquant: '🔴', majeur: '🟠', mineur: '🟡' }[severity];
-      const sevColor = { bloquant: 0xdc2626, majeur: 0xea580c, mineur: 0xeab308 }[severity];
+      // Message TEXTE simple (markdown) : ne nécessite pas la permission « Intégrer des liens ».
+      const srcLabel = source === 'app' ? 'Application' : 'Site';
+      const body = [
+        '**' + title + '**',
+        '',
+        description,
+        '',
+        `${sevEmoji} **Gravité** : ${severity}  ·  **Catégorie** : ${category}  ·  **Source** : ${srcLabel}  ·  **Langue** : ${lang.toUpperCase()}`,
+        `**Auteur** : ${prof.name || '—'}`,
+        ...(context ? ['**Contexte** : ' + context.slice(0, 900)] : []),
+        '**Ticket** : `' + ticket.id + '`',
+      ].join('\n').slice(0, 3900);
       const payload = {
         name: `[${ticket.id.slice(0, 8)}] ${title}`.slice(0, 100),
         auto_archive_duration: 10080,
         ...(appliedTags.length ? { applied_tags: appliedTags.slice(0, 5) } : {}),
-        message: {
-          embeds: [{
-            title,
-            description,
-            color: sevColor,
-            fields: [
-              { name: 'Catégorie', value: category, inline: true },
-              { name: 'Gravité', value: `${sevEmoji} ${severity}`, inline: true },
-              { name: 'Source', value: source === 'app' ? 'Application' : 'Site', inline: true },
-              { name: 'Langue', value: lang.toUpperCase(), inline: true },
-              { name: 'Auteur', value: `${prof.name || '—'} (${prof.email || userId})` },
-              ...(context ? [{ name: 'Contexte', value: context.slice(0, 1000) }] : []),
-              { name: 'Ticket', value: '`' + ticket.id + '`' },
-            ],
-            timestamp: new Date().toISOString(),
-          }],
-        },
+        message: { content: body },
       };
       const th = await discord(`/channels/${chanId}/threads`, {
         method: 'POST',
@@ -225,9 +221,11 @@ export default async function handler(request) {
           body: JSON.stringify({ discord_thread_id: thread.id }),
         });
         discordOk = true;
+      } else {
+        discordErr = 'HTTP ' + th.status + ' ' + (await th.text()).slice(0, 300);
       }
     }
-  } catch { /* non bloquant */ }
+  } catch (e) { discordErr = 'EXC ' + (e && e.message); }
 
   return json(200, { ok: true, id: ticket.id, status: ticket.status, discord: discordOk });
 }
