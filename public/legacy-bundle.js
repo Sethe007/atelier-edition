@@ -3750,6 +3750,160 @@ function _persoSection(icon, title, color, content, openByDefault = false) {
   </div>`;
 }
 
+// ══════════════════════════════════════════════════════════════
+//  LIENS PERSONNAGE ↔ LIEU  (fiche perso : « Lieux liés »)
+// ══════════════════════════════════════════════════════════════
+function _persoRelations() {
+  return [
+    { v: 'naissance', l: '🌱 ' + _t('rel_naissance') },
+    { v: 'residence', l: '🏠 ' + _t('rel_residence') },
+    { v: 'passage',   l: '🚶 ' + _t('rel_passage') },
+    { v: 'mort',      l: '⚰️ ' + _t('rel_mort') },
+    { v: 'autre',     l: '🔗 ' + _t('rel_autre') },
+  ];
+}
+function _persoLieuOptions(selected) {
+  var lieux = (typeof getLieux === 'function') ? getLieux() : [];
+  var seen = {};
+  var opts = '<option value="">' + escHtml(_t('perso_lieux_choose')) + '</option>';
+  lieux.forEach(function (l) {
+    if (l.nom && !seen[l.nom.toLowerCase()]) {
+      seen[l.nom.toLowerCase()] = 1;
+      opts += '<option value="' + escHtml(l.nom) + '"' + (l.nom === selected ? ' selected' : '') + '>' + escHtml(l.nom) + '</option>';
+    }
+  });
+  if (selected && !seen[String(selected).toLowerCase()]) {
+    opts += '<option value="' + escHtml(selected) + '" selected>' + escHtml(selected) + '</option>';
+  }
+  opts += '<option value="__new__">' + escHtml(_t('perso_lieux_newopt')) + '</option>';
+  return opts;
+}
+function _persoRelOptions(selected) {
+  return _persoRelations().map(function (r) {
+    return '<option value="' + r.v + '"' + (r.v === selected ? ' selected' : '') + '>' + escHtml(r.l) + '</option>';
+  }).join('');
+}
+function _persoLieuRowHTML(lieu, relation) {
+  var sel = "font-size:11px;font-family:'DM Sans',sans-serif;border:1px solid var(--cream);border-radius:3px;background:var(--parchment);color:var(--ink);padding:2px 4px;box-sizing:border-box;outline:none;";
+  return '<div class="pl-row" style="display:grid;grid-template-columns:1fr 0.9fr auto;gap:4px;align-items:center;margin-bottom:4px;">'
+    + '<select class="pl-lieu" onchange="_persoLieuChanged(this)" style="' + sel + '">' + _persoLieuOptions(lieu || '') + '</select>'
+    + '<select class="pl-rel" onchange="markUnsaved()" style="' + sel + '">' + _persoRelOptions(relation || 'passage') + '</select>'
+    + '<button type="button" onclick="_removePersoLieuRow(this)" title="' + escHtml(_t('btn_delete')) + '" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--ink-muted);padding:0 2px;line-height:1;">✕</button>'
+    + '</div>';
+}
+function _persoLieuxWidget(lieuxArr) {
+  var rows = (Array.isArray(lieuxArr) ? lieuxArr : []).map(function (x) {
+    return _persoLieuRowHTML(x.lieu || x.nom || '', x.relation || 'passage');
+  }).join('');
+  return '<div class="pl-list">' + rows + '</div>'
+    + '<button type="button" onclick="_addPersoLieuRow(this)" style="margin-top:2px;font-size:10px;font-family:\'DM Sans\',sans-serif;background:none;border:1px dashed var(--cream);border-radius:4px;color:var(--accent);cursor:pointer;padding:3px 8px;">' + escHtml(_t('perso_lieux_add')) + '</button>';
+}
+function _addPersoLieuRow(btn) {
+  var list = btn.parentElement && btn.parentElement.querySelector('.pl-list');
+  if (!list) return;
+  list.insertAdjacentHTML('beforeend', _persoLieuRowHTML('', 'passage'));
+  markUnsaved();
+}
+function _removePersoLieuRow(btn) {
+  var row = btn.closest('.pl-row');
+  if (row) { row.remove(); markUnsaved(); }
+}
+function _persoLieuChanged(sel) {
+  if (sel.value === '__new__') {
+    var name = (window.prompt(_t('perso_lieux_newprompt')) || '').trim();
+    if (!name) { sel.value = ''; return; }
+    var exists = (typeof getLieux === 'function') && getLieux().some(function (l) {
+      return l.nom && l.nom.toLowerCase() === name.toLowerCase();
+    });
+    if (!exists && typeof addLieu === 'function') addLieu({ nom: name });
+    _refreshAllPersoLieuSelects(name);
+    sel.value = name;
+    if (typeof refreshAllLieuSynth === 'function') refreshAllLieuSynth();
+  }
+  markUnsaved();
+}
+function _refreshAllPersoLieuSelects(keepForCurrent) {
+  document.querySelectorAll('#perso-list .pl-lieu').forEach(function (sel) {
+    var cur = sel.value === '__new__' ? (keepForCurrent || '') : sel.value;
+    sel.innerHTML = _persoLieuOptions(cur);
+    sel.value = cur;
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SYNTHÈSE PAR LIEU  (« Qui est lié à ce lieu » + résumé IA)
+// ══════════════════════════════════════════════════════════════
+function _lieuSynthese(lieuNom) {
+  var out = { naissance: [], residence: [], passage: [], mort: [], autre: [] };
+  if (!lieuNom) return out;
+  var target = lieuNom.toLowerCase();
+  var persos = (typeof getPersos === 'function') ? getPersos() : [];
+  persos.forEach(function (p) {
+    (p.lieux || []).forEach(function (x) {
+      if (x.lieu && x.lieu.toLowerCase() === target) {
+        var rel = out[x.relation] ? x.relation : 'autre';
+        if (out[rel].indexOf(p.nom) === -1) out[rel].push(p.nom);
+      }
+    });
+  });
+  return out;
+}
+function renderLieuSynth(elOrBtn) {
+  var card = (elOrBtn && elOrBtn.id) ? elOrBtn : (elOrBtn && elOrBtn.closest ? elOrBtn.closest('div[id^="lieu-"]') : null);
+  if (!card) return;
+  var body = card.querySelector('.lieu-synth-body');
+  if (!body) return;
+  var nom = (card.querySelector('[data-field="nom"]') || {}).value;
+  nom = (nom || '').trim();
+  var s = _lieuSynthese(nom);
+  var html = '';
+  _persoRelations().forEach(function (g) {
+    var names = s[g.v] || [];
+    if (names.length) {
+      html += '<div style="margin-bottom:3px;"><span style="color:var(--ink-muted);">' + g.l + ' :</span> ' + names.map(escHtml).join(', ') + '</div>';
+    }
+  });
+  body.innerHTML = html || '<div style="color:var(--ink-muted);font-style:italic;">' + escHtml(_t('lieu_synth_none')) + '</div>';
+}
+function refreshAllLieuSynth() {
+  document.querySelectorAll('#lieu-list > div[id^="lieu-"]').forEach(function (c) { renderLieuSynth(c); });
+}
+async function lieuAISummary(elOrBtn) {
+  var card = (elOrBtn && elOrBtn.id) ? elOrBtn : (elOrBtn && elOrBtn.closest ? elOrBtn.closest('div[id^="lieu-"]') : null);
+  if (!card) return;
+  var body = card.querySelector('.lieu-synth-body');
+  if (!body) return;
+  var nom = (card.querySelector('[data-field="nom"]') || {}).value;
+  nom = (nom || '').trim();
+  if (!nom) return;
+  var lieu = (typeof getLieux === 'function') ? getLieux().find(function (l) { return l.nom === nom; }) : null;
+  var s = _lieuSynthese(nom);
+  var relLabel = { naissance: _t('rel_naissance'), residence: _t('rel_residence'), passage: _t('rel_passage'), mort: _t('rel_mort'), autre: _t('rel_autre') };
+  var liens = [];
+  Object.keys(s).forEach(function (rel) { s[rel].forEach(function (n) { liens.push('- ' + n + ' (' + relLabel[rel] + ')'); }); });
+  var lang = (typeof getPref === 'function') ? (getPref('ia_langue') || 'fr') : 'fr';
+  var desc = lieu ? [
+    lieu.type && ('Type: ' + lieu.type),
+    lieu.parent && ('Situé dans: ' + lieu.parent),
+    lieu.peuples && ('Habitants: ' + lieu.peuples),
+    lieu.gouvernance && ('Gouvernance: ' + lieu.gouvernance),
+    lieu.notes && ('Notes: ' + lieu.notes),
+  ].filter(Boolean).join('\n') : '';
+  var sys = (lang === 'fr')
+    ? "Tu es un assistant d'écriture. À partir de la fiche d'un lieu et de la liste des personnages qui y sont liés, rédige une courte synthèse narrative (3 à 5 phrases) : l'atmosphère du lieu et le rôle qu'il joue pour ces personnages (qui y est né, y vit, y est mort, y passe). Reste factuel, n'invente aucun élément absent. Réponds en texte simple, sans titre ni liste."
+    : "You are a writing assistant. From a location sheet and the list of characters linked to it, write a short narrative synthesis (3 to 5 sentences): the atmosphere of the place and the role it plays for these characters (who was born there, lives there, died there, passes through). Stay factual, do not invent anything. Reply in plain text, no heading or list.";
+  var usr = 'LIEU: ' + nom + '\n' + desc + '\n\nPERSONNAGES LIÉS:\n' + (liens.join('\n') || '(aucun)');
+  body.innerHTML = '<div style="color:var(--ink-muted);font-style:italic;">' + escHtml(_t('lieu_synth_ai_wait')) + '</div>';
+  try {
+    var raw = await callAI(sys, usr, 400);
+    if (!raw || raw.error) throw new Error((raw && raw.error) || 'no-response');
+    body.innerHTML = '<div style="white-space:pre-wrap;color:var(--ink);">' + escHtml(String(raw).trim()) + '</div>';
+  } catch (e) {
+    if (typeof showToast === 'function') showToast(_t('toast_ai_error') || 'Erreur IA', 2500, 'error');
+    renderLieuSynth(card);
+  }
+}
+
 function addPerso(data = {}) {
   _persoCount++;
   const id = 'perso-' + _persoCount;
@@ -3825,7 +3979,10 @@ function addPerso(data = {}) {
     _persoField(_t('perso_detail_sensoriel'), 'detail_sensoriel', _t('perso_detail_sensoriel_ph'), data.detail_sensoriel || '', true)
   );
 
-  card.innerHTML = header + s1 + s2 + s3 + s4 + s5 + s6;
+  const sLieux = _persoSection('📍', _t('perso_lieux_title'), '#0d9488',
+    '<div style="font-size:9px;color:var(--ink-muted);margin-bottom:5px;">' + escHtml(_t('perso_lieux_hint')) + '</div>' + _persoLieuxWidget(data.lieux || [])
+  );
+  card.innerHTML = header + s1 + sLieux + s2 + s3 + s4 + s5 + s6;
   card._orig = data || {};
   list.appendChild(card);
   markUnsaved();
@@ -3861,6 +4018,10 @@ function getPersos() {
     langage:          card.querySelector('[data-field="langage"]')?.value?.trim()          || '',
     souvenir:         card.querySelector('[data-field="souvenir"]')?.value?.trim()         || '',
     detail_sensoriel: card.querySelector('[data-field="detail_sensoriel"]')?.value?.trim() || '',
+    lieux: [...card.querySelectorAll('.pl-row')].map(r => ({
+      lieu: (r.querySelector('.pl-lieu')?.value || '').trim(),
+      relation: r.querySelector('.pl-rel')?.value || 'passage',
+    })).filter(x => x.lieu && x.lieu !== '__new__'),
   })).filter(p => p.nom);
 }
 
@@ -3917,9 +4078,21 @@ function addLieu(data = {}) {
     ${_cardField(_t('lieu_peuples_label'), 'peuples', _t('lieu_peuples_ph'), data.peuples||'')}
     ${_cardField(_t('lieu_gouvernance_label'), 'gouvernance', _t('lieu_gouvernance_ph'), data.gouvernance||'')}
     ${_cardField(_t('lieu_notes_label'), 'notes', _t('lieu_notes_ph'), data.notes||'', true)}
+
+    <div class="lieu-synth" style="margin-top:7px;border-top:1px solid var(--cream);padding-top:6px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px;">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-weight:600;">${_t('lieu_synth_title')}</div>
+        <div style="display:flex;gap:4px;">
+          <button type="button" onclick="renderLieuSynth(this)" title="${_t('lieu_synth_refresh_t')||'Actualiser'}" style="font-size:10px;background:none;border:1px solid var(--cream);border-radius:4px;color:var(--ink-muted);cursor:pointer;padding:2px 7px;">${_t('lieu_synth_refresh')}</button>
+          <button type="button" onclick="lieuAISummary(this)" style="font-size:9px;background:none;border:1px solid var(--cream);border-radius:4px;color:var(--accent);cursor:pointer;padding:2px 6px;">${_t('lieu_synth_ai')}</button>
+        </div>
+      </div>
+      <div class="lieu-synth-body" style="font-size:10.5px;color:var(--ink);line-height:1.5;"></div>
+    </div>
   `;
 
   list.appendChild(card);
+  renderLieuSynth(card);
   markUnsaved();
 }
 
@@ -10464,6 +10637,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function openSettingsModal(tab) {
   const overlay = document.getElementById('settings-modal');
   if (!overlay) return;
+  setTimeout(function(){ try { if (typeof _refreshAllPersoLieuSelects==='function') _refreshAllPersoLieuSelects(); if (typeof refreshAllLieuSynth==='function') refreshAllLieuSynth(); } catch(e){} }, 80);
 
   // Focus mode: quitter d'abord le focus avant d'ouvrir les paramètres
   // (le return était APRÈS overlay.classList.add('open') → modale ouverte sans Escape)
@@ -13278,6 +13452,23 @@ var _i18n = {
     perso_s4_title:            'Rôle dans l\'intrigue',
     perso_s5_title:            'Relations aux autres',
     perso_s6_title:            'Détails singuliers',
+    perso_lieux_title:         'Lieux liés',
+    perso_lieux_hint:          'Relie ce personnage à des lieux (existants ou à créer).',
+    perso_lieux_add:           '＋ Lier un lieu',
+    perso_lieux_choose:        '— Choisir un lieu —',
+    perso_lieux_newopt:        '＋ Nouveau lieu…',
+    perso_lieux_newprompt:     'Nom du nouveau lieu :',
+    rel_naissance:             'Né·e ici',
+    rel_residence:             'Vit ici',
+    rel_passage:               'De passage',
+    rel_mort:                  'Mort·e ici',
+    rel_autre:                 'Autre lien',
+    lieu_synth_title:          'Qui est lié à ce lieu',
+    lieu_synth_none:           'Aucun personnage lié pour l’instant.',
+    lieu_synth_refresh:        '↻',
+    lieu_synth_refresh_t:      'Actualiser',
+    lieu_synth_ai:             '✦ Résumé IA',
+    lieu_synth_ai_wait:        '✦ Génération…',
     perso_role:                'Rôle narratif',
     perso_role_ph:             'Protagoniste, antagoniste, mentor, confident…',
     perso_age:                 'Âge / époque',
@@ -14240,6 +14431,23 @@ var _i18n = {
     perso_s4_title:            'Role in the plot',
     perso_s5_title:            'Relationships',
     perso_s6_title:            'Singular details',
+    perso_lieux_title:         'Linked places',
+    perso_lieux_hint:          'Link this character to places (existing or new).',
+    perso_lieux_add:           '＋ Link a place',
+    perso_lieux_choose:        '— Choose a place —',
+    perso_lieux_newopt:        '＋ New place…',
+    perso_lieux_newprompt:     'Name of the new place:',
+    rel_naissance:             'Born here',
+    rel_residence:             'Lives here',
+    rel_passage:               'Passing through',
+    rel_mort:                  'Died here',
+    rel_autre:                 'Other link',
+    lieu_synth_title:          'Who is linked to this place',
+    lieu_synth_none:           'No linked character yet.',
+    lieu_synth_refresh:        '↻',
+    lieu_synth_refresh_t:      'Refresh',
+    lieu_synth_ai:             '✦ AI summary',
+    lieu_synth_ai_wait:        '✦ Generating…',
     perso_role:                'Narrative role',
     perso_role_ph:             'Protagonist, antagonist, mentor, confidant…',
     perso_age:                 'Age / era',
@@ -22342,8 +22550,34 @@ async function runCoherenceCheck() {
   // Fiches personnages / lieux
   const persos = typeof getPersos === 'function' ? getPersos() : [];
   const lieux   = typeof getLieux  === 'function' ? getLieux()  : [];
-  const persoDesc = persos.map(p => `• ${p.nom}${p.description ? ' : ' + p.description.slice(0,120) : ''}${p.notes ? ' — ' + p.notes.slice(0,80) : ''}`).join('\n');
-  const lieuxDesc  = lieux.map(l => `• ${l.nom}${l.description ? ' : ' + l.description.slice(0,120) : ''}`).join('\n');
+  const _cohLang = (typeof getPref === 'function' ? getPref('ia_langue') || 'fr' : 'fr');
+  const _rel = { naissance:'né·e ici', residence:'vit ici', passage:'de passage', mort:'mort·e ici', autre:'lié' };
+  const persoDesc = persos.map(p => {
+    let s = `• ${p.nom}`;
+    if (p.role_narratif || p.role) s += ` [${p.role_narratif||p.role}]`;
+    if (p.age) s += `, ${p.age}`;
+    if (p.origine) s += `, origine: ${p.origine}`;
+    if (p.variantes) s += ` (aussi: ${p.variantes})`;
+    const _ll = (p.lieux||[]).filter(x=>x.lieu).map(x=>`${x.lieu} (${_rel[x.relation]||'lié'})`);
+    if (_ll.length) s += ` — lieux: ${_ll.join('; ')}`;
+    if (p.arc) s += ` — arc: ${String(p.arc).slice(0,80)}`;
+    return s;
+  }).join('\n');
+  const lieuxDesc = lieux.map(l => {
+    let s = `• ${l.nom}`;
+    if (l.type) s += ` [${l.type}]`;
+    if (l.parent) s += ` — dans: ${l.parent}`;
+    if (l.variantes) s += ` (aussi: ${l.variantes})`;
+    if (l.notes) s += ` — ${String(l.notes).slice(0,100)}`;
+    return s;
+  }).join('\n');
+  const _lieuNames = new Set(lieux.map(l => (l.nom||'').toLowerCase()));
+  const _structIssues = [];
+  persos.forEach(p => (p.lieux||[]).forEach(x => {
+    if (x.lieu && !_lieuNames.has(x.lieu.toLowerCase())) {
+      _structIssues.push({ type:'lieu', severity:'warn', message:`${p.nom} ${(_cohLang==='en')?'is linked to a location missing from the sheets':'est lié à un lieu absent des fiches'} : « ${x.lieu} »`, citation_a:'', citation_b:'' });
+    }
+  }));
 
   const lang = typeof getPref === 'function' ? getPref('ia_langue') || 'fr' : 'fr';
 
@@ -22449,7 +22683,7 @@ Max 5 issues. Returning [] is better than inventing.`;
     try {
       const cleaned = raw.replace(/```json[\s\S]*?```|```/g,'').trim();
       const parsed  = JSON.parse(cleaned);
-      issues = parsed.issues || [];
+      issues = _structIssues.concat(parsed.issues || []);
     } catch(e) {
       box.innerHTML = _coRe + `<div style="font-size:11px;color:var(--ink);line-height:1.6;padding:8px;">${escHtml(raw)}</div>`;
       return;
