@@ -1028,7 +1028,8 @@ function formatRoman() {
         const _sAfter  = img.spaceAfter  != null ? img.spaceAfter  + 'pt' : null;
 
         if (isFloat) {
-          wrap.style.cssText = 'width:' + w + '%;position:relative;';
+          const wF = Math.min(w, 60); // plafond flottant : garde une colonne de texte lisible
+          wrap.style.cssText = 'width:' + wF + '%;position:relative;';
           // Marges CSS par défaut img-float-left/right : 4pt haut, 8pt bas — on override si customisé
           if (_sBefore) wrap.style.setProperty('margin-top',    _sBefore, 'important');
           if (_sAfter)  wrap.style.setProperty('margin-bottom', _sAfter,  'important');
@@ -2258,6 +2259,13 @@ function showConfirm(title, msg, onConfirm) {
 
 function updateImgProp(name, prop, value) {
   if (!images[name]) return;
+  // Garde-fou : largeur d'un flottant plafonnée à 60% (colonne de texte lisible).
+  if (prop === 'width' && (images[name].valign === 'float-left' || images[name].valign === 'float-right')) {
+    value = Math.min(value, 60);
+    const _c = document.querySelector('[data-img="' + name + '"]');
+    const _s = _c && _c.querySelector('input[type=range]');
+    if (_s && +_s.value > 60) _s.value = 60;
+  }
   images[name][prop] = value;
   if (prop === 'width') {
     const card = document.querySelector('[data-img="' + name + '"]');
@@ -2346,6 +2354,9 @@ function setImgAlign(name, align) {
 function setImgValign(name, valign) {
   if (!images[name]) return;
   images[name].valign = valign;
+  // Garde-fou : un flottant trop large rend la colonne de texte illisible → plafond 60%.
+  const _isFloatV = (valign === 'float-left' || valign === 'float-right');
+  if (_isFloatV && (images[name].width || 100) > 60) images[name].width = 60;
   const card = document.querySelector('[data-img="' + name + '"]');
   if (card) {
     card.querySelectorAll('.valign-btn').forEach(b =>
@@ -2371,6 +2382,13 @@ function setImgValign(name, valign) {
       'fill':        _t('img_mode_fill'),
     };
     if (modeNote) modeNote.textContent = notes[valign] || '';
+    // Refléter le plafond de largeur dans le slider et son label
+    if (_isFloatV) {
+      const _ws = card.querySelector('input[type=range]');
+      if (_ws && +_ws.value > 60) _ws.value = 60;
+      const _wl = card.querySelector('.range-val');
+      if (_wl) _wl.textContent = (images[name].width || 60) + '%';
+    }
   }
   formatRoman();
 }
@@ -3676,7 +3694,8 @@ document.addEventListener('mousedown', (e) => {
   function onMove(mv) {
     const dx    = (mv.clientX - startX) * (side === 'left' ? -1 : 1);
     const delta = (dx / refW) * 100;
-    const newW  = Math.min(200, Math.max(10, Math.round(startW + delta)));
+    const _maxW = (images[key].valign === 'float-left' || images[key].valign === 'float-right') ? 60 : 200;
+    const newW  = Math.min(_maxW, Math.max(10, Math.round(startW + delta)));
     images[key].width = newW;
     // Mettre à jour TOUTES les instances de cette image dans le rendu
     document.querySelectorAll('.book-image[data-img-key="' + key + '"]').forEach(w => {
