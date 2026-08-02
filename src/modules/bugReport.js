@@ -424,6 +424,7 @@
     width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 8px;
     background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
     color: rgba(255,255,255,0.9); font-size: 13px; font-family: inherit;
+    color-scheme: dark;
   }
   .bugr-form textarea { min-height: 96px; resize: vertical; }
   .bugr-form input:focus, .bugr-form select:focus, .bugr-form textarea:focus {
