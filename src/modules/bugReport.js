@@ -429,7 +429,7 @@
   .bugr-form input:focus, .bugr-form select:focus, .bugr-form textarea:focus {
     outline: none; border-color: rgba(255,255,255,0.35);
   }
-  .bugr-form option { background: #1e1f24; }
+  .bugr-form option { background: #1e1f24; color: rgba(255,255,255,0.9); }
   .bugr-actions { display: flex; align-items: center; gap: 12px; margin-top: 2px; }
   .bugr-send {
     padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer;
