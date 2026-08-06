@@ -19750,19 +19750,59 @@ var _ANNOT = (() => {
     const ta = document.getElementById('raw-input');
     if (!ta) return null;
     const text = ta.value;
-    // Essayer d'abord à l'offset mémorisé (rapide), puis chercher global
     const anchor = annot.anchor;
-    if (!anchor || anchor.length < 3) return null;
-    // Cherche à partir de l'offset sauvegardé ± 200 chars
-    const searchFrom = Math.max(0, (annot.offset || 0) - 100);
-    let idx = text.indexOf(anchor, searchFrom);
-    if (idx === -1) idx = text.indexOf(anchor); // fallback global
-    if (idx === -1) return null;
-    // Mettre à jour l'offset mémorisé
-    annot.offset = idx;
-    // Utiliser selLength si présent (longueur réelle de la sélection, peut dépasser anchor tronqué à 120)
+    if (!anchor) return null;
     const hlLen = (annot.selLength && annot.selLength > anchor.length) ? annot.selLength : anchor.length;
-    return { start: idx, end: idx + hlLen };
+    const off = annot.offset || 0;
+
+    // 1) L'ancre est-elle TOUJOURS à sa position mémorisée ? Cas le plus fréquent,
+    //    et seul moyen fiable pour les ancres très courtes (1-2 caractères), qui
+    //    étaient auparavant rejetées (anchor.length < 3) : la note existait en
+    //    base mais n'était jamais localisée, donc invisible à l'écran.
+    if (text.substr(off, anchor.length) === anchor) {
+      // Migration progressive : une annotation d'avant ce correctif n'a pas de
+      // contexte. On ne le renseigne QUE dans ce cas — position exacte, donc
+      // confiance maximale — pour ne jamais figer un contexte erroné.
+      if (annot.before === undefined && annot.after === undefined) {
+        annot.before = text.slice(Math.max(0, off - 40), off);
+        annot.after  = text.slice(off + hlLen, off + hlLen + 40);
+        try { _persist(); } catch (e) {}
+      }
+      return { start: off, end: off + hlLen };
+    }
+
+    // 2) Sinon, recenser TOUTES les occurrences. L'ancienne version prenait la
+    //    première trouvée à partir de (offset - 100) : dès que l'auteur
+    //    supprimait plus de 100 caractères en amont, elle sautait la bonne et
+    //    accrochait une occurrence ULTÉRIEURE du même texte — d'où les balises
+    //    décalées sur un passage identique mais au mauvais endroit.
+    const occ = [];
+    for (let i = text.indexOf(anchor); i !== -1 && occ.length < 2000; i = text.indexOf(anchor, i + 1)) occ.push(i);
+    if (!occ.length) return null;
+
+    // 3) Départager par le contexte quand il est connu (annotations récentes),
+    //    sinon par la proximité avec l'offset mémorisé. Les annotations créées
+    //    avant ce correctif n'ont pas de contexte : elles bénéficient quand même
+    //    du choix « occurrence la plus proche », strictement meilleur qu'avant.
+    let best = occ[0], bestScore = -Infinity;
+    for (const i of occ) {
+      let score = 0;
+      if (annot.before) {
+        const b = text.slice(Math.max(0, i - annot.before.length), i);
+        if (b === annot.before) score += 4;
+        else if (b.slice(-10) === annot.before.slice(-10)) score += 2;
+      }
+      if (annot.after) {
+        const a = text.slice(i + hlLen, i + hlLen + annot.after.length);
+        if (a === annot.after) score += 4;
+        else if (a.slice(0, 10) === annot.after.slice(0, 10)) score += 2;
+      }
+      // proximité : départage les ex aequo sans jamais dominer le contexte
+      score += 1 / (1 + Math.abs(i - off) / 1000);
+      if (score > bestScore) { bestScore = score; best = i; }
+    }
+    annot.offset = best;
+    return { start: best, end: best + hlLen };
   }
 
   // ── Calcul des positions pixel via mirror div ─────────────────────────
@@ -20287,6 +20327,10 @@ var _ANNOT = (() => {
       anchor:    anch.slice(0, 120),
       selLength: anch.length,
       offset:    selStart,
+      // Contexte immédiat : permet de retrouver LA bonne occurrence quand le
+      // texte a été remanié et que l'ancre apparaît plusieurs fois.
+      before:    text.slice(Math.max(0, selStart - 40), selStart),
+      after:     text.slice(selEnd, selEnd + 40),
       color:     color || 'jaune',
       note:      note || '',
       priority:  priority || 'none',
