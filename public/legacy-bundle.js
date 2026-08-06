@@ -8629,7 +8629,7 @@ async function _runSynonymsForWord(word) {
     const data = await _synAICall(word);
     _synRender(word, data, res);
   } catch(e) {
-    if (res) res.innerHTML = `<span style="color:#dc2626;font-size:10.5px;">Erreur : ${e.message}</span>`;
+    if (res) res.innerHTML = `<span style="color:#dc2626;font-size:10.5px;">Erreur : ${escHtml(e.message)}</span>`;
   } finally {
     if (btn) btn.disabled = false;
     _synUpdateDot();
@@ -8659,7 +8659,7 @@ async function runSynonyms() {
     const data = await _synAICall(word);
     _synRender(word, data, res);
   } catch(e) {
-    if (res) res.innerHTML = `<span style="color:#dc2626;font-size:10.5px;">Erreur : ${e.message}</span>`;
+    if (res) res.innerHTML = `<span style="color:#dc2626;font-size:10.5px;">Erreur : ${escHtml(e.message)}</span>`;
   } finally {
     if (btn) btn.disabled = false;
     _synUpdateDot();
@@ -15480,6 +15480,7 @@ var _i18n = {
     rel_autre: "Otro vínculo",
     lieu_synth_title: "Quién está vinculado a este lugar",
     lieu_synth_none: "Ningún personaje vinculado por ahora.",
+    lieu_synth_refresh: "↻",
     lieu_synth_refresh_t: "Actualizar",
     lieu_synth_ai: "✦ Resumen IA",
     lieu_synth_ai_wait: "✦ Generando…",
@@ -16465,6 +16466,7 @@ var _i18n = {
     rel_autre: "Andere Verbindung",
     lieu_synth_title: "Wer mit diesem Ort verbunden ist",
     lieu_synth_none: "Noch keine Figur verknüpft.",
+    lieu_synth_refresh: "↻",
     lieu_synth_refresh_t: "Aktualisieren",
     lieu_synth_ai: "✦ KI-Zusammenfassung",
     lieu_synth_ai_wait: "✦ Wird generiert…",
@@ -17411,6 +17413,7 @@ var _i18n = {
     rel_autre: "Altro legame",
     lieu_synth_title: "Chi è collegato a questo luogo",
     lieu_synth_none: "Nessun personaggio collegato per ora.",
+    lieu_synth_refresh: "↻",
     lieu_synth_refresh_t: "Aggiorna",
     lieu_synth_ai: "✦ Riassunto IA",
     lieu_synth_ai_wait: "✦ Generazione…",
@@ -18353,6 +18356,7 @@ var _i18n = {
     rel_autre: "Outro vínculo",
     lieu_synth_title: "Quem está vinculado a este lugar",
     lieu_synth_none: "Nenhuma personagem vinculada por enquanto.",
+    lieu_synth_refresh: "↻",
     lieu_synth_refresh_t: "Atualizar",
     lieu_synth_ai: "✦ Resumo IA",
     lieu_synth_ai_wait: "✦ A gerar…",
@@ -23444,9 +23448,13 @@ const PluralEngine = (() => {
     // FR uniquement
     const det = DET_PLUR_FR;
     // Pattern : déterminant pluriel + NOM qui ne finit pas par s/x/z
+      // 2026-08-06 — \b repose sur \w (ASCII) et coupait les mots avant leur accent
+      // final : « malgré » était capturé « malgr », d'où « malgrsé ». Pire, les gardes
+      // d'invariabilité testaient le fragment tronqué et ne reconnaissaient donc plus
+      // le mot : elles étaient toutes silencieusement contournées. Frontières Unicode.
     const re = new RegExp(
-      '\\b(' + det + ')\\s+([a-zA-Z\u00C0-\u017E]{3,})\\b',
-      'gi'
+      '(?<![\\p{L}\\p{N}_])(' + det + ')\\s+(\\p{L}{3,})(?![\\p{L}])',
+      'giu'
     );
     return text.replace(re, (m, d, noun) => {
       // GARDE DÉFINITIVE : jamais d'accord sur une forme verbale ou un mot-outil
@@ -23464,7 +23472,7 @@ const PluralEngine = (() => {
       // Participes passés (é/ée/és/ées) — déjà accordés, ne pas retoucher
       if (/[eé]e?s?$/i.test(noun) && noun.length > 4) return m;
       // Prépositions et mots invariables courants
-      if (/^(avec|sans|pour|par|sur|sous|vers|dans|entre|contre|depuis|pendant|avant|après|chez|près|loin)$/i.test(noun)) return m;
+      if (/^(avec|sans|pour|par|sur|sous|vers|dans|entre|contre|depuis|pendant|avant|après|chez|près|loin|malgré|selon|parmi|hormis|envers|durant|excepté|dès|auprès|exprès|déjà|ici|partout|ailleurs|debout|tôt|tard|aussitôt|bientôt|plutôt|surtout|assez|trop|très|bien|mal|ainsi|alors|donc|puis|jamais|toujours|encore|souvent)$/i.test(noun)) return m;
       // Terminaison -au → -aux, -al → -aux, -eu → -eux
       if (/eau$/i.test(noun)) return d + ' ' + noun + 'x';
       if (/au$/i.test(noun) && noun.length > 3) return d + ' ' + noun + 'x';
@@ -23919,8 +23927,8 @@ const PluralEngine = (() => {
     }
     // Cas général : det + NOM-s/x + ADJ sans -s
     const reAdj = new RegExp(
-      '\\b(' + DET_PLUR_FR + '\\s+[a-zA-Z\u00C0-\u017E]*[sx]\\s+)([a-zA-Z\u00C0-\u017E]{3,}[b-df-hj-lp-rt-vz])\\b',
-      'gi'
+      '(?<![\\p{L}\\p{N}_])(' + DET_PLUR_FR + '\\s+[a-zA-Z\u00C0-\u017E]*[sx]\\s+)([a-zA-Z\u00C0-\u017E]{3,}[b-df-hj-lp-rt-vz])(?![\\p{L}])',
+      'giu'
     );
     result = result.replace(reAdj, (m, pre, adj) => {
       if (/[sxz]$/i.test(adj)) return m;
@@ -26583,6 +26591,7 @@ _registerLang('ru', {
   "rel_autre": "Другая связь",
   "lieu_synth_title": "Кто связан с этим местом",
   "lieu_synth_none": "Пока нет связанных персонажей.",
+  "lieu_synth_refresh": "↻",
   "lieu_synth_refresh_t": "Обновить",
   "lieu_synth_ai": "✦ Резюме ИИ",
   "lieu_synth_ai_wait": "✦ Генерация…",
@@ -27550,6 +27559,7 @@ _registerLang('da', {
   "rel_autre": "Anden forbindelse",
   "lieu_synth_title": "Hvem er knyttet til dette sted",
   "lieu_synth_none": "Ingen figur tilknyttet endnu.",
+  "lieu_synth_refresh": "↻",
   "lieu_synth_refresh_t": "Opdatér",
   "lieu_synth_ai": "✦ AI-resumé",
   "lieu_synth_ai_wait": "✦ Genererer…",
@@ -28517,6 +28527,7 @@ _registerLang('el', {
   "rel_autre": "Άλλος δεσμός",
   "lieu_synth_title": "Ποιος συνδέεται με αυτόν τον τόπο",
   "lieu_synth_none": "Κανένας χαρακτήρας συνδεδεμένος προς το παρόν.",
+  "lieu_synth_refresh": "↻",
   "lieu_synth_refresh_t": "Ανανέωση",
   "lieu_synth_ai": "✦ Σύνοψη AI",
   "lieu_synth_ai_wait": "✦ Δημιουργία…",
@@ -29484,6 +29495,7 @@ _registerLang('fi', {
   "rel_autre": "Muu yhteys",
   "lieu_synth_title": "Kuka on linkitetty tähän paikkaan",
   "lieu_synth_none": "Ei vielä linkitettyjä hahmoja.",
+  "lieu_synth_refresh": "↻",
   "lieu_synth_refresh_t": "Päivitä",
   "lieu_synth_ai": "✦ Tekoälyn tiivistelmä",
   "lieu_synth_ai_wait": "✦ Luodaan…",
@@ -30451,6 +30463,7 @@ _registerLang('hu', {
   "rel_autre": "Egyéb kapcsolat",
   "lieu_synth_title": "Ki kapcsolódik ehhez a helyszínhez",
   "lieu_synth_none": "Egyelőre nincs kapcsolt szereplő.",
+  "lieu_synth_refresh": "↻",
   "lieu_synth_refresh_t": "Frissítés",
   "lieu_synth_ai": "✦ MI-összefoglaló",
   "lieu_synth_ai_wait": "✦ Generálás…",
