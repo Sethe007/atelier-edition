@@ -14,7 +14,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "build:protected": "OBFUSCATE=1 npm run build"
+    "build:protected": "OBFUSCATE=1 npm run build",
+    "test:ci": "node scripts/vitest-shim.mjs && node test/_run.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
