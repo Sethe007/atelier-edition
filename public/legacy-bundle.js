@@ -24533,6 +24533,26 @@ const TypographicEngine = {
 
   /** Normalise les espaces autour de la ponctuation selon la langue */
   applyPunctuation(text, lang) {
+    // ── Protection des noms de domaine — 2026-08-07 ──────────────────────────
+    // Le correctif précédent recollait APRÈS COUP tout « . xx » dont xx
+    // figurait dans une liste d'extensions, en IGNORANT LA CASSE. Or « de »
+    // (Allemagne) y figure : « …l'orgueil. De l'égoïsme » devenait
+    // « …l'orgueil.De l'égoïsme ». Les 15 extensions étaient concernées —
+    // De, Net, Ca, Es, Ch, Co… — et l'espace manquant n'était jamais ajouté,
+    // puisque la règle d'espacement le posait et celle-ci le retirait aussitôt.
+    //
+    // On masque désormais les vrais domaines AVANT toute règle, et on les
+    // restaure à la fin. La distinction devient structurelle : un domaine est
+    // COLLÉ à son point et son extension est en minuscules ; une fin de phrase
+    // est suivie d'une majuscule. Plus aucun recollage a posteriori.
+    const _domaines = [];
+    text = text.replace(
+      /\b([a-z0-9][a-z0-9-]{0,62})\.(com|fr|net|org|io|co|uk|de|es|eu|be|ch|ca|gov|edu)\b/g,
+      (m) => { _domaines.push(m); return '\u0000D' + (_domaines.length - 1) + '\u0000'; }
+    );
+    const _restaurerDomaines = (t) =>
+      _domaines.length ? t.replace(/\u0000D(\d+)\u0000/g, (m, i) => _domaines[+i]) : t;
+
     if (lang === 'fr') {
       // Ajoute espace insécable AVANT ! ? : ; (si absent)
       text = text.replace(/([^\s\u202f\u00ab])([!?:;])/g, (m, a, p, off) => {
@@ -24562,8 +24582,7 @@ const TypographicEngine = {
       // Correction du cas décimal : annuler l'espace ajoutée par-dessus
       // Pattern : chiffre . espace chiffre → chiffre . chiffre
       text = text.replace(/(\d)\. (\d)/g, '$1.$2');
-      // Annuler aussi pour les extensions de fichier/domaine courants
-      text = text.replace(/\. (com|fr|net|org|io|co|uk|de|es|eu|be|ch|ca|gov|edu)\b/gi, '.$1');
+      // (le recollage a posteriori a été supprimé : les domaines sont masqués)
     } else {
       // EN/ES : pas d'espace avant ponctuation
       text = text.replace(/\s+([!?:;,\.](?!\.))/g, '$1');
@@ -24572,9 +24591,9 @@ const TypographicEngine = {
       text = text.replace(/([\.])([^\s\n\)\]"'\u00bb\u201d\u2019\.])/g, '$1 $2');
       // Correction décimaux
       text = text.replace(/(\d)\. (\d)/g, '$1.$2');
-      text = text.replace(/\. (com|fr|net|org|io|co|uk|de|es|eu|be|ch|ca|gov|edu)\b/gi, '.$1');
+      // (le recollage a posteriori a été supprimé : les domaines sont masqués)
     }
-    return text;
+    return _restaurerDomaines(text);
   },
 
   /** Réduit les répétitions accidentelles de mots courts */
