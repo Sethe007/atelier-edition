@@ -23557,6 +23557,29 @@ const PluralEngine = (() => {
   // 1. ACCORD NOMINAL : "des chat" → "des chats"
   // ══════════════════════════════════════════════════════════════════════════
 
+  // Noms français à finale ambiguë (-a, -it, -ut, -int) qu'il est légitime de
+  // pluraliser. Hors de cette liste, ces finales sont laissées intactes : elles
+  // désignent presque toujours un passé simple (« il les prit », « les
+  // détourna »), temps dominant de la narration littéraire.
+  const NOM_FINALE_AMBIGUE_FR = new Set([
+    // ── finale -a ────────────────────────────────────────────────────────
+    'cinéma','opéra','agenda','panorama','alinéa','aléa','boa','koala','gala',
+    'tibia','delta','sofa','visa','magma','karma','camélia','dahlia','alpaga',
+    'pyjama','caméra','cobra','puma','lama','panda','tuba','aria','villa',
+    'pizza','véranda','tombola','mimosa','coma','choléra','sauna','harmonica',
+    'diplôma','média','schéma','dilemma','anagramma','quota','tapioca','baccara',
+    // ── finale -it ───────────────────────────────────────────────────────
+    'lit','bruit','fruit','produit','conduit','réduit','habit','crédit','débit',
+    'appétit','circuit','esprit','écrit','délit','profit','déficit','biscuit',
+    'droit','endroit','détroit','exploit','toit','répit','dépit','récit','abri',
+    'enduit','duit','esprit','crédit','permis',
+    // ── finale -ut ───────────────────────────────────────────────────────
+    'but','salut','début','attribut','institut','statut','tribut','rebut',
+    'chalut','azimut','scorbut','affût','début',
+    // ── finale -int ──────────────────────────────────────────────────────
+    'point','contrepoint','embonpoint',
+  ]);
+
   // Exceptions : mots invariables ou déjà pluriels implicites
   const NOUN_INVARIABLE_FR = new Set([
     'bras','bois','bois','corps','cours','fois','fois','mois','pays','poids',
@@ -23612,6 +23635,21 @@ const PluralEngine = (() => {
       // (Les finales -a et -it ne peuvent PAS être ajoutées : « les cinéma »,
       //  « les lit » sont de vrais noms à pluraliser.)
       if (/(?:èrent|irent|urent|arent|inrent)$/i.test(noun)) return m;
+
+      // FINALES AMBIGUËS — 2026-08-07.
+      // -a, -it, -ut, -int terminent à la fois des noms (« les fruit ») et le
+      // passé simple (« il les prit », « puis les détourna »). Impossible de
+      // trancher par la morphologie seule.
+      //
+      // On inverse donc la charge de la preuve : sur ces finales, on ne
+      // corrige QUE si le mot figure dans une liste explicite de noms. Le pire
+      // cas devient « le correcteur s'abstient » au lieu de « le correcteur
+      // abîme le texte » — c'est le bon sens du risque pour un logiciel
+      // d'écriture, où une correction fautive coûte plus qu'une correction
+      // manquée.
+      //
+      // Ajouter un nom à cette liste est sans danger ; l'en retirer aussi.
+      if (/(?:a|it|ut|int)$/i.test(noun) && !NOM_FINALE_AMBIGUE_FR.has(noun.toLowerCase())) return m;
       // Participes passés (é/ée/és/ées) — déjà accordés, ne pas retoucher
       if (/[eé]e?s?$/i.test(noun) && noun.length > 4) return m;
       // Prépositions et mots invariables courants

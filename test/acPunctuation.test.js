@@ -40,6 +40,7 @@ const P = { enabled:true, lang:'fr', quotes:true, punctuation:true, repetitions:
   trailingSpaces:true, pluralNoun:true, pluralVerb:true, pluralAdj:true, capitals:true, spell:true,
   participes:true, ellipsis:true, apostrophes:true };
 const run = (t) => S.SafeCorrectionEngine.applyAll(t, P);
+const src = fs.readFileSync(new URL('../public/legacy-bundle.js', import.meta.url), 'utf8');
 
 describe('Ponctuation — espace après le point', () => {
   it('le cas signalé est corrigé', () => {
@@ -165,4 +166,43 @@ describe('Audit FR — incises de dialogue', () => {
     it(`« ${t.slice(0, 26)}… » garde sa majuscule`, () => {
       expect(run(t)).toBe(t);
     });
+});
+
+describe('Audit FR — finales ambiguës -a / -it / -ut / -int', () => {
+  // Ces finales terminent à la fois des noms (« les fruit ») et le passé
+  // simple (« il les prit »). La morphologie seule ne tranche pas.
+  //
+  // Charge de la preuve inversée : sur ces finales, on ne corrige QUE si le
+  // mot figure dans une liste explicite de noms. Le pire cas devient « le
+  // correcteur s'abstient » plutôt que « le correcteur abîme le texte » —
+  // pour un logiciel d'écriture, une correction fautive coûte bien plus
+  // qu'une correction manquée.
+
+  const PASSE_SIMPLE = [
+    'puis les détourna', 'elle les regarda', 'il les prit', 'on les entendit',
+    'les posa sur la table', 'il les vendit', 'elle les ouvrit', 'on les connut',
+    'il les vint chercher', 'elle les sentit', 'il les but', 'elle les rompit',
+  ];
+  for (const t of PASSE_SIMPLE)
+    it(`« ${t} » reste intact`, () => {
+      expect(run(t).toLowerCase()).toBe(t.toLowerCase());
+    });
+
+  const NOMS = [['les fruit mûrs','fruits'], ['les bruit de la nuit','bruits'],
+                ['les cinéma du quartier','cinémas'], ['des but marqués','buts'],
+                ['les esprit libres','esprits'], ['les droit acquis','droits'],
+                ['les toit rouges','toits'], ['des récit anciens','récits']];
+  for (const [t, att] of NOMS)
+    it(`« ${t} » est toujours accordé`, () => {
+      expect(run(t).toLowerCase()).toContain(att);
+    });
+
+  it('la liste de noms existe et est documentée', () => {
+    expect(src.includes('NOM_FINALE_AMBIGUE_FR')).toBe(true);
+  });
+  it('les accords ordinaires ne sont pas affectés', () => {
+    expect(run('les chien dort').toLowerCase()).toContain('chiens');
+    expect(run('des maison neuve').toLowerCase()).toContain('maisons');
+    expect(run('les yeux bleu').toLowerCase()).toContain('bleus');
+  });
 });
