@@ -23581,19 +23581,37 @@ const PluralEngine = (() => {
       '(?<![\\p{L}\\p{N}_])(' + det + ')\\s+(\\p{L}{3,})(?![\\p{L}\\u2019\\u0027])',
       'giu'
     );
-    return text.replace(re, (m, d, noun) => {
+    return text.replace(re, (m, d, noun, _off, _str) => {
+      // Contexte gauche : nécessaire pour distinguer « les » déterminant
+      // de « les » pronom complément (voir garde plus bas).
+      const _before = (typeof _str === 'string') ? _str.slice(Math.max(0, _off - 24), _off) : '';
       // GARDE DÉFINITIVE : jamais d'accord sur une forme verbale ou un mot-outil
       if (NEVER_INFLECT_FR.has(noun.toLowerCase())) return m;
       // Déjà au pluriel ?
       if (/[sxz]$/i.test(noun)) return m;
       // Invariable ?
       if (NOUN_INVARIABLE_FR.has(noun.toLowerCase())) return m;
+      // « LES » PRONOM — 2026-08-07.
+      // Après un pronom SUJET, « les » ne peut être que pronom complément :
+      // « elle les regarda », « il les prit », « on les entendit ». On ne dit
+      // jamais « elle les enfants ». La garde est donc certaine, pas heuristique.
+      // Elle couvre l'essentiel des cas ; « puis les détourna » (sujet implicite)
+      // reste hors de portée sans analyse grammaticale.
+      if (/(?:^|[^\p{L}])(?:je|tu|il|elle|on|nous|vous|ils|elles)\s+$/iu.test(_before || '')) return m;
       // ANTI-FAUTE : noms propres — « les Dupont » reste invariable
       if (/^\p{Lu}/u.test(noun)) return m;
       // Mot trop court (articles, prépositions captées malgré le look-ahead)
       if (noun.length <= 2) return m;
       // Verbes conjugués et participes passés — ne pas toucher
       if (/(?:ent|ons|ez|ant|ment|ait|aient|erait|eraient|ais|aient)$/i.test(noun)) return m;
+      // PASSÉ SIMPLE — 2026-08-07. La garde ci-dessus ne couvrait que présent,
+      // imparfait et conditionnel. Or le passé simple est LE temps de la
+      // narration littéraire : « puis les détourna » devenait « les détournas ».
+      // Seules les terminaisons en -rent sont ajoutées : elles n'existent pas
+      // en finale de nom français, la garde est donc sans risque.
+      // (Les finales -a et -it ne peuvent PAS être ajoutées : « les cinéma »,
+      //  « les lit » sont de vrais noms à pluraliser.)
+      if (/(?:èrent|irent|urent|arent|inrent)$/i.test(noun)) return m;
       // Participes passés (é/ée/és/ées) — déjà accordés, ne pas retoucher
       if (/[eé]e?s?$/i.test(noun) && noun.length > 4) return m;
       // Prépositions et mots invariables courants
@@ -24494,6 +24512,15 @@ const TypographicEngine = {
         const w = wm ? wm[1].toLowerCase() : '';
         if (w && (w.length === 1 || _ABBR.has(w))) return m;
       }
+      // INCISE DE DIALOGUE — 2026-08-07.
+      // « — Non ! répondit-il. » : l'incise reste en minuscule en français.
+      // Les dialogues aux guillemets étaient déjà épargnés par hasard (le »
+      // n'est pas un blanc, la regex ne mordait pas), mais pas ceux au tiret
+      // cadratin — la convention DOMINANTE en fiction française.
+      // L'inversion sujet-verbe (dit-il, cria-t-elle, s'étonna-t-il) est la
+      // marque de l'incise ; c'est un signal typographique, pas une devinette.
+      const _suite = text.slice(off + p.length + sp.length, off + p.length + sp.length + 40);
+      if (/^\p{Ll}[\p{L}\u2019'-]*-(?:t-)?(?:il|elle|on|ils|elles|je|nous|vous)\b/u.test(_suite)) return m;
       return p + sp + ch.toUpperCase();
     });
     return text;
@@ -24559,12 +24586,25 @@ const TypographicEngine = {
         // ANTI-FAUTE : heures « 14:30 », URL « http:// »
         const next = text[off + 2] || '';
         if (p === ':' && ((/\d/.test(a) && /\d/.test(next)) || next === '/')) return m;
+        // ANTI-FAUTE 2026-08-07 : ponctuation expressive. « ?! », « !! », « ?? »
+        // sont des groupes voulus par l'auteur : on n'insère pas d'espace
+        // insécable entre deux signes de ponctuation.
+        if (/[!?:;,\.]/.test(a)) return m;
         return a + '\u202f' + p;
       });
       // Supprime espace(s) avant , .
       text = text.replace(/\s+([,\.](?!\.))/g, '$1');
       // Espace après , ; ! ? si pas déjà espace ou fin de ligne
-      text = text.replace(/([,;!?])([^\s\n\)\]\u00bb"'\u201d\u2019])/g, '$1 $2');
+      // ANTI-FAUTE 2026-08-07 : en français la VIRGULE est le séparateur
+      // décimal — « 3,14 » ne doit jamais devenir « 3, 14 ». La protection
+      // existait pour le point (rendu inutile ici) mais pas pour la virgule.
+      // ANTI-FAUTE 2026-08-07 : ponctuation expressive « ?! » « !! » « ?? » —
+      // on n'insère pas d'espace entre deux signes de ponctuation.
+      text = text.replace(/([,;!?])([^\s\n\)\]\u00bb"'\u201d\u2019])/g, (m, sgn, nxt, off) => {
+        if (sgn === ',' && /\d/.test(nxt) && /\d/.test(text[off - 1] || '')) return m; // décimal
+        if (/[!?:;,\.]/.test(nxt)) return m;                                            // ?! !! ??
+        return sgn + ' ' + nxt;
+      });
       // Espace après point — SAUF :
       //  • nombre décimal : 3.14, 1.5
       //  • ellipse : ...

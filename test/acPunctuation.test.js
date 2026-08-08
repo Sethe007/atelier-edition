@@ -107,3 +107,62 @@ describe('Ponctuation — le recollage a posteriori a disparu', () => {
     expect(src.slice(i, i + 4000).includes('_restaurerDomaines')).toBe(true);
   });
 });
+
+// ══ Audit systématique du 7 août — quatre défauts trouvés sur corpus ═══════
+describe('Audit FR — virgule décimale', () => {
+  // En français la VIRGULE est le séparateur décimal. La protection existait
+  // pour le point, pas pour la virgule : « 3,14 » devenait « 3, 14 ».
+  for (const n of ['3,14', '72,5', '1,5', '0,1', '99,9'])
+    it(`${n} n'est pas disloqué`, () => {
+      expect(run('Il mesurait ' + n + ' mètres.')).toContain(n);
+    });
+  it('la virgule normale reçoit toujours son espace', () => {
+    expect(run('Il partit,elle resta.')).toContain(', elle');
+  });
+});
+
+describe('Audit FR — ponctuation expressive', () => {
+  // « ?! » « !! » « ?? » sont des groupes voulus par l'auteur : le moteur
+  // insérait une espace insécable entre les deux signes.
+  for (const g of ['?!', '!?', '!!', '??'])
+    it(`« ${g} » reste soudé`, () => {
+      expect(run('Vraiment ' + g)).toContain(g);
+    });
+});
+
+describe('Audit FR — passé simple après « les » pronom', () => {
+  // Le passé simple est LE temps de la narration littéraire. « les » pronom
+  // était pris pour un déterminant : « il les prit » -> « il les prits ».
+  const OK = ['elle les regarda', 'il les prit', 'on les entendit', 'je les vis',
+              'nous les vîmes', 'vous les prîtes'];
+  for (const t of OK)
+    it(`« ${t} » n'est pas altéré`, () => {
+      const o = run(t);
+      expect(o.toLowerCase()).toBe(t.toLowerCase());
+    });
+  it('les terminaisons en -rent sont protégées', () => {
+    expect(run('les partirent').toLowerCase()).toContain('les partirent');
+  });
+  it('mais un vrai nom est toujours accordé', () => {
+    expect(run('les chien dort').toLowerCase()).toContain('chiens');
+  });
+});
+
+describe('Audit FR — incises de dialogue', () => {
+  // En français l'incise reste en minuscule. Les dialogues aux guillemets
+  // étaient épargnés par hasard, pas ceux au tiret cadratin — pourtant la
+  // convention dominante en fiction.
+  const INCISES = ['— Non ! répondit-il.', '« Pars ! » cria-t-elle.',
+                   'Vraiment ?! s’étonna-t-il.', '« Oui ? » fit-il.',
+                   '— Viens ! murmura-t-elle doucement.'];
+  for (const t of INCISES)
+    it(`« ${t.slice(0, 28)}… » garde sa minuscule`, () => {
+      expect(run(t)).toBe(t);
+    });
+
+  const PHRASES = ['Attention ! Le train arrive.', 'Où va-t-il ? Personne ne sait.', 'Stop ! Ça suffit.'];
+  for (const t of PHRASES)
+    it(`« ${t.slice(0, 26)}… » garde sa majuscule`, () => {
+      expect(run(t)).toBe(t);
+    });
+});
