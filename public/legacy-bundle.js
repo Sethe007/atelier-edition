@@ -25833,6 +25833,24 @@ function _fsUpdateButton() {
     btn.removeAttribute('data-fs-warn');
     if (span) span.textContent = _F;
   }
+
+  // ── Bouton « dossier de backups » — 2026-08-07 ───────────────────────────
+  // C'est la SEULE fonctionnalité disque sans repli possible : écrire des
+  // versions horodatées dans un dossier choisi exige showDirectoryPicker,
+  // qu'aucune autre API web ne remplace. Les autres boutons disque retombent
+  // proprement (fsOpenProject -> input file, fsSaveProject -> OPFS puis
+  // téléchargement) et restent donc utiles partout.
+  //
+  // Or Firefox et Safari n'implémentent pas cette API, et Brave la désactive
+  // volontairement par choix de confidentialité. Le bouton était malgré tout
+  // affiché et ne produisait qu'un message d'erreur au clic.
+  // On le masque : ne pas exposer une action qui ne peut pas aboutir.
+  const _bkpBtn = document.getElementById('btn-fs-backup');
+  if (_bkpBtn) {
+    const _bkpOk = fsSupported() && ('showDirectoryPicker' in window);
+    _bkpBtn.style.display = _bkpOk ? '' : 'none';
+    _bkpBtn.setAttribute('aria-hidden', _bkpOk ? 'false' : 'true');
+  }
 }
 
 // ── Ouvrir un projet depuis un VRAI fichier ────────────────
@@ -25993,7 +26011,13 @@ async function _fsIdbGet(key) {
 // Choisir (ou changer) le dossier de backups.
 async function fsChooseBackupFolder() {
   if (!fsSupported() || !('showDirectoryPicker' in window)) {
-    _fsToast('Votre navigateur ne permet pas les backups sur disque.', 5000, 'error');
+    // Message actionnable : dire QUOI faire, pas seulement que ça ne marche pas.
+    // Firefox et Safari n'implémentent pas showDirectoryPicker ; Brave la
+    // désactive par défaut mais laisse un drapeau pour l'activer.
+    _fsToast('Les backups automatiques sur disque demandent Chrome, Edge ou Opera. '
+           + 'Sur Brave : brave://flags/#file-system-access-api. '
+           + 'Vos projets restent sauvegardés dans le navigateur, et le bouton Télécharger fonctionne partout.',
+           9000, 'error');
     return;
   }
   try {
