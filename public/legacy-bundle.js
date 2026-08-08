@@ -23352,6 +23352,9 @@ var ACPrefs = (() => {
       const el = document.getElementById(id);
       if (el) el.checked = !!val;
     });
+    // La liste des mots exemptés est reconstruite à chaque ouverture du panneau.
+    try { if (typeof acRenderExemptions === 'function') acRenderExemptions(); } catch (e) {}
+
     // La langue de correction est pilotée par le sélecteur de langue du projet (pref-ui-langue)
     // On passe par set() pour invalider le cache correctement et déclencher onPrefsChange()
     const uiLang = (typeof getPref === 'function') ? (getPref('ui_lang') || 'fr') : 'fr';
@@ -24689,8 +24692,19 @@ var SafeCorrectionEngine = (() => {
     let touched = false;
     for (const ch of _acLastChanges) {
       if (toks.has(ch.from) && !toks.has(ch.to)) {   // forme d'origine revenue, correction disparue
+        const _neuf = !_acExempt.has(ch.from);
         _acExempt.add(ch.from);
         touched = true;
+        // Rendre le mécanisme LISIBLE au moment où il se déclenche. Sans ce
+        // message, l'auteur découvrirait des semaines plus tard qu'un mot
+        // n'est plus corrigé, sans pouvoir relier cela à son geste.
+        // La détection est heuristique : elle peut exempter un mot sans
+        // intention. L'auteur doit donc pouvoir s'en apercevoir et défaire.
+        if (_neuf && typeof showToast === 'function') {
+          try {
+            showToast('« ' + ch.from + ' » ne sera plus corrigé — modifiable dans Réglages › Correction', 4200);
+          } catch (e) {}
+        }
         if (_acExempt.size > _AC_EXEMPT_MAX) _acExempt.delete(_acExempt.values().next().value);
       }
     }
@@ -24712,6 +24726,8 @@ var SafeCorrectionEngine = (() => {
 
   // Exposé pour les réglages : permet de repartir de zéro.
   function acClearExemptions() { _acExempt.clear(); _acExemptSave(); }
+  function acGetExemptions()   { return [..._acExempt].sort((a, b) => a.localeCompare(b, 'fr')); }
+  function acRemoveExemption(mot) { _acExempt.delete(mot); _acExemptSave(); }
 
   function _safeApply(ta) {
     const prefs = ACPrefs.load();
@@ -24960,8 +24976,49 @@ var SafeCorrectionEngine = (() => {
     setTimeout(() => { _correctionCooldown = false; }, 1200);
   }
 
-  return { init, attach, onPrefsChange, applyAll, notifyExternalEdit };
+  return { init, attach, onPrefsChange, applyAll, notifyExternalEdit,
+           getExemptions: acGetExemptions,
+           removeExemption: acRemoveExemption,
+           clearExemptions: acClearExemptions };
 })();
+
+// ── Liste des mots exemptés de correction (Réglages › Correction) ─────────
+// Le refus d'une correction est un état PERSISTANT et autrement INVISIBLE.
+// Cette liste le rend consultable et réversible mot par mot : un bouton de
+// remise à zéro globale obligerait à tout perdre pour annuler une seule
+// exemption involontaire.
+function acRenderExemptions() {
+  const box = document.getElementById('ac-exempt-list');
+  if (!box || typeof SafeCorrectionEngine === 'undefined' ||
+      typeof SafeCorrectionEngine.getExemptions !== 'function') return;
+  const mots = SafeCorrectionEngine.getExemptions();
+  const esc = (typeof escHtml === 'function') ? escHtml : (x) => String(x);
+  if (!mots.length) {
+    box.innerHTML = '<div style="font-size:11px;color:var(--ink-muted);font-style:italic;">'
+                  + 'Aucun mot exempté pour l\'instant.</div>';
+    return;
+  }
+  box.innerHTML = mots.map((m) =>
+      '<button type="button" class="ac-exempt-chip" data-mot="' + esc(m) + '" '
+    + 'title="Cliquer pour corriger de nouveau ce mot" '
+    + 'style="font-size:11px;font-family:inherit;border:1px solid var(--cream);'
+    + 'background:transparent;color:var(--ink);border-radius:12px;padding:2px 8px;'
+    + 'margin:2px 4px 2px 0;cursor:pointer;">' + esc(m) + ' \u00d7</button>'
+  ).join('');
+  box.querySelectorAll('.ac-exempt-chip').forEach((b) => {
+    b.addEventListener('click', () => {
+      SafeCorrectionEngine.removeExemption(b.getAttribute('data-mot'));
+      acRenderExemptions();
+    });
+  });
+}
+
+function acClearAllExemptions() {
+  if (typeof SafeCorrectionEngine === 'undefined') return;
+  SafeCorrectionEngine.clearExemptions();
+  acRenderExemptions();
+  if (typeof showToast === 'function') showToast('Tous les mots sont de nouveau corrigés.', 2400);
+}
 
 // initPrefsPane est déjà patchée directement dans le corps de la fonction
 // pour appeler ACPrefs.refreshUI() — voir définition ci-dessus.

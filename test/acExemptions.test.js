@@ -152,3 +152,70 @@ describe('Correcteur — cycle complet correction / rejet / mémoire', () => {
     expect(m.exempt.size).toBe(0);
   });
 });
+
+// ── Visibilité et réversibilité des exemptions ─────────────────────────────
+// Le refus d'une correction est un état PERSISTANT et autrement INVISIBLE, posé
+// par une heuristique qui peut se tromper. Sans fenêtre pour le consulter et le
+// défaire, le correcteur se dégraderait en silence, mot après mot.
+describe('Exemptions — rendues visibles et réversibles', () => {
+  const html = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+
+  it('l\'auteur est averti au moment où un mot est exempté', () => {
+    const i = src.indexOf('function _acDetectRevert');
+    const f = src.slice(i, i + 1400);
+    expect(f.includes('showToast')).toBe(true);
+    expect(f.includes('ne sera plus corrigé')).toBe(true);
+  });
+  it('le message n\'apparaît qu\'à la PREMIÈRE exemption du mot', () => {
+    const i = src.indexOf('function _acDetectRevert');
+    expect(src.slice(i, i + 1400).includes('_neuf')).toBe(true);
+  });
+  it('un showToast absent ne fait pas planter le correcteur', () => {
+    const i = src.indexOf('function _acDetectRevert');
+    const f = src.slice(i, i + 1400);
+    expect(f.includes("typeof showToast === 'function'")).toBe(true);
+  });
+
+  it('le moteur expose consultation, retrait unitaire et remise à zéro', () => {
+    const i = src.indexOf('return { init, attach, onPrefsChange');
+    const f = src.slice(i, i + 260);
+    for (const k of ['getExemptions', 'removeExemption', 'clearExemptions'])
+      expect(f.includes(k)).toBe(true);
+  });
+
+  it('les réglages contiennent le conteneur de la liste', () => {
+    expect(html.includes('id="ac-exempt-list"')).toBe(true);
+  });
+  it('le bloc est un frère des autres pref-row, pas un enfant', () => {
+    const i = html.indexOf('id="ac-exempt-list"');
+    const avant = html.slice(Math.max(0, i - 400), i);
+    // la pref-row qui le contient doit s'ouvrir après la fermeture de la précédente
+    expect(avant.lastIndexOf('class="pref-row"') > avant.lastIndexOf('</label>')).toBe(true);
+  });
+  it('les balises restent équilibrées', () => {
+    const o = (html.match(/<div\b/g) || []).length;
+    const c = (html.match(/<\/div>/g) || []).length;
+    expect(o === c).toBe(true);
+  });
+  it('un bouton de remise à zéro globale existe', () => {
+    expect(html.includes('acClearAllExemptions()')).toBe(true);
+  });
+  it('chaque mot est retirable individuellement', () => {
+    const i = src.indexOf('function acRenderExemptions');
+    const f = src.slice(i, i + 1500);
+    expect(f.includes('removeExemption')).toBe(true);
+    expect(f.includes('ac-exempt-chip')).toBe(true);
+  });
+  it('les mots sont échappés avant injection (pas de XSS)', () => {
+    const i = src.indexOf('function acRenderExemptions');
+    expect(src.slice(i, i + 1500).includes('escHtml')).toBe(true);
+  });
+  it('la liste vide affiche un état explicite', () => {
+    const i = src.indexOf('function acRenderExemptions');
+    expect(src.slice(i, i + 1500).includes('Aucun mot exempté')).toBe(true);
+  });
+  it('la liste est reconstruite à l\'ouverture des réglages', () => {
+    const i = src.indexOf('function refreshUI');
+    expect(src.slice(i, i + 1800).includes('acRenderExemptions')).toBe(true);
+  });
+});

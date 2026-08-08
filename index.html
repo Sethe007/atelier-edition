@@ -1529,6 +1529,18 @@ Astuce : tapez [IMAGE:nom] là où vous voulez placer une image." oninput="onRaw
               </div>
             </div>
 
+            <div class="pref-row" style="align-items:flex-start;">
+              <div class="pref-row-left" style="flex:1;">
+                <div class="pref-label">Mots que vous avez exemptés</div>
+                <div class="pref-desc">Quand vous défaites une correction, le mot n'est plus corrigé. Cliquez sur un mot pour qu'il le soit de nouveau.</div>
+                <div id="ac-exempt-list" style="margin-top:8px;"></div>
+              </div>
+              <div class="pref-row-right">
+                <button type="button" onclick="acClearAllExemptions()" title="Corriger de nouveau tous les mots"
+                        style="font-size:11px;font-family:inherit;border:1px solid var(--cream);background:transparent;color:var(--ink-muted);border-radius:6px;padding:4px 10px;cursor:pointer;white-space:nowrap;">Tout réinitialiser</button>
+              </div>
+            </div>
+
           </div>
 
         </div>

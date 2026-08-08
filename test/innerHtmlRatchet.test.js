@@ -15,8 +15,14 @@ import fs from 'node:fs';
 //        (_t/_nt), des entiers ou des libellés de configuration
 //   -   2 injectaient e.message SANS échappement (l. ~8632 et ~8662) :
 //        corrigées le même jour, elles passent désormais par escHtml().
+//
+// 2026-08-07 — plafond porté 127 -> 129. Deux affectations ajoutées par
+// acRenderExemptions() (liste des mots exemptés de correction, Réglages) :
+//   - l'état vide : chaîne littérale, aucune donnée utilisateur
+//   - la liste : chaque mot passe par escHtml(), et les gestionnaires de clic
+//     sont posés par addEventListener, pas par un attribut onclick inline
 // Toute nouvelle affectation doit passer par escHtml()/textContent.
-const CEILING = 127;
+const CEILING = 129;
 
 describe('S-8 — ratchet innerHTML', () => {
   it(`le bundle contient au plus ${CEILING} affectations innerHTML`, () => {
