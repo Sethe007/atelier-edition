@@ -11478,6 +11478,20 @@ function applyTheme(name, persist) {
   // On la pilote depuis le thème : un seul point de vérité, et tous les
   // widgets natifs suivent automatiquement.
   root.setProperty('color-scheme', isLight ? 'light' : 'dark');
+
+  // ── Variables d'INTERFACE — 2026-08-07 ───────────────────────────────────
+  // ATTENTION : --ink est l'encre du PARCHEMIN (l'aire d'écriture, toujours
+  // claire) — elle vaut #0f0f0f y compris sur les thèmes sombres. L'utiliser
+  // pour du texte de chrome donne du noir sur noir. Même piège avec --c-ink.
+  //
+  // Ces quatre variables-ci décrivent le chrome (modales, champs, menus) et
+  // basculent réellement avec le thème. Toujours définies, jamais retirées :
+  // aucun repli implicite, donc aucune ambiguïté.
+  root.setProperty('--ui-text',    isLight ? (name === 'jour_ivoire' ? '#1a150e' : '#0e1a28')
+                                           : 'rgba(255,255,255,0.9)');
+  root.setProperty('--ui-field',   isLight ? 'rgba(0,0,0,0.04)'  : 'rgba(255,255,255,0.05)');
+  root.setProperty('--ui-border',  isLight ? 'rgba(0,0,0,0.20)'  : 'rgba(255,255,255,0.12)');
+  root.setProperty('--ui-menu-bg', isLight ? '#ffffff'           : '#1e1f24');
   if (isLight && name === 'jour_ivoire') {
     root.setProperty('--ink',          '#1a150e');
     root.setProperty('--ink-soft',     '#3a3020');

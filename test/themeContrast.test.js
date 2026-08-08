@@ -44,8 +44,8 @@ describe('Signaler un bug — couleurs liées au thème', () => {
   it('les champs suivent les variables de thème', () => {
     const i = bugr.indexOf('.bugr-form input,');
     const bloc = bugr.slice(i, i + 1400);
-    expect(bloc.includes('var(--ink')).toBe(true);
-    expect(bloc.includes('var(--c-lift')).toBe(true);
+    expect(bloc.includes('var(--ui-text')).toBe(true);
+    expect(bloc.includes('var(--ui-field')).toBe(true);
   });
   it('color-scheme n\'est plus forcé localement', () => {
     expect(bugr.includes('color-scheme: dark')).toBe(false);
@@ -57,10 +57,30 @@ describe('Signaler un bug — couleurs liées au thème', () => {
   });
   it('les <option> suivent aussi les variables', () => {
     const m = bugr.match(/\.bugr-form option \{[^}]*\}/);
-    expect(m[0].includes('var(--ink')).toBe(true);
+    expect(m[0].includes('var(--ui-text')).toBe(true);
   });
   it('les replis restent en place si les variables manquent', () => {
     const m = bugr.match(/\.bugr-form option \{[^}]*\}/);
     expect(m[0].includes('#1e1f24')).toBe(true);
+  });
+});
+
+describe('Thème — les variables d\'interface ne sont pas l\'encre du parchemin', () => {
+  const i = src.indexOf('function applyTheme');
+  const f = src.slice(i, i + 3400);
+  it('applyTheme définit --ui-text, --ui-field, --ui-border, --ui-menu-bg', () => {
+    for (const v of ['--ui-text', '--ui-field', '--ui-border', '--ui-menu-bg'])
+      expect(f.includes(v)).toBe(true);
+  });
+  it('elles sont TOUJOURS définies, jamais retirées (pas de repli implicite)', () => {
+    expect(f.includes("removeProperty('--ui-text')")).toBe(false);
+  });
+  it('PIÈGE : --ink est l\'encre du parchemin, sombre même en thème sombre', () => {
+    const base = fs.readFileSync(new URL('../src/styles/base.css', import.meta.url), 'utf8');
+    expect(/--ink:\s*#0f0f0f/.test(base)).toBe(true);   // documente le piège
+  });
+  it('le module de bug n\'utilise donc ni --ink ni --c-ink', () => {
+    expect(bugr.includes('var(--ink,')).toBe(false);
+    expect(bugr.includes('var(--c-ink,')).toBe(false);
   });
 });
