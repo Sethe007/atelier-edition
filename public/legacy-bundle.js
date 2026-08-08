@@ -23575,7 +23575,7 @@ const PluralEngine = (() => {
       // d'invariabilité testaient le fragment tronqué et ne reconnaissaient donc plus
       // le mot : elles étaient toutes silencieusement contournées. Frontières Unicode.
     const re = new RegExp(
-      '(?<![\\p{L}\\p{N}_])(' + det + ')\\s+(\\p{L}{3,})(?![\\p{L}])',
+      '(?<![\\p{L}\\p{N}_])(' + det + ')\\s+(\\p{L}{3,})(?![\\p{L}\\u2019\\u0027])',
       'giu'
     );
     return text.replace(re, (m, d, noun) => {
@@ -24049,7 +24049,7 @@ const PluralEngine = (() => {
     }
     // Cas général : det + NOM-s/x + ADJ sans -s
     const reAdj = new RegExp(
-      '(?<![\\p{L}\\p{N}_])(' + DET_PLUR_FR + '\\s+[a-zA-Z\u00C0-\u017E]*[sx]\\s+)([a-zA-Z\u00C0-\u017E]{3,}[b-df-hj-lp-rt-vz])(?![\\p{L}])',
+      '(?<![\\p{L}\\p{N}_])(' + DET_PLUR_FR + '\\s+[a-zA-Z\u00C0-\u017E]*[sx]\\s+)([a-zA-Z\u00C0-\u017E]{3,}[b-df-hj-lp-rt-vz])(?![\\p{L}\\u2019\\u0027])',
       'giu'
     );
     result = result.replace(reAdj, (m, pre, adj) => {
@@ -24651,12 +24651,78 @@ var SafeCorrectionEngine = (() => {
   let _correctionCooldown = false;  // évite de re-corriger immédiatement après une correction
 
   /** Applique les corrections de façon sûre dans le textarea, préserve le curseur. */
+  // ══ MÉMOIRE DES CORRECTIONS REJETÉES — 2026-08-07 ═══════════════════════
+  // Quand l'auteur défait une correction à la main, le moteur la ré-appliquait
+  // dès le passage suivant : la faute revenait indéfiniment. Le cooldown de
+  // 800 ms ne suffisait pas — repérer la faute, déplacer le curseur et
+  // supprimer un caractère prend plus longtemps.
+  //
+  // On retient donc la forme rétablie par l'auteur et on ne la corrige plus.
+  // Post-filtre volontaire : aucune règle du moteur n'est modifiée, seul le
+  // résultat est filtré. L'auteur a toujours le dernier mot sur sa langue.
+  const _AC_EXEMPT_KEY = 'atelier_ac_exempt_v1';
+  const _AC_EXEMPT_MAX = 300;
+  let _acExempt = new Set();
+  let _acLastChanges = [];
+  try {
+    const raw = localStorage.getItem(_AC_EXEMPT_KEY);
+    if (raw) _acExempt = new Set(JSON.parse(raw));
+  } catch (e) { /* stockage indisponible : mémoire de session seulement */ }
+  function _acExemptSave() {
+    try { localStorage.setItem(_AC_EXEMPT_KEY, JSON.stringify([..._acExempt])); } catch (e) {}
+  }
+  // Découpe en conservant les séparateurs : join('') reconstruit à l'identique.
+  function _acTokens(t) { return t.split(/(\s+)/); }
+
+  function _acDiffWords(a, b) {
+    const A = _acTokens(a), B = _acTokens(b);
+    if (A.length !== B.length) return null;   // structure trop différente : on s'abstient
+    const out = [];
+    for (let i = 0; i < A.length; i++) if (A[i] !== B[i]) out.push({ from: A[i], to: B[i] });
+    return out;
+  }
+
+  // L'auteur a-t-il rétabli une forme que nous venions de corriger ?
+  function _acDetectRevert(current) {
+    if (!_acLastChanges.length) return;
+    const toks = new Set(_acTokens(current));
+    let touched = false;
+    for (const ch of _acLastChanges) {
+      if (toks.has(ch.from) && !toks.has(ch.to)) {   // forme d'origine revenue, correction disparue
+        _acExempt.add(ch.from);
+        touched = true;
+        if (_acExempt.size > _AC_EXEMPT_MAX) _acExempt.delete(_acExempt.values().next().value);
+      }
+    }
+    _acLastChanges = [];
+    if (touched) _acExemptSave();
+  }
+
+  // Rétablit les formes exemptées dans le texte corrigé.
+  function _acRespectExemptions(original, corrected) {
+    if (!_acExempt.size || original === corrected) return corrected;
+    const A = _acTokens(original), B = _acTokens(corrected);
+    if (A.length !== B.length) return corrected;
+    let changed = false;
+    for (let i = 0; i < A.length; i++) {
+      if (A[i] !== B[i] && _acExempt.has(A[i])) { B[i] = A[i]; changed = true; }
+    }
+    return changed ? B.join('') : corrected;
+  }
+
+  // Exposé pour les réglages : permet de repartir de zéro.
+  function acClearExemptions() { _acExempt.clear(); _acExemptSave(); }
+
   function _safeApply(ta) {
     const prefs = ACPrefs.load();
     if (!prefs.enabled) return;
 
     const original = ta.value;
     if (original === _lastText) return;
+
+    // Le texte a changé depuis notre dernière écriture : l'auteur est
+    // intervenu. A-t-il défait l'une de nos corrections ?
+    _acDetectRevert(original);
 
     // Si l'utilisateur a modifié le texte pendant le cooldown post-correction,
     // on accepte son texte tel quel comme nouvelle baseline (correction manuelle respectée)
@@ -24671,8 +24737,12 @@ var SafeCorrectionEngine = (() => {
 
     // Applique les corrections en protégeant la ligne courante du curseur
     // contre removeTrailingSpaces (elle est encore en cours d'écriture).
-    const corrected = _applyAllSafe(original, prefs, selStart);
+    let corrected = _applyAllSafe(original, prefs, selStart);
+    corrected = _acRespectExemptions(original, corrected);
     if (corrected === original) { _lastText = original; return; }
+
+    // Mémorise ce passage : si l'auteur le défait, on saura ne plus y revenir.
+    _acLastChanges = _acDiffWords(original, corrected) || [];
 
     // Calcul du décalage curseur par diff caractère-à-caractère
     const delta = _computeCursorDelta(original, corrected, selStart);
