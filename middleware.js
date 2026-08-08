@@ -51,10 +51,20 @@ export default async function middleware(request) {
   }
 
   const cookieHeader = request.headers.get('cookie') || '';
-  const match = cookieHeader.match(/(^|;\s*)sv_session=([^;]+)/);
-  const token = match ? match[2] : null;
 
-  if (token && await verifyCookie(token, secret)) return; // cookie valide → pass-through
+  // Plusieurs cookies sv_session peuvent coexister dans l'en-tête : un ancien
+  // scopé au domaine (Domain=.scrivaelo.com, signé avec l'ancien ACCESS_SECRET)
+  // et le nouveau, host-only. .match() ne renvoyait que le PREMIER : si le
+  // périmé arrivait en tête, la vérification échouait et l'utilisateur était
+  // renvoyé vers la connexion, qui reposait un cookie... toujours placé en
+  // second. D'où une boucle de connexion infinie.
+  //
+  // On accepte donc si AU MOINS UN des cookies présents est valide.
+  // Correctif porté depuis scrivaelo-site (a653147), où il était déjà appliqué.
+  const _toks = [...cookieHeader.matchAll(/(?:^|;\s*)sv_session=([^;]+)/g)].map(x => x[1]);
+  for (const _t of _toks) {
+    if (await verifyCookie(_t, secret)) return; // cookie valide → pass-through
+  }
 
   const url = new URL(request.url);
   const next = url.pathname + url.search;
