@@ -11466,6 +11466,18 @@ function applyTheme(name, persist) {
   Object.entries(theme).forEach(([k, v]) => root.setProperty(k, v, 'important'));
   // Surcharge des variables sémantiques pour les thèmes clairs
   const isLight = name.startsWith('jour_');
+
+  // ── color-scheme — 2026-08-07 ────────────────────────────────────────────
+  // Les widgets NATIFS (liste déroulante d'un <select>, barres de défilement,
+  // sélecteurs de date) ne sont pas peints par notre CSS : le navigateur les
+  // dessine avec la palette indiquée par color-scheme. Cette propriété n'était
+  // déclarée nulle part, donc la palette par défaut s'appliquait quel que soit
+  // le thème choisi — d'où du texte clair sur menu clair (sélecteur de modèle
+  // IA du bandeau) sur les thèmes jour_ivoire et jour_ardoise.
+  //
+  // On la pilote depuis le thème : un seul point de vérité, et tous les
+  // widgets natifs suivent automatiquement.
+  root.setProperty('color-scheme', isLight ? 'light' : 'dark');
   if (isLight && name === 'jour_ivoire') {
     root.setProperty('--ink',          '#1a150e');
     root.setProperty('--ink-soft',     '#3a3020');

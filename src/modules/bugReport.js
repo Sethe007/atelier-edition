@@ -422,15 +422,23 @@
   .bugr-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .bugr-form input, .bugr-form select, .bugr-form textarea {
     width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 8px;
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.9); font-size: 13px; font-family: inherit;
-    color-scheme: dark;
+    /* 2026-08-07 — les couleurs étaient codées en dur pour un fond sombre :
+       sur les thèmes clairs (jour_ivoire, jour_ardoise) le texte restait blanc,
+       donc illisible. On suit désormais les variables de thème, avec repli sur
+       les anciennes valeurs si elles ne sont pas définies.
+       color-scheme n'est plus forcé ici : il est piloté globalement par
+       applyTheme(), sinon la liste déroulante native reste sombre en thème clair. */
+    background: var(--c-lift, rgba(255,255,255,0.05));
+    border: 1px solid var(--cream, rgba(255,255,255,0.12));
+    color: var(--ink, rgba(255,255,255,0.9)); font-size: 13px; font-family: inherit;
   }
   .bugr-form textarea { min-height: 96px; resize: vertical; }
   .bugr-form input:focus, .bugr-form select:focus, .bugr-form textarea:focus {
     outline: none; border-color: rgba(255,255,255,0.35);
   }
-  .bugr-form option { background: #1e1f24; color: rgba(255,255,255,0.9); }
+  /* La couleur de texte est OBLIGATOIRE ici : sans elle, le navigateur applique
+     son noir par défaut sur ce fond sombre — texte noir sur fond noir. */
+  .bugr-form option { background: var(--c-void, #1e1f24); color: var(--ink, rgba(255,255,255,0.9)); }
   .bugr-actions { display: flex; align-items: center; gap: 12px; margin-top: 2px; }
   .bugr-send {
     padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer;
