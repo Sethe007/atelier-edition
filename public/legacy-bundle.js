@@ -293,6 +293,7 @@ function chooseLoad() {
 }
 
 function confirmProjectChoice() {
+  flushAutosave('changement de projet');
   if (_projectPendingAction === 'new') {
     // Lire le nom saisi — était indéfini (ReferenceError) avant ce correctif
     const nom = (document.getElementById('project-name-input')?.value || '').trim() || 'Sans titre';
@@ -570,6 +571,7 @@ function resetAnalysisModules() {
 }
 
 function applyProjectData(data, fileName) {
+  flushAutosave('chargement de projet');
   data = _sanitizeProjectData(data);
   if (!data) { console.warn('applyProjectData : fichier projet invalide, chargement annulé'); return; }
   // Vider l'état actuel
@@ -2624,6 +2626,7 @@ function renderImgList() {
 
 // ── UTILITAIRES ────────────────────────────────────────
 function clearAll() {
+  flushAutosave('clearAll');
   if (!confirm(_t('confirm_clear_text'))) return;
   setDomVal('raw-input', '');
   paginateNodes([], []);
@@ -4245,11 +4248,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 1.1 — Avertissement avant rechargement accidentel
   window.addEventListener('beforeunload', (e) => {
+    flushAutosave('beforeunload');
     if (_hasUnsavedChanges) {
       e.preventDefault();
       e.returnValue = '';
     }
   });
+
+  // 1.2 — Sauvegarde immédiate à la sortie de page (2026-08-07)
+  //
+  // beforeunload NE SUFFIT PAS et n'est pas portable : sur iOS Safari et sur
+  // Android Chrome, une page mise en arrière-plan peut être supprimée par le
+  // système sans jamais le déclencher. Safari l'ignore aussi lors d'un passage
+  // au multitâche. Résultat : jusqu'à 3 s de frappe perdues sans aucun signal.
+  //
+  // visibilitychange (état 'hidden') et pagehide sont les deux seuls signaux
+  // fiables sur l'ensemble des navigateurs, mobiles compris. On écoute les
+  // deux : pagehide couvre la navigation arrière/avant avec cache (bfcache),
+  // visibilitychange couvre la mise en arrière-plan et le verrouillage écran.
+  //
+  // flushAutosave() n'écrit que si une sauvegarde est réellement en attente,
+  // et passe par localStorage, dont l'écriture est SYNCHRONE — la seule qui
+  // aboutisse de façon garantie dans ces gestionnaires.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushAutosave('visibilitychange');
+  });
+  window.addEventListener('pagehide', () => { flushAutosave('pagehide'); });
 
   // 4.5 — Drag and drop d'images dans la sidebar
   const dropZone = document.querySelector('.img-drop-zone');
@@ -5060,6 +5084,7 @@ function updateErrorBadge(count) {
 
 // ── Effacer avec confirm (P5) ─────────────────────────
 function clearAllSafe() {
+  flushAutosave('clearAllSafe');
   if (!confirm(_t('confirm_clear_text'))) return;
   setDomVal('raw-input', '');
   if (typeof paginateNodes === 'function') paginateNodes([], []);
@@ -9137,6 +9162,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ══════════════════════════════════════════════════════════
 const LS_KEY   = 'atelier_autosave';
 let _autosaveTimer  = null;
+let _autosavePending = false;   // une sauvegarde différée est-elle en attente ?
 var _wgStartWords   = null; // mots au début de session
 var _lastGoalPct    = 0;    // pour détecter le franchissement de 100%
 
@@ -9201,7 +9227,33 @@ function autosaveToLS() {
 
 function scheduleAutosave() {
   clearTimeout(_autosaveTimer);
-  _autosaveTimer = setTimeout(autosaveToLS, 3000);
+  _autosavePending = true;
+  _autosaveTimer = setTimeout(() => { _autosavePending = false; autosaveToLS(); }, 3000);
+}
+
+// ── Purge immédiate de la sauvegarde différée ──────────────────────────────
+// scheduleAutosave() arme un timer de 3 s. Tant que ce timer n'a pas expiré, les
+// dernières secondes de frappe n'existent QUE dans le DOM : tout ce qui vide ou
+// remplace la zone de texte les détruit silencieusement, et toute fermeture de
+// page les emporte. flushAutosave() écrit immédiatement et désarme le timer.
+//
+// Appelé depuis : les 4 fonctions qui remplacent le contenu
+// (confirmProjectChoice, applyProjectData, clearAll, clearAllSafe) et les 3
+// signaux de sortie de page (visibilitychange, pagehide, beforeunload).
+//
+// Sans effet si aucune sauvegarde n'est en attente : aucune écriture inutile.
+function flushAutosave(raison) {
+  if (!_autosavePending) return false;
+  clearTimeout(_autosaveTimer);
+  _autosaveTimer = null;
+  _autosavePending = false;
+  try {
+    autosaveToLS();   // écriture localStorage SYNCHRONE — utilisable en fermeture
+    return true;
+  } catch (e) {
+    console.warn('flushAutosave (' + (raison || '?') + ') a échoué :', e);
+    return false;
+  }
 }
 
 function slugify(s) {
